@@ -1,4 +1,3 @@
-// src/components/qna/Dropdown.tsx
 
 import {useState} from 'react';
 
