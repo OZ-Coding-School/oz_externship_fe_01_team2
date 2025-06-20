@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import UserDefaultImage from "../../assets/images/common/img_user_default.png"
+import UserDefaultImage from '../../assets/images/common/img_user_default.png'
 import LogoImage from '../../assets/images/common/renewal_ozcoding_logo_black.svg'
 
 const Header = () => {
@@ -85,10 +85,7 @@ const Header = () => {
                       </Link>
                     </li>
                     <li>
-                      <button
-                        onClick={() => setIsLoggedIn(false)}
-                        className="w-full cursor-pointer transition-all duration-300 text-left block hover:text-[#6201E0] px-2 py-2.5 font-medium"
-                      >
+                      <button className="w-full cursor-pointer transition-all duration-300 text-left block hover:text-[#6201E0] px-2 py-2.5 font-medium">
                         로그아웃
                       </button>
                     </li>
