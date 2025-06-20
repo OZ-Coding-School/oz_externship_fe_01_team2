@@ -1,7 +1,8 @@
 import './App.css'
+import MarkdownEditor from './components/common/MarkdownEditor'
 
 function App() {
-  return <div>template</div>
+  return <div><MarkdownEditor/></div>
 }
 
 export default App
