@@ -90,7 +90,6 @@ export default function MarkdownToolbar({
           </button>
         )
       )}
-    {/* 헤딩 텍스트 버튼 */}
     <div className="flex gap-2 ml-4">
       {[
         { style: 'h1', label: 'H1' },
