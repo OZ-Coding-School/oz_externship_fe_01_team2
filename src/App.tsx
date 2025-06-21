@@ -1,7 +1,10 @@
 import './App.css'
+import LoginPage from './pages/LoginPage'
 
 function App() {
-  return <div>template</div>
+  return (
+    <LoginPage />
+  )
 }
 
 export default App
