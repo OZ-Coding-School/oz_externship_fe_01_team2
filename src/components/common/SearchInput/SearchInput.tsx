@@ -3,6 +3,10 @@
 // 포커스되면 x 아이콘 생기면서, 테두리 색깔변경
 // 텍스트입력 후 바깥쪽 클릭하면 x 아이콘 사라지며, 테두리 색깔변경
 
+// 사용방법
+// import SearchInput from './components/common/SearchInput
+// <SearchInput />
+
 import React, {useState} from 'react'; // 추가
 
 const SearchInput: React.FC = () => {
