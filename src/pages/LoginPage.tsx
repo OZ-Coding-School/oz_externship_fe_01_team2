@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import Modal from "../components"
 
 export default function LoginPage () {
 return (
@@ -73,9 +74,28 @@ return (
             </div>
 
             <div>
-                <Link to="*" className="text-sm underline-none text-gray-600">아이디 찾기</Link>
+                <button type="button" onClick={handleOpenFindIdModal} className="text-sm underline-none text-gray-600">아이디 찾기</button>
                 <span className="text-gray-600"> | </span>
-                <Link to="*" className="text-sm underline-none text-gray-600">비밀번호 찾기</Link>
+                <button type="button" onClick={handleOpenFindPwModal} className="text-sm no-underline text-gray-600">비밀번호 찾기</button>
+
+                {/* 아이디 찾기 모달 */}
+                <Modal isOpen={isFindIdModalOpen} onClose={handleCloseFindIdModal}>
+                    <div className="flex flex-col items-center gap-4 max-w-[396px] max-h-[522px]">
+                    <div className="text-center">
+                    <p>아이콘</p>
+                    <h2>아이디찾기</h2>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor="name" className="text-sm" >이름<span className="text-[#f04141]">*</span></label>
+                        <input id="name" type="text" placeholder="이름을 입력해주세요" className="border p-2.5 rounded-sm border-[#BDBDBD] text-[#BDBDBD] placeholder:text-sm" />
+                    </div>
+                    </div>
+                </Modal>
+
+                {/* 비밀번호 찾기 모달 */}
+                <Modal isOpen={isFindPwModalOpen} onClose={handleCloseFindPwModal}>
+                    <div>비밀번호 찾기 내용</div>
+                </Modal>
             </div>
 
             <button type="submit" className=" mb-5 w-full py-4 bg-[#ECECEC] text-[#BDBDBD] p-3 rounded-sm font-normal text-sm">
