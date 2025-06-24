@@ -1,6 +1,6 @@
 // Button.types.ts
 export interface ButtonProps {
-  variant?: 'fill' | 'outline' | 'ghost'
+  variant?: 'fill' | 'outline' | 'ghost' | 'check'
   disabled?: boolean
   children: React.ReactNode
   onClick?: () => void
