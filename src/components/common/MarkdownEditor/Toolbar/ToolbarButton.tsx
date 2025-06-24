@@ -1,13 +1,13 @@
 // Toolbar/ToolbarButton.tsx
 
-import React from 'react';
-import type { ToolbarButtonProps } from '../MarkdownEditor.types';
+import React from 'react'
+import type { ToolbarButtonProps } from '../MarkdownEditor.types'
 
-const ToolbarButton: React.FC<ToolbarButtonProps> = ({ 
-  icon, 
-  title, 
-  onClick, 
-  isActive = false 
+const ToolbarButton: React.FC<ToolbarButtonProps> = ({
+  icon,
+  title,
+  onClick,
+  isActive = false,
 }) => (
   <button
     onClick={onClick}
@@ -19,6 +19,6 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
   >
     {icon}
   </button>
-);
+)
 
-export default ToolbarButton;
+export default ToolbarButton
