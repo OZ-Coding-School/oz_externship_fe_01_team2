@@ -1,0 +1,6 @@
+@tailwind utilities;
+
+@import 'tailwindcss';
+@import './typography.css';
+
+@config "../../tailwind.config.ts";
