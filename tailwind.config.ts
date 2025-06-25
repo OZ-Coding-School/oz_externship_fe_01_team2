@@ -1,14 +1,12 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
-  content: [
-    './src/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
       colors: {
         gray: {
-          primary: '#0D0D0D',
+          DEFAULT: '#0D0D0D',
           800: '#1C1C1C',
           700: '#333333',
           600: '#4D4D4D',
@@ -42,12 +40,12 @@ const config: Config = {
           900: '#331A00',
         },
         success: {
-          primary: '#00C48C',
+          DEFAULT: '#00C48C',
           700: '#007A5C',
           100: '#CCF5E9',
         },
         warning: {
-          primary: '#FFCF00',
+          DEFAULT: '#FFCF00',
           100: '#FFF8CC',
           700: '#996B00',
         },
@@ -64,7 +62,7 @@ const config: Config = {
           '2xl': '0',
         },
         screens: {
-          '2xl': '1200px', 
+          '2xl': '1200px',
         },
       },
     },
