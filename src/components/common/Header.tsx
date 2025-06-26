@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import UserDefaultImage from "../../assets/images/common/img_user_default.png"
+import UserDefaultImage from '../../assets/images/common/img_user_default.png'
 import LogoImage from '../../assets/images/common/renewal_ozcoding_logo_black.svg'
 
 const Header = () => {
