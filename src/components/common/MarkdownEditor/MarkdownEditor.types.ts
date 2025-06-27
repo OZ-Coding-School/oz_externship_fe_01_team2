@@ -7,7 +7,7 @@ export interface MarkdownEditorProps {
   onChange?: (value: string) => void
   placeholder?: string
   height?: string
-  width?: string // 가로 크기 추가
+  width?: string
   showPreview?: boolean
   className?: string
 }
@@ -23,8 +23,18 @@ export interface ToolbarProps {
   onInsert: (before: string, after?: string) => void
   showPreview: boolean
   onTogglePreview: () => void
+  onImageUpload?: (files: FileList) => void
 }
 
 export interface PreviewProps {
   content: string
+  onImageClick?: (imageId: string) => void
+}
+
+export interface ImageItem {
+  id: string
+  file: File
+  url: string
+  width?: number
+  height?: number
 }
