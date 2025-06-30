@@ -1,6 +1,7 @@
 // FormInput.tsx
 import React, { useState } from 'react'
 import type { FormInputProps } from './FormInput.types'
+import SuccessIcon from '../../../assets/icons/success.svg'
 
 const FormInput: React.FC<FormInputProps> = ({
   placeholder = '',
@@ -90,7 +91,7 @@ const FormInput: React.FC<FormInputProps> = ({
 
         {hasSuccess && (
           <img
-            src="src/assets/icons/common/success.svg"
+            src={SuccessIcon}
             alt="성공"
             className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
           />
