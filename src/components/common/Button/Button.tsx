@@ -33,7 +33,8 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      className={`${baseStyles} ${getStyles()}`}
+      className={`${baseStyles} ${getStyles()}
+      ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       style={{
         borderRadius: radius,
         width: width,
