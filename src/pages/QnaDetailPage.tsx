@@ -1,7 +1,5 @@
 import { ChevronRight, Link } from 'lucide-react'
 import { useState } from 'react'
-import AnswerMarkdownEx1 from '../assets/answer_ex1.md?raw'
-import AnswerMarkdownEx2 from '../assets/answer_ex2.md?raw'
 import UserDefaultImage from '../assets/images/common/img_user_default.png'
 import Avatar from '../components/common/Avatar'
 import Button from '../components/common/Button'
@@ -51,7 +49,7 @@ const QnaDetailPage = () => {
     answers: [
       {
         id: 201,
-        content: AnswerMarkdownEx2,
+        content: '# Django 마이그레이션 오류 해결 방법',
         is_adopted: true,
         created_at: '2025-06-23T06:00:00Z',
         author: {
@@ -84,7 +82,8 @@ const QnaDetailPage = () => {
       },
       {
         id: 202,
-        content: AnswerMarkdownEx1,
+        content:
+          '마이그레이션 오류는 종종 데이터베이스 스키마와 모델 간의 불일치로 발생합니다. 다음 단계를 시도해 보세요:\n\n1. `python manage.py makemigrations` 명령어로 변경 사항을 적용하세요.\n2. `python manage.py migrate` 명령어로 마이그레이션을 실행하세요.\n3. 만약 여전히 오류가 발생한다면, 데이터베이스를 초기화하고 다시 마이그레이션을 시도해 보세요.',
         is_adopted: false,
         created_at: '2025-06-23T06:00:00Z',
         author: {
