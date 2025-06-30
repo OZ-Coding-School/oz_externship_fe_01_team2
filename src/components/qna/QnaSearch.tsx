@@ -1,5 +1,3 @@
-// 질의응답 검색바
-
 import { useRef, useState } from 'react'
 import searchIcon from '../../assets/icons/search.svg'
 import clearIcon from '../../assets/icons/x_mark.svg'
@@ -24,7 +22,6 @@ const QnaSearch = ({ query, setQuery }: Props) => {
 
   return (
     <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-      {/* 검색 input 박스 */}
       <div
         className={`flex items-center w-full max-w-[472px] px-4 py-2 rounded-full
           border transition 
@@ -67,7 +64,6 @@ const QnaSearch = ({ query, setQuery }: Props) => {
         )}
       </div>
 
-      {/* ✅ 공통 버튼 적용 */}
       <Button
         variant="fill"
         width="126px"
