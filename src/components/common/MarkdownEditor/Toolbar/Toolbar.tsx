@@ -89,7 +89,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   const Divider = () => <div className="w-px h-6 bg-gray-300 mx-2" />
 
   return (
-    <div className="bg-gray-50 border-b p-2 flex items-center gap-2 flex-wrap">
+    <div className="bg-gray-50 border border-gray-250 p-2 flex items-center gap-2 flex-wrap">
       {headingButtons.map((button, index) => (
         <ToolbarButton
           key={`heading-${index}`}
