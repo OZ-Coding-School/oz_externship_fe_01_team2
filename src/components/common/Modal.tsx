@@ -1,52 +1,40 @@
-import React from 'react';
+import { X } from 'lucide-react'
+import React from 'react'
+import { cn } from '../../utils/cn'
 
 interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
+  isOpen: boolean
+  className?: string
+  onClose: () => void
+  children: React.ReactNode
 }
 
-const Modal = ({ isOpen, onClose, children }: ModalProps) => {
-  if (!isOpen) return null;
+const Modal = ({ isOpen, className, onClose, children }: ModalProps) => {
+  if (!isOpen) return null
 
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    <div
+      className={cn(
+        `fixed inset-0 bg-black/60 flex items-center justify-center z-50`,
+        className
+      )}
       onClick={onClose}
     >
-      <div 
-        className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 relative"
+      <div
+        className="bg-white rounded-[12px] shadow-xl mt-[280px] mb-[278px] p-[24px] gap-[10px] relative"
         onClick={(e) => e.stopPropagation()}
       >
-        <button 
+        <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl"
+          className="absolute top-6 right-6 text-gray-400 transition hover:text-gray-600 text-xl cursor-pointer"
+          aria-label="닫기"
         >
-          ×
+          <X />
         </button>
         {children}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Modal;
-
-//사용방법
-// import React, { useState } from 'react';
-// import Modal from './components/common/Modal';
-
-// const TestPage = () => {
-//   const [isOpen, setIsOpen] = useState(false);
-
-//   return (
-//     <div>
-//       <button onClick={() => setIsOpen(true)}>모달 열기</button>
-
-//       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-//       </Modal>
-//     </div>
-//   );
-// };
-
-// export default TestPage;
+export default Modal
