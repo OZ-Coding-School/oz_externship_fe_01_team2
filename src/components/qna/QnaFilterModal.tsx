@@ -4,12 +4,18 @@ import SingleDropdown from '../common/SingleDropdown'
 import Button from '../common/Button/Button'
 import rotateIcon from '../../assets/icons/rotate-cw.svg'
 
-type Props = {
-  onClose: () => void
+type Filters = {
+  category1: string
+  category2: string
+  category3: string
 }
 
-const QnaFilterModal: React.FC<Props> = ({ onClose }) => {
-  // ✅ 초기값을 문자열로 설정
+type Props = {
+  onClose: () => void
+  onApply: (filters: Filters) => void
+}
+
+const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
   const [category1, setCategory1] = useState('대분류')
   const [category2, setCategory2] = useState('중분류')
   const [category3, setCategory3] = useState('소분류')
@@ -21,20 +27,17 @@ const QnaFilterModal: React.FC<Props> = ({ onClose }) => {
     }
   }, [])
 
-  // 대분류 변경 시 중/소분류 초기화
   const handleCategoryChange = (selected: string) => {
     setCategory1(selected)
     setCategory2('중분류')
     setCategory3('소분류')
   }
 
-  // 중분류 변경 시 소분류 초기화
   const handleSubCategoryChange = (selected: string) => {
     setCategory2(selected)
     setCategory3('소분류')
   }
 
-  // ✅ 선택 초기화
   const resetFilters = () => {
     setCategory1('대분류')
     setCategory2('중분류')
@@ -154,13 +157,10 @@ const QnaFilterModal: React.FC<Props> = ({ onClose }) => {
             height="54px"
             fontSize="20px"
             radius="4px"
-            onClick={() =>
-              console.log('필터 적용', {
-                category1,
-                category2,
-                category3,
-              })
-            }
+            onClick={() => {
+              onApply({ category1, category2, category3 })
+              onClose()
+            }}
           >
             <div className="font-bold flex items-center justify-center gap-2 cursor-pointer">
               필터 적용하기
