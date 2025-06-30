@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import SearchIcon from '../../../assets/icons/search.svg'
+import XMarkIcon from '../../../assets/icons/x_mark.svg'
 
 const SearchInput: React.FC = () => {
   const [inputValue, setInputValue] = useState('')
@@ -7,7 +9,7 @@ const SearchInput: React.FC = () => {
   return (
     <div className="relative w-[472px]">
       <img
-        src="src/assets/icons/common/search.svg"
+        src={SearchIcon}
         alt="검색"
         className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
       />
@@ -22,7 +24,7 @@ const SearchInput: React.FC = () => {
       />
       {inputValue && isFocused && (
         <img
-          src="src/assets/icons/common/x_mark.svg"
+          src={XMarkIcon}
           alt="지우기"
           onClick={() => setInputValue('')}
           className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 cursor-pointer"

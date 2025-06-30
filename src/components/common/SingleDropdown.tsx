@@ -1,5 +1,9 @@
 // src/components/common/SingleDropdown.tsx
 
+import ExpandMoreIcon from '../../assets/icons/common/expand_more.svg'
+import ExpandLessIcon from '../../assets/icons/common/expand_less.svg'
+import CheckMarkIcon from '../../assets/icons/common/check_mark.svg'
+
 import { useState } from 'react'
 
 interface StyleConfig {
@@ -52,14 +56,19 @@ export default function SingleDropdown({
   })
 
   const getOptionStyle = (option: string) => ({
-    backgroundColor: selectedValue === option ? '#fff' 
-      : hoveredOption === option ? hoverBgColor : '#fff',
+    backgroundColor:
+      selectedValue === option
+        ? '#fff'
+        : hoveredOption === option
+          ? hoverBgColor
+          : '#fff',
     color: selectedValue === option ? selectedTextColor : '#121212',
   })
 
-  const getIconFilter = () => selectedValue
-    ? 'brightness(0) saturate(100%) invert(7%) sepia(0%) saturate(0%) hue-rotate(167deg) brightness(95%) contrast(88%)'
-    : 'brightness(0) saturate(100%) invert(75%) sepia(0%) saturate(0%) hue-rotate(167deg) brightness(95%) contrast(88%)'
+  const getIconFilter = () =>
+    selectedValue
+      ? 'brightness(0) saturate(100%) invert(7%) sepia(0%) saturate(0%) hue-rotate(167deg) brightness(95%) contrast(88%)'
+      : 'brightness(0) saturate(100%) invert(75%) sepia(0%) saturate(0%) hue-rotate(167deg) brightness(95%) contrast(88%)'
 
   const isSelected = (option: string) => selectedValue === option
 
@@ -75,7 +84,7 @@ export default function SingleDropdown({
           {selectedValue || placeholder}
         </span>
         <img
-          src={`src/assets/icons/common/expand_${isOpen ? 'less' : 'more'}.svg`}
+          src={isOpen ? ExpandLessIcon : ExpandMoreIcon}
           width={16}
           height={16}
           alt={`${isOpen ? '위로' : '아래로'} 화살표`}
@@ -84,8 +93,8 @@ export default function SingleDropdown({
       </button>
 
       {isOpen && (
-        <div 
-          className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-lg" 
+        <div
+          className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-lg"
           style={{ border: `1px solid ${borderColor}` }}
         >
           {options.map((option) => (
@@ -100,12 +109,13 @@ export default function SingleDropdown({
               <span>{option}</span>
               {isSelected(option) && (
                 <img
-                  src="src/assets/icons/common/check_mark.svg"
+                  src={CheckMarkIcon}
                   alt="체크 표시"
                   width={16}
                   height={16}
                   style={{
-                    filter: 'brightness(0) saturate(100%) invert(18%) sepia(99%) saturate(7483%) hue-rotate(265deg) brightness(89%) contrast(114%)',
+                    filter:
+                      'brightness(0) saturate(100%) invert(18%) sepia(99%) saturate(7483%) hue-rotate(265deg) brightness(89%) contrast(114%)',
                   }}
                 />
               )}
