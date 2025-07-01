@@ -22,6 +22,12 @@ const AnswerCard = ({ answer }: { answer: Answer }) => {
     e.preventDefault()
   }
 
+  const sortedComments = [...comments].sort((a, b) => {
+    const aTime = new Date(a.created_at).getTime()
+    const bTime = new Date(b.created_at).getTime()
+    return orderByDesc ? bTime - aTime : aTime - bTime
+  })
+
   return (
     <div
       className={`border ${borderColor} px-9 py-11 rounded-3xl shadow-sm relative`}
@@ -57,7 +63,7 @@ const AnswerCard = ({ answer }: { answer: Answer }) => {
         {formatRelativeTime(created_at)}
       </div>
       {/* 댓글 */}
-      <div className="mt-6 pt-4 pace-y-2 text-sm text-gray-700">
+      <div className="mt-6 pt-4 text-sm text-gray-700">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3 font-semibold mb-2">
             <MessageCircle />
@@ -68,7 +74,7 @@ const AnswerCard = ({ answer }: { answer: Answer }) => {
             className="flex items-center gap-2 cursor-pointer"
             onClick={toggleOrderBy}
           >
-            <span className="text-gray-600">
+            <span className="text-gray-600 hover:text-gray-800 transition">
               {orderByDesc ? '최신순' : '오래된 순'}
             </span>
             <img
@@ -95,30 +101,34 @@ const AnswerCard = ({ answer }: { answer: Answer }) => {
           </button>
         </form>
         {/* 댓글 목록 */}
-        {comments.map((comment, idx) => (
-          <div key={idx} className="flex items-start gap-4 mt-5">
-            <Avatar
-              name={comment.author.nickname}
-              profileUrl={comment.author.profile_image_url}
-              className="inline-block mr-2"
-            />
-            <div
-              className={cn(
-                `border-b border-gray-250 pb-9 w-full ${idx === comments.length - 1 && 'border-b-0 pb-0'}`
-              )}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-gray-600 font-semibold">
-                  {comment.author.nickname}
-                </span>{' '}
-                <span className="text-xs text-gray-400">
-                  {getFullDate(comment.created_at)}
-                </span>
-              </div>{' '}
-              <p>{comment.content}</p>
+        {comments &&
+          sortedComments.map((comment, idx) => (
+            <div key={comment.id} className="flex items-start gap-4 mt-5">
+              <Avatar
+                name={comment.author.nickname}
+                profileUrl={comment.author.profile_image_url}
+                className="inline-block mr-2"
+              />
+              <div
+                className={cn(
+                  'w-full',
+                  idx === sortedComments.length - 1
+                    ? 'pb-0 border-b-0'
+                    : 'pb-9 border-b border-gray-250'
+                )}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-gray-600 font-semibold">
+                    {comment.author.nickname}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {getFullDate(comment.created_at)}
+                  </span>
+                </div>
+                <p>{comment.content}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   )
