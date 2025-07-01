@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Layout from './pages/Layout'
 import HomePage from './pages/index'
+import Layout from './pages/Layout'
+import QnaDetailPage from './pages/QnaDetailPage'
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
+          <Route path="qna/:id" element={<QnaDetailPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
