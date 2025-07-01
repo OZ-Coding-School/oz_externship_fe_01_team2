@@ -9,12 +9,13 @@ import { cn } from '../../../utils/cn'
 interface MarkdownRendererProps {
   content: string
   className?: string
+  children?: React.ReactNode
 }
 
-const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
+const MarkdownRenderer = ({
   content,
   className = '',
-}) => {
+}: MarkdownRendererProps) => {
   const components = {
     code({
       inline,
