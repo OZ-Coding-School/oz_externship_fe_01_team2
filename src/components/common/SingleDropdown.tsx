@@ -3,7 +3,6 @@
 import ExpandMoreIcon from '../../assets/icons/common/expand_more.svg'
 import ExpandLessIcon from '../../assets/icons/common/expand_less.svg'
 import CheckMarkIcon from '../../assets/icons/common/check_mark.svg'
-
 import { useState } from 'react'
 
 interface StyleConfig {
@@ -17,6 +16,7 @@ interface StyleConfig {
 interface SingleDropdownProps {
   options: string[]
   placeholder: string
+  selected: string // ⭐️ 외부에서 상태 관리 (컨트롤러드)
   onChange?: (selected: string) => void
   styleConfig?: StyleConfig
   disabled?: boolean
@@ -25,11 +25,11 @@ interface SingleDropdownProps {
 export default function SingleDropdown({
   options,
   placeholder,
+  selected,
   onChange,
   styleConfig = {},
   disabled = false,
 }: SingleDropdownProps) {
-  const [selectedValue, setSelectedValue] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [hoveredOption, setHoveredOption] = useState<string | null>(null)
 
@@ -41,14 +41,14 @@ export default function SingleDropdown({
     disabledBgColor = '#F0F0F0',
   } = styleConfig
 
+  const toggleDropdown = () => !disabled && setIsOpen(!isOpen)
+
   const handleSelect = (option: string) => {
-    setSelectedValue(option)
     setIsOpen(false)
     onChange?.(option)
   }
 
-  const toggleDropdown = () => !disabled && setIsOpen(!isOpen)
-
+  // 스타일 함수에서 selectedValue 대신 selected 사용
   const getButtonStyle = () => ({
     backgroundColor: disabled ? disabledBgColor : bgColor,
     borderColor,
@@ -57,20 +57,18 @@ export default function SingleDropdown({
 
   const getOptionStyle = (option: string) => ({
     backgroundColor:
-      selectedValue === option
+      selected === option
         ? '#fff'
         : hoveredOption === option
           ? hoverBgColor
           : '#fff',
-    color: selectedValue === option ? selectedTextColor : '#121212',
+    color: selected === option ? selectedTextColor : '#121212',
   })
 
   const getIconFilter = () =>
-    selectedValue
+    selected
       ? 'brightness(0) saturate(100%) invert(7%) sepia(0%) saturate(0%) hue-rotate(167deg) brightness(95%) contrast(88%)'
       : 'brightness(0) saturate(100%) invert(75%) sepia(0%) saturate(0%) hue-rotate(167deg) brightness(95%) contrast(88%)'
-
-  const isSelected = (option: string) => selectedValue === option
 
   return (
     <div className="relative w-full">
@@ -79,9 +77,10 @@ export default function SingleDropdown({
         onClick={toggleDropdown}
         className="w-full rounded-lg px-4 py-3 flex items-center justify-between border transition-colors"
         style={getButtonStyle()}
+        type="button"
       >
-        <span style={{ color: selectedValue ? '#121212' : '#BDBDBD' }}>
-          {selectedValue || placeholder}
+        <span style={{ color: selected ? '#121212' : '#BDBDBD' }}>
+          {selected || placeholder}
         </span>
         <img
           src={isOpen ? ExpandLessIcon : ExpandMoreIcon}
@@ -91,7 +90,6 @@ export default function SingleDropdown({
           style={{ filter: getIconFilter() }}
         />
       </button>
-
       {isOpen && (
         <div
           className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-lg"
@@ -105,9 +103,10 @@ export default function SingleDropdown({
               style={getOptionStyle(option)}
               onMouseEnter={() => setHoveredOption(option)}
               onMouseLeave={() => setHoveredOption(null)}
+              type="button"
             >
               <span>{option}</span>
-              {isSelected(option) && (
+              {selected === option && (
                 <img
                   src={CheckMarkIcon}
                   alt="체크 표시"
