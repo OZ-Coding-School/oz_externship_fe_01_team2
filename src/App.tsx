@@ -3,6 +3,7 @@ import HomePage from './pages/index'
 import Layout from './pages/Layout'
 import QnaListPage from './pages/QnaListPage'
 import QnaDetailPage from './pages/QnaDetailPage'
+import QnaCreatePage from './pages/QnaCreatePage'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="/qna" element={<QnaListPage />} />
           <Route path="qna/:id" element={<QnaDetailPage />} />
+          <Route path="qna/create" element={<QnaCreatePage />} />
         </Route>
       </Routes>
     </BrowserRouter>
