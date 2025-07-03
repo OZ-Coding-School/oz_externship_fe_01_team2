@@ -3,22 +3,18 @@ import { X } from 'lucide-react'
 import SingleDropdown from '../common/SingleDropdown'
 import Button from '../common/Button/Button'
 import rotateIcon from '../../assets/icons/rotate-cw.svg'
-
-type Filters = {
-  category1: string
-  category2: string
-  category3: string
-}
+import { CATEGORY, DEFAULT_CATEGORY } from '../qna/category'
+import type { CategoryFilter } from '../../../src/types/qnaFilters.types'
 
 type Props = {
   onClose: () => void
-  onApply: (filters: Filters) => void
+  onApply: (filters: CategoryFilter) => void
 }
 
 const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
-  const [category1, setCategory1] = useState('대분류')
-  const [category2, setCategory2] = useState('중분류')
-  const [category3, setCategory3] = useState('소분류')
+  const [main, setMain] = useState(DEFAULT_CATEGORY.main)
+  const [sub, setSub] = useState(DEFAULT_CATEGORY.sub)
+  const [detail, setDetail] = useState(DEFAULT_CATEGORY.detail)
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -27,41 +23,31 @@ const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
     }
   }, [])
 
-  const handleCategoryChange = (selected: string) => {
-    setCategory1(selected)
-    setCategory2('중분류')
-    setCategory3('소분류')
-  }
-
-  const handleSubCategoryChange = (selected: string) => {
-    setCategory2(selected)
-    setCategory3('소분류')
-  }
-
   const resetFilters = () => {
-    setCategory1('대분류')
-    setCategory2('중분류')
-    setCategory3('소분류')
+    setMain(DEFAULT_CATEGORY.main)
+    setSub(DEFAULT_CATEGORY.sub)
+    setDetail(DEFAULT_CATEGORY.detail)
   }
 
-  const category1Options = ['프론트엔드', '백엔드', 'Select 03', 'Select 04']
-  const category2Options = [
-    '프로그래밍 언어',
-    '웹 프레임워크',
-    'Web',
-    'OS',
-    '라이브러리',
-  ]
-  const category3Options = [
-    'JavaScript',
-    'Python',
-    'React',
-    'Django',
-    'FastAPI',
-  ]
+  const mainOptions = Object.keys(CATEGORY) as (keyof typeof CATEGORY)[]
+  type MainKey = keyof typeof CATEGORY
+  type SubKey = keyof (typeof CATEGORY)[MainKey]
 
-  const isSubCategoryDisabled = category1 === '대분류'
-  const isSubSubCategoryDisabled = category2 === '중분류'
+  const subOptions =
+    main && (main as MainKey) in CATEGORY
+      ? Object.keys(CATEGORY[main as MainKey])
+      : []
+
+  const detailOptions =
+    main &&
+    sub &&
+    (main as MainKey) in CATEGORY &&
+    (sub as SubKey) in CATEGORY[main as MainKey]
+      ? CATEGORY[main as MainKey][sub as SubKey]
+      : []
+
+  const isSubDisabled = main === DEFAULT_CATEGORY.main
+  const isDetailDisabled = sub === DEFAULT_CATEGORY.sub
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -90,43 +76,33 @@ const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
 
             <div className="flex flex-col gap-4">
               <SingleDropdown
-                options={category1Options}
+                options={mainOptions}
                 placeholder="대분류"
-                onChange={handleCategoryChange}
-                styleConfig={{
-                  bgColor: '#fff',
-                  borderColor: '#ccc',
-                  hoverBgColor: '#EFE6FC',
-                  selectedTextColor: '#6200E0',
+                selected={main}
+                onChange={(selected) => {
+                  setMain(selected)
+                  setSub(DEFAULT_CATEGORY.sub)
+                  setDetail(DEFAULT_CATEGORY.detail)
                 }}
               />
 
               <SingleDropdown
-                options={category2Options}
+                options={subOptions}
                 placeholder="중분류"
-                onChange={handleSubCategoryChange}
-                disabled={isSubCategoryDisabled}
-                styleConfig={{
-                  bgColor: isSubCategoryDisabled ? '#f0f0f0' : '#fff',
-                  borderColor: '#ccc',
-                  hoverBgColor: '#EFE6FC',
-                  selectedTextColor: '#6200E0',
-                  disabledBgColor: '#f0f0f0',
+                selected={sub}
+                onChange={(selected) => {
+                  setSub(selected)
+                  setDetail(DEFAULT_CATEGORY.detail)
                 }}
+                disabled={isSubDisabled}
               />
 
               <SingleDropdown
-                options={category3Options}
+                options={detailOptions}
                 placeholder="소분류"
-                onChange={setCategory3}
-                disabled={isSubSubCategoryDisabled}
-                styleConfig={{
-                  bgColor: isSubSubCategoryDisabled ? '#f0f0f0' : '#fff',
-                  borderColor: '#ccc',
-                  hoverBgColor: '#EFE6FC',
-                  selectedTextColor: '#6200E0',
-                  disabledBgColor: '#f0f0f0',
-                }}
+                selected={detail}
+                onChange={(selected) => setDetail(selected)}
+                disabled={isDetailDisabled}
               />
             </div>
           </div>
@@ -153,12 +129,9 @@ const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
 
           <Button
             variant="fill"
-            width="278px"
-            height="54px"
-            fontSize="20px"
-            radius="4px"
+            className="w-[278px] h-[54px] text-[20px] rounded-[4px]"
             onClick={() => {
-              onApply({ category1, category2, category3 })
+              onApply({ main, sub, detail })
               onClose()
             }}
           >
