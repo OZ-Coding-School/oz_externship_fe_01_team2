@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 간단한 커밋 메시지 형식 검사
+if ! grep -qE '^(feat|fix|chore|docs|build|test|refactor|hotfix): .{10,50}$' "$1"; then
+    echo "❌ 커밋 메시지 형식이 올바르지 않습니다!"
+    echo "형식: type: subject (10-50자)"
+    echo "허용되는 type: feat, fix, chore, docs, build, test, refactor, hotfix"
+    exit 1
+fi
