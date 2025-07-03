@@ -11,8 +11,11 @@ const Header = () => {
     setShowDropdown((prev) => !prev)
   }
 
+  const logout = () => {
+    setIsLoggedIn(false)
+  }
   return (
-    <header className="border-b border-gray-200">
+    <header className="border-b border-gray-200 bg-white">
       {/* 상단 공지 배너 */}
       <div className="bg-black text-white h-12 flex items-center justify-center">
         🚨 선착순 모집! 국비지원 받고 4주 완성
@@ -85,7 +88,10 @@ const Header = () => {
                       </Link>
                     </li>
                     <li>
-                      <button className="w-full cursor-pointer transition-all duration-300 text-left block hover:text-[#6201E0] px-2 py-2.5 font-medium">
+                      <button
+                        onClick={logout}
+                        className="w-full cursor-pointer transition-all duration-300 text-left block hover:text-[#6201E0] px-2 py-2.5 font-medium"
+                      >
                         로그아웃
                       </button>
                     </li>
