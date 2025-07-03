@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+commit_msg=$(cat "$1")
+
+# 주석(#)이 아닌 첫 번째 줄 찾기
+first_line=$(echo "$commit_msg" | grep -v '^#' | grep -v '^$' | head -n1)
+
+echo "=== 디버그 시작 ==="
+echo "실제 커밋 메시지 첫 줄: [$first_line]"
+echo "=== 디버그 끝 ==="
+
+# 빈 줄이면 에러
+if [ -z "$first_line" ]; then
+    echo "❌ 커밋 메시지가 비어있습니다!"
+    exit 1
+fi
+
+# 이모지 + 타입 + 메시지 + (#숫자) 형식 검사
+if ! echo "$first_line" | grep -qE '^(✨ feat|🐛 fix|💡 chore|📝 docs|🚚 build|✅ test|♻️ refactor|🚑 hotfix): .+\(#[0-9]+\)'; then
+    echo "❌ 커밋 메시지 형식이 올바르지 않습니다!"
+    echo "입력된 메시지: $first_line"
+    exit 1
+fi
+
+echo "✅ 커밋 메시지 형식이 올바릅니다!"

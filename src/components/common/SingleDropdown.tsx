@@ -1,5 +1,3 @@
-// src/components/common/SingleDropdown.tsx
-
 import ExpandMoreIcon from '../../assets/icons/common/expand_more.svg'
 import ExpandLessIcon from '../../assets/icons/common/expand_less.svg'
 import CheckMarkIcon from '../../assets/icons/common/check_mark.svg'
@@ -11,6 +9,7 @@ interface SingleDropdownProps {
   placeholder: string
   onChange?: (selected: string) => void
   disabled?: boolean
+  selected?: string
 }
 
 const ICON_FILTER_SELECTED = 'filter brightness-95 invert-[7%] contrast-[88%]'
@@ -24,13 +23,18 @@ export default function SingleDropdown({
   placeholder,
   onChange,
   disabled = false,
+  selected,
 }: SingleDropdownProps) {
-  const [selectedValue, setSelectedValue] = useState('')
+  const [internalSelected, setInternalSelected] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [hoveredOption, setHoveredOption] = useState<string | null>(null)
 
+  const selectedValue = selected !== undefined ? selected : internalSelected
+
   const handleSelect = (option: string) => {
-    setSelectedValue(option)
+    if (selected === undefined) {
+      setInternalSelected(option)
+    }
     setIsOpen(false)
     onChange?.(option)
   }
