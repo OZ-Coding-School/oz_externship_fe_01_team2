@@ -19,7 +19,7 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
   <button
     onClick={onClick}
     title={title}
-    className={`cursor-pointer p-2 rounded transition-colors flex items-center gap-1 ${
+    className={`p-2 rounded transition-colors flex items-center gap-1 ${
       isActive ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-200 text-gray-600'
     }`}
   >
