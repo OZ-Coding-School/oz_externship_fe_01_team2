@@ -66,16 +66,11 @@ const QnaSearch = ({ query, setQuery }: Props) => {
 
       <Button
         variant="fill"
-        width="126px"
-        height="48px"
-        fontSize="16px"
-        radius="4px"
+        className="w-[126px] h-[48px] text-[16px] rounded-[4px] flex items-center justify-center gap-2"
         onClick={() => console.log('질문하기 클릭')}
       >
-        <div className="flex items-center justify-center gap-2 cursor-pointer">
-          <img src={pencilIcon} alt="질문하기" className="w-[20px] h-[20px]" />
-          질문하기
-        </div>
+        <img src={pencilIcon} alt="질문하기" className="w-[20px] h-[20px]" />
+        <span className="whitespace-nowrap">질문하기</span>
       </Button>
     </div>
   )
