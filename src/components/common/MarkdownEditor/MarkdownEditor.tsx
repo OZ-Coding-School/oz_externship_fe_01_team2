@@ -348,7 +348,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   return (
     <div className={className} style={{ width }}>
       <div
-        className={`border rounded-lg overflow-hidden relative ${
+        className={`border border-gray-250 rounded-lg overflow-hidden relative ${
           isDragOver ? 'border-blue-500 border-2 bg-blue-50' : ''
         }`}
         {...dragHandlers}
