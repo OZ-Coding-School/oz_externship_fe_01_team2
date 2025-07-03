@@ -1,5 +1,6 @@
 // FormInput.tsx
 import React, { useState } from 'react'
+import { cn } from '../../../utils/cn'
 import type { FormInputProps } from './FormInput.types'
 import SuccessIcon from '../../../assets/icons/success.svg'
 
@@ -14,17 +15,14 @@ const FormInput: React.FC<FormInputProps> = ({
   errorMessage = '',
   hasSuccess = false,
   successMessage = '',
-  width = '480px',
-  height = '48px',
+  className,
 }) => {
   const [inputValue, setInputValue] = useState(value || '')
   const [isFocused, setIsFocused] = useState(false)
 
-  // Controlled/Uncontrolled 컴포넌트 처리
   const isControlled = value !== undefined
   const currentValue = isControlled ? value : inputValue
 
-  // 이벤트 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
 
@@ -47,15 +45,14 @@ const FormInput: React.FC<FormInputProps> = ({
 
   // 스타일 맵
   const borderColors = {
-    error: 'border-[rgba(236,0,55,1)]',
-    success: 'border-[rgba(20,199,134,1)]',
-    focused: 'border-[rgba(98,1,224,1)]',
-    default: 'border-[rgba(189,189,189,1)]',
+    error: 'border-danger',
+    success: 'border-success',
+    focused: 'border-primary',
+    default: 'border-gray-400',
   }
-
   const textColors = {
-    error: 'text-[rgba(236,0,55,1)]',
-    success: 'text-[rgba(20,199,134,1)]',
+    error: 'text-danger',
+    success: 'text-success',
   }
 
   const getBorderColor = () => {
@@ -67,17 +64,17 @@ const FormInput: React.FC<FormInputProps> = ({
 
   const baseInputStyles = `
     w-full h-full border rounded-[4px] pl-3 pr-12 
-    focus:outline-none bg-[rgba(255,255,255,1)] 
-    placeholder-[rgba(189,189,189,1)] font-pretendard 
+    focus:outline-none bg-white 
+    placeholder-gray-400 font-pretendard 
     font-normal text-[14px] leading-none tracking-[-0.03em] 
-    text-[rgba(18,18,18,1)]
+    text-gray-800
   `
     .replace(/\s+/g, ' ')
     .trim()
 
   return (
     <div className="w-full">
-      <div className="relative" style={{ width }}>
+      <div className={cn('relative w-[480px] h-[48px]', className)}>
         <input
           type={type}
           value={currentValue}
@@ -85,7 +82,6 @@ const FormInput: React.FC<FormInputProps> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder={placeholder}
-          style={{ height }}
           className={`${baseInputStyles} ${getBorderColor()}`}
         />
 
