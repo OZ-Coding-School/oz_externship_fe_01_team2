@@ -12,7 +12,7 @@ export default function QnaTitleInput({ value, onChange }: Props) {
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      placeholder="제목을 입력해 주세요 (최대 50자)"
+      placeholder="제목을 입력해 주세요"
       maxLength={50}
       className={cn(
         'w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors',
