@@ -1,4 +1,3 @@
-// FormInput.types.ts
 export interface FormInputProps {
   placeholder?: string
   type?: 'text' | 'email' | 'password' | 'number'
@@ -12,4 +11,5 @@ export interface FormInputProps {
 
   onFocus?: () => void
   onBlur?: () => void
+  disabled?: boolean // 추가!
 }
