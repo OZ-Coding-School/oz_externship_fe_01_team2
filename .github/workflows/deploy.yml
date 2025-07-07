@@ -46,7 +46,7 @@ jobs:
           echo "Invalidating CloudFront cache..."
           aws cloudfront create-invalidation --distribution-id E3LJZVYRNTH49B --paths "/*"
 
-      - name: Notify Deployment Successㅁ
+      - name: Notify Deployment Success
         run: |
           echo "Deployment to S3 and CloudFront completed successfully!"
           echo "You can access your site at https://oz-team2.kro.kr/"
