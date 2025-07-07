@@ -3,6 +3,7 @@ import { useState } from 'react'
 import UserDefaultImage from '../assets/images/common/img_user_default.png'
 import Avatar from '../components/common/Avatar'
 import Button from '../components/common/Button'
+import AIAnswer from '../components/qna/AIAnswer'
 import AnswerCard from '../components/qna/AnswerCard'
 import { useToast } from '../hooks/useToast'
 import { formatRelativeTime } from '../utils/formatRelativeTime'
@@ -82,6 +83,7 @@ const QnaDetailPage = () => {
           </div>
         </div>
         <p className="pt-10 text-body-rg pb-15">{qnaData.content}</p>
+        <AIAnswer />
         <div className="flex justify-end">
           <button
             type="button"
