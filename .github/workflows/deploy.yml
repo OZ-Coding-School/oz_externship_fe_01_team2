@@ -3,11 +3,10 @@ name: Deploy to S3 and CloudFront
 on:
   push:
     branches:
-      - feature/6--github-cicd
+      - develop
 
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/feature/6--github-cicd'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,7 +20,7 @@ jobs:
       - name: install & build
         run: |
           echo "Building the project..."
-          npm install
+          NODE_ENV=production npm ci
           npm run build
 
       - name: Build files 목록 출력
@@ -45,9 +44,9 @@ jobs:
       - name: Invalidate CloudFront Cache
         run: |
           echo "Invalidating CloudFront cache..."
-          aws cloudfront create-invalidation --distribution-id E22MTX5W58G0EE --paths "/*"
+          aws cloudfront create-invalidation --distribution-id E3LJZVYRNTH49B --paths "/*"
 
-      - name: Notify Deployment Success
+      - name: Notify Deployment Successㅁ
         run: |
           echo "Deployment to S3 and CloudFront completed successfully!"
           echo "You can access your site at https://oz-team2.kro.kr/"
