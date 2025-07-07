@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 const Sidebar = () => {
   const menuList = [
     { name: '쪽지 시험', path: '/test' },
-    { name: '내 정보', path: '/profile' },
+    { name: '내 정보', path: '/mypage' },
     { name: '비밀번호 변경', path: '/changePassword' },
   ]
   return (
