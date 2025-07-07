@@ -4,9 +4,14 @@ import Button from '../Button'
 interface IdSuccessProps {
   email: string
   onFindPw: () => void
+  onClose: () => void
 }
 
-export default function IdSuccess({ email, onFindPw }: IdSuccessProps) {
+export default function IdSuccess({
+  email,
+  onFindPw,
+  onClose,
+}: IdSuccessProps) {
   function maskEmail(email: string): string {
     const [id, domain] = email.split('@')
     if (id.length <= 2) {
@@ -31,7 +36,11 @@ export default function IdSuccess({ email, onFindPw }: IdSuccessProps) {
         {maskEmail(email)}
       </div>
       <div className="flex gap-[12px]">
-        <Button variant="check" className="w-[168px] h-[48px]">
+        <Button
+          variant="check"
+          className="w-[168px] h-[48px]"
+          onClick={onClose}
+        >
           로그인
         </Button>
         <Button
