@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage'
 import QnaDetailPage from './pages/QnaDetailPage'
 import SignUpPage from './pages/SignUpPage'
 import QnaListPage from './pages/QnaListPage'
+import MyPage from './pages/MyPage'
 
 function App() {
   return (
@@ -13,10 +14,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
-          <Route path="/qna" element={<QnaListPage />} />
+          <Route path="qna" element={<QnaListPage />} />
           <Route path="qna/:id" element={<QnaDetailPage />} />
           <Route path="signup" element={<SignUpPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="mypage" element={<MyPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
