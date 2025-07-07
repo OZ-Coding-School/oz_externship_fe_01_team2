@@ -163,9 +163,7 @@ const QnaDetailPage = () => {
             </div>
           </div>
         </div>
-        <Button radius="48px" width="112px">
-          답변하기
-        </Button>
+        <Button className="px-0 rounded-full w-28">답변하기</Button>
       </div>
 
       {/* 답변 개수 */}
