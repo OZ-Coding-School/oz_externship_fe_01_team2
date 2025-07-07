@@ -13,7 +13,10 @@ export default function SignUpPage() {
           />
           <div className="flex justify-center items-center h-[11px] gap-[12px]">
             <h3 className="font-medium">현재 회원이신가요?</h3>
-            <Link to="*" className="text-[#6201E0] no-underline font-medium">
+            <Link
+              to="/login"
+              className="text-[#6201E0] no-underline font-medium"
+            >
               로그인하기
             </Link>
           </div>
@@ -62,7 +65,7 @@ export default function SignUpPage() {
         </div>
         <div className="text-center">
           <Link
-            to="*"
+            to="/signupform"
             className="text-sm underline underline-offset-[2px] text-[16px] text-gray-600"
           >
             일반회원 가입
