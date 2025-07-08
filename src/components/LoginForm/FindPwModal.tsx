@@ -79,7 +79,7 @@ const FindPwModal: React.FC<FindPwModalProps> = ({
           </Button>
         </div>
       ) : (
-        <PwSuccess onCloseModal={onClose} />
+        <PwSuccess onClose={onClose} />
       )}
     </Modal>
   )
