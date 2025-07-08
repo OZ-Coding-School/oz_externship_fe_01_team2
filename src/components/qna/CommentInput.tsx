@@ -3,16 +3,15 @@ import { cn } from '../../utils/cn'
 import Textarea from '../common/Textarea'
 import Button from '../common/Button/Button'
 import { ToastContext } from '../common/Toast/ToastContext'
+const NOTICE =
+  '개인정보를 공유 및 요청하거나, 명예 훼손, 무단 광고, 불법 정보 유포시 모니터링 후 삭제될 수 있습니다.'
+const DEFAULT_MAX_LENGTH = 300
 
 interface CommentInputProps {
   onSubmit: (text: string) => void
   maxLength?: number
   className?: string
 }
-
-const NOTICE =
-  '개인정보를 공유 및 요청하거나, 명예 훼손, 무단 광고, 불법 정보 유포시 모니터링 후 삭제될 수 있습니다.'
-const DEFAULT_MAX_LENGTH = 300
 
 function CommentInput({
   onSubmit,
