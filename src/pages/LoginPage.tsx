@@ -11,10 +11,15 @@ import FindIdModal from '../components/LoginForm/FindIdModal'
 import FindPwModal from '../components/LoginForm/FindPwModal'
 import { useContext } from 'react'
 import { ToastContext } from '../components/common/Toast/ToastContext'
+import WithdrawnAccountModal from '../components/LoginForm/WithdrawnAccountModal'
+import RecoverAccountModal from '../components/LoginForm/RecoverAccountModal'
 
 export default function LoginPage() {
   const toastCtx = useContext(ToastContext)
   const [codeCheckClicked, setCodeCheckClicked] = useState(false)
+  const [modalType, setModalType] = useState<'withdrawn' | 'recover' | null>(
+    null
+  )
 
   // 폼 validation hooks
   const nameValid = useInput(
@@ -160,11 +165,47 @@ export default function LoginPage() {
               variant={isFormValid ? 'fill' : 'ghost'}
               disabled={!isFormValid}
               className="w-[348px] h-[52px]"
+              onClick={(e) => {
+                e.preventDefault()
+                if (idValid.value === 'deleted@example.com') {
+                  setModalType('withdrawn') // ← 모달 상태 설정
+                } else {
+                  console.log('로그인 성공')
+                }
+              }}
             >
               일반회원 로그인
             </Button>
           </div>
         </form>
+        {modalType === 'withdrawn' && (
+          <WithdrawnAccountModal
+            isOpen={true}
+            onClose={() => setModalType(null)}
+            onRecoverClick={() => {
+              // 모달 전환 보장
+              setTimeout(() => setModalType('recover'), 0)
+            }}
+          />
+        )}
+
+        {modalType === 'recover' && (
+          <RecoverAccountModal
+            isOpen={true}
+            onClose={() => setModalType(null)}
+            step={findPwStep}
+            emailValid={emailValid}
+            codeValid={emailCodeValid}
+            isTimerActive={timer.isActive}
+            timeLeft={timer.timeLeft}
+            onSendCode={handleSendCode}
+            onVerifyCode={handleVerifyCode}
+            onFindPw={handleFindPw}
+            formatTime={timer.formatTime}
+            codeCheckClicked={codeCheckClicked}
+            setCodeCheckClicked={setCodeCheckClicked}
+          />
+        )}
       </div>
     </div>
   )

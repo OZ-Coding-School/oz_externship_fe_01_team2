@@ -3,7 +3,7 @@ import Layout from './components/common/Layout'
 import HomePage from './pages/index'
 import LoginPage from './pages/LoginPage'
 import MyPage from './pages/MyPage'
-import MypageEdit from './pages/MypageEdit'
+// import MypageEdit from './pages/MypageEdit'
 import QnaDetailPage from './pages/QnaDetailPage'
 import QnaListPage from './pages/QnaListPage'
 import SignUpPage from './pages/SignUpPage'
@@ -20,7 +20,7 @@ function App() {
           <Route path="signup" element={<SignUpPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="mypage" element={<MyPage />} />
-          <Route path="mypage/edit" element={<MypageEdit />} />
+          {/* <Route path="mypage/edit" element={<MypageEdit />} /> */}
           <Route path="signupform" element={<SignUpFormPage />} />
         </Route>
       </Routes>

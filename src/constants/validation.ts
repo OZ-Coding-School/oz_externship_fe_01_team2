@@ -2,7 +2,7 @@ export const VALIDATION_REGEX = {
   KOREAN_NAME: /^[가-힣]+$/,
   NICKNAME: /^[가-힣a-zA-Z0-9]{2,10}$/,
   BIRTH: /^\d{8}$/,
-  EMAIL: /^[^\s@]+@gmail\.com$/,
+  EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   EMAIL_CODE: /^[0-9a-zA-Z]{6,10}$/,
   PHONE_PART1: /^\d{3}$/,
   PHONE_PART2: /^\d{4}$/,
