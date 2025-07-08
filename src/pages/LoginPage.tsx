@@ -4,7 +4,7 @@ import { useInput } from '../hooks/useInput'
 import { useTimer } from '../hooks/useTimer'
 import { VALIDATION_REGEX, TIMER_DURATION } from '../constants/validation'
 import type { ModalStep } from '../types/auth'
-import LoginHeader from '../components/LoginForm/LoginHeader'
+import AuthHeader from '../components/LoginForm/AuthHeader'
 import SocialLoginButtons from '../components/LoginForm/SocialLoginButtons'
 import LoginFormInputs from '../components/LoginForm/LoginFormInputs'
 import FindIdModal from '../components/LoginForm/FindIdModal'
@@ -98,7 +98,11 @@ export default function LoginPage() {
     <div className="flex justify-center">
       <div className="mt-[200px] mb-[392px] w-[348px] h-[488px]">
         <form>
-          <LoginHeader />
+          <AuthHeader
+            message="아직 회원이 아니신가요?"
+            linkText="회원가입하기"
+            linkTo="/signup"
+          />
           <SocialLoginButtons />
           <LoginFormInputs idValid={idValid} pwValid={pwValid} />
 
