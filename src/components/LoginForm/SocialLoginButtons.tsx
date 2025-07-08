@@ -1,11 +1,17 @@
 import React from 'react'
 
-const SocialLoginButtons: React.FC = () => {
+interface SocialLoginButtonsProps {
+  className?: string
+}
+
+const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({
+  className,
+}) => {
   return (
     <div className="flex flex-col gap-[12px] mb-[40px]">
       <button
         type="button"
-        className="flex items-center justify-center p-[8px] gap-[4px] bg-[#FEE500] rounded-[4px] w-full h-[52px] text-black font-normal"
+        className={`w-[348px] h-[52px] flex items-center justify-center gap-[4px] bg-[#FEE500] text-black font-normal rounded-[4px] ${className || ''}`}
       >
         <svg
           width="16"
@@ -25,7 +31,7 @@ const SocialLoginButtons: React.FC = () => {
 
       <button
         type="button"
-        className="flex items-center justify-center gap-[4px] bg-[#03C75A] h-[52px] p-[8px] text-white rounded-[4px] w-full font-normal"
+        className={`w-[348px] h-[52px] flex items-center justify-center gap-[4px] bg-[#03C75A] text-white font-normal rounded-[4px] ${className || ''}`}
       >
         <svg
           width="20"

@@ -2,7 +2,17 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import ozLogo from '../../assets/images/common/renewal_ozcoding_logo_black.svg'
 
-const LoginHeader: React.FC = () => {
+interface AuthHeaderProps {
+  message: string
+  linkText: string
+  linkTo: string
+}
+
+const AuthHeader: React.FC<AuthHeaderProps> = ({
+  message,
+  linkText,
+  linkTo,
+}) => {
   return (
     <div className="flex flex-col justify-center items-center mb-[64px]">
       <img
@@ -11,13 +21,13 @@ const LoginHeader: React.FC = () => {
         className="w-[180px] h-[24px] mb-[27px]"
       />
       <div className="flex justify-center items-center h-[11px] gap-[12px]">
-        <h3 className="font-medium">아직 회원이 아니신가요?</h3>
-        <Link to="/signup" className="text-[#6201E0] no-underline font-medium">
-          회원가입하기
+        <h3 className="font-medium">{message}</h3>
+        <Link to={linkTo} className="text-[#6201E0] no-underline font-medium">
+          {linkText}
         </Link>
       </div>
     </div>
   )
 }
 
-export default LoginHeader
+export default AuthHeader
