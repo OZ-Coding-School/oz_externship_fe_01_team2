@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+// src/components/common/FormInput/FormInput.tsx
+
+import React, { useId, useState } from 'react'
 import { cn } from '../../../utils/cn'
 import type { FormInputProps } from './FormInput.types'
 import SuccessIcon from '../../../assets/icons/success.svg'
@@ -15,8 +17,9 @@ const FormInput: React.FC<FormInputProps> = ({
   hasSuccess = false,
   successMessage = '',
   className,
-  disabled = false, // 추가
+  disabled = false,
 }) => {
+  const id = useId()
   const [inputValue, setInputValue] = useState(value || '')
   const [isFocused, setIsFocused] = useState(false)
 
@@ -62,8 +65,9 @@ const FormInput: React.FC<FormInputProps> = ({
 
   return (
     <div className="w-full">
-      <div className={cn('relative w-[480px] h-[48px]', className)}>
+      <div className={cn('relative h-[48px]', className)}>
         <input
+          id={id}
           type={type}
           value={currentValue}
           onChange={handleChange}
@@ -73,7 +77,6 @@ const FormInput: React.FC<FormInputProps> = ({
           disabled={disabled}
           className={cn(baseInputStyles, getBorderColor(), disabledStyles)}
         />
-
         {hasSuccess && !disabled && (
           <img
             src={SuccessIcon}
@@ -86,7 +89,6 @@ const FormInput: React.FC<FormInputProps> = ({
       {hasError && errorMessage && (
         <p className="text-danger text-sm mt-1">{errorMessage}</p>
       )}
-
       {hasSuccess && successMessage && (
         <p className="text-success text-sm mt-1">{successMessage}</p>
       )}
