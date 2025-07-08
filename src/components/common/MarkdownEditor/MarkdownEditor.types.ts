@@ -5,6 +5,7 @@ import type React from 'react'
 export interface MarkdownEditorProps {
   value?: string
   onChange?: (value: string) => void
+  updateImageFiles?: React.Dispatch<React.SetStateAction<File[]>>
   placeholder?: string
   height?: string
   width?: string
