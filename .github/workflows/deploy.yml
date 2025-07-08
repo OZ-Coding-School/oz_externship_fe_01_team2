@@ -20,7 +20,7 @@ jobs:
       - name: install & build
         run: |
           echo "Building the project..."
-          NODE_ENV=production npm ci
+          HUSKY=0 NODE_ENV=production npm ci
           npm run build
 
       - name: Build files 목록 출력
