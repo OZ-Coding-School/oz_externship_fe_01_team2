@@ -46,12 +46,12 @@ export default function SingleDropdown({
   const isSelected = (option: string) => selectedValue === option
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-[282px]">
       <button
         disabled={disabled}
         onClick={toggleDropdown}
         className={cn(
-          'w-full rounded-lg px-4 py-3 flex items-center justify-between border transition-colors',
+          'w-full h-[48px] rounded px-[16px] py-[10px] flex items-center justify-between border transition-colors',
           disabled
             ? 'bg-gray-100 border-gray-disabled text-gray-disabled cursor-not-allowed'
             : 'bg-white border-gray-250 text-gray-700 cursor-pointer'
@@ -59,7 +59,7 @@ export default function SingleDropdown({
       >
         <span
           className={cn(
-            'truncate',
+            'text-[14px] font-normal leading-[100%] tracking-[-0.03em]',
             selectedValue ? 'text-gray-700' : 'text-gray-400'
           )}
         >
@@ -78,7 +78,9 @@ export default function SingleDropdown({
       {isOpen && (
         <div
           className={cn(
-            'absolute z-50 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-250'
+            'absolute z-50 w-full mt-1 bg-white rounded shadow-lg border border-gray-250',
+            'h-[270px] pt-[5px] pb-[5px] overflow-y-auto',
+            'flex flex-col gap-[10px]'
           )}
         >
           {options.map((option) => (
@@ -88,11 +90,13 @@ export default function SingleDropdown({
               onMouseEnter={() => setHoveredOption(option)}
               onMouseLeave={() => setHoveredOption(null)}
               className={cn(
-                'w-full px-4 py-2 text-left transition-colors flex items-center justify-between first:rounded-t-lg last:rounded-b-lg',
+                'w-[272px] px-4 h-[48px] py-2 text-left transition-colors flex items-center justify-between',
+                'mx-auto', // ✅ 중앙 정렬을 위한 클래스 추가
+                'text-[14px] font-normal leading-[100%] tracking-[-0.03em]',
                 isSelected(option) && 'bg-white text-primary-600 font-semibold',
                 !isSelected(option) &&
                   hoveredOption === option &&
-                  'bg-primary-200 text-gray-700',
+                  'bg-[#EFE6FC] text-gray-700',
                 !isSelected(option) &&
                   hoveredOption !== option &&
                   'bg-white text-gray-700'
