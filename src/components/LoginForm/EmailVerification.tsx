@@ -8,9 +8,11 @@ interface EmailVerificationProps {
   codeValid: ValidationInput
   isTimerActive: boolean
   timeLeft: number
-  onSendCode: () => void
-  onVerifyCode: () => void
+  onSendCode: (event: React.MouseEvent<HTMLButtonElement>) => void
+  onVerifyCode: (event: React.MouseEvent<HTMLButtonElement>) => void
   formatTime: () => string
+  codeCheckClicked: boolean
+  setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const EmailVerification: React.FC<EmailVerificationProps> = ({
@@ -20,10 +22,13 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
   onSendCode,
   onVerifyCode,
   formatTime,
+  codeCheckClicked,
+  setCodeCheckClicked,
 }) => {
   const handleCodeChange = (value: string) => {
     const onlyNums = value.replace(/\D/g, '').slice(0, 6)
     codeValid.setValue(onlyNums)
+    setCodeCheckClicked(false)
   }
 
   return (
@@ -56,9 +61,9 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
           <FormInput
             value={codeValid.value}
             onChange={handleCodeChange}
-            hasError={!codeValid.isValid && codeValid.value.length > 0}
-            errorMessage=""
-            hasSuccess={codeValid.isValid}
+            hasError={codeCheckClicked && !codeValid.isValid}
+            errorMessage="인증코드가 일치하지 않습니다"
+            hasSuccess={codeCheckClicked && codeValid.isValid}
             successMessage=""
             type="text"
             placeholder="인증코드를 입력해주세요."
