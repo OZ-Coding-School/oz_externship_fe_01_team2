@@ -1,13 +1,12 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import ErrorPage from './pages/ErrorPage'
+import Layout from './components/common/Layout'
 import HomePage from './pages/index'
-import Layout from './pages/Layout'
 import LoginPage from './pages/LoginPage'
-import QnaDetailPage from './pages/QnaDetailPage'
-import SignUpPage from './pages/SignUpPage'
-import QnaListPage from './pages/QnaListPage'
 import MyPage from './pages/MyPage'
 import MypageEdit from './pages/MypageEdit'
+import QnaDetailPage from './pages/QnaDetailPage'
+import QnaListPage from './pages/QnaListPage'
+import SignUpPage from './pages/SignUpPage'
 
 function App() {
   return (
