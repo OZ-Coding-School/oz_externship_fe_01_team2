@@ -67,7 +67,7 @@ const MypageEdit = () => {
                 alt="프로필 이미지"
                 className="w-[188px] h-[188px] rounded-full"
               />
-              <div className="w-[60px] h-[60px] rounded-full bg-[##BDBDBD]"></div>
+              <div className="w-[60px] h-[60px] rounded-full bg-[#BDBDBD]"></div>
               <button
                 title="프로필 사진 변경"
                 className="absolute bottom-0 right-0 bg-gray-300 rounded-full p-2 border-4 border-white"
