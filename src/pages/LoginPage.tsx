@@ -9,8 +9,13 @@ import SocialLoginButtons from '../components/LoginForm/SocialLoginButtons'
 import LoginFormInputs from '../components/LoginForm/LoginFormInputs'
 import FindIdModal from '../components/LoginForm/FindIdModal'
 import FindPwModal from '../components/LoginForm/FindPwModal'
+import { useContext } from 'react'
+import { ToastContext } from '../components/common/Toast/ToastContext'
 
 export default function LoginPage() {
+  const toastCtx = useContext(ToastContext)
+  const [codeCheckClicked, setCodeCheckClicked] = useState(false)
+
   // 폼 validation hooks
   const nameValid = useInput(
     (v) => VALIDATION_REGEX.KOREAN_NAME.test(v) && v.trim() !== ''
@@ -36,7 +41,7 @@ export default function LoginPage() {
   const isFormValid = idValid.value.length > 0 && pwValid.value.length > 0
 
   // 이벤트 핸들러
-  const handleFindId = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFindId = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault()
     if (!nameValid.isValid || !phoneValid.isValid || !codeValid.isValid) {
       setValidError(true)
@@ -46,13 +51,24 @@ export default function LoginPage() {
     setFindIdStep('result')
   }
 
-  const handleSendCode = () => {
+  const handleSendCode = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault()
     timer.start(TIMER_DURATION)
+
+    toastCtx?.show({
+      message: '전송 완료! 이메일을 확인해주세요.',
+      type: 'success',
+    })
   }
 
-  const handleVerifyCode = () => {
-    console.log('인증코드 확인 진행')
+  const handleVerifyCode = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
     timer.stop()
+    setCodeCheckClicked(true)
+
+    if (codeValid.isValid) {
+      toastCtx?.show({ message: '인증이 완료되었습니다!', type: 'success' })
+    }
   }
 
   const handleFindPw = () => {
@@ -131,6 +147,8 @@ export default function LoginPage() {
             onVerifyCode={handleVerifyCode}
             onFindPw={handleFindPw}
             formatTime={timer.formatTime}
+            codeCheckClicked={codeCheckClicked}
+            setCodeCheckClicked={setCodeCheckClicked}
           />
 
           <div className="mt-[12px]">

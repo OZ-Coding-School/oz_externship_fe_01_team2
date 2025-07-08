@@ -36,7 +36,7 @@ export default function PwSuccess({ onCloseModal }: PwSuccessProps) {
         setShowPopup(false)
         onCloseModal()
         navigate('/login')
-      }, 2000)
+      }, 10000)
 
       return () => clearTimeout(timer)
     }
