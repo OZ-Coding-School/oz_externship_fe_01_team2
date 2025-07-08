@@ -3,11 +3,11 @@ import { useState } from 'react'
 import UserDefaultImage from '../assets/images/common/img_user_default.png'
 import Avatar from '../components/common/Avatar'
 import Button from '../components/common/Button'
+import { mockQnaDetail } from '../components/Mocks/MockQnaDetail'
 import AIAnswer from '../components/qna/AIAnswer'
 import AnswerCard from '../components/qna/AnswerCard'
 import { useToast } from '../hooks/useToast'
 import { formatRelativeTime } from '../utils/formatRelativeTime'
-import { mockQnaDetail } from '../components/Mocks/MockQnaDetail'
 
 const QnaDetailPage = () => {
   const [user] = useState({
@@ -83,7 +83,7 @@ const QnaDetailPage = () => {
           </div>
         </div>
         <p className="pt-10 text-body-rg pb-15">{qnaData.content}</p>
-        <AIAnswer />
+        <AIAnswer question={qnaData.content} />
         <div className="flex justify-end">
           <button
             type="button"

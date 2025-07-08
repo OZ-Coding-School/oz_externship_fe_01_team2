@@ -1,37 +1,78 @@
 import { ChevronDown } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { getAiAnswerStream } from '../../api/getAiAnswerStream'
 import SendHorizonal from '../../assets/icons/message.png'
 import AiAvatarImg from '../../assets/images/qna/img_ai_avatar.png'
+import { useToast } from '../../hooks/useToast'
 import Avatar from '../common/Avatar'
+import MarkdownRenderer from '../common/MarkdownEditor/MarkdownRenderer'
 import Textarea from '../common/Textarea'
-const AIAnswer = () => {
-  const [message, setMessage] = useState('') // 사용자 입력 메시지
-  const [aiAnswer, setAiAnswer] = useState('') // AI 답변 데이터
-  const [showFullAnswer, setShowFullAnswer] = useState(false)
-  const [loading, setLoading] = useState(false)
+import AIAnswerSkeleton from './AIAnswerSkeleton'
 
-  const handleGetAnswer = async () => {
-    if (aiAnswer || loading) {
-      setShowFullAnswer((prev) => !prev)
+const AIAnswer = ({ question }: { question: string }) => {
+  const [message, setMessage] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [displayText, setDisplayText] = useState('')
+
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const toast = useToast()
+
+  const handleGetAnswer = async (message = '') => {
+    if (isOpen || isStreaming) return
+
+    setIsOpen(true)
+    setDisplayText('')
+
+    try {
+      setIsStreaming(true)
+      setIsLoading(true)
+
+      let started = false
+      if (message.trim() === '') {
+        // 질문이 비어있으면 기본 질문으로 설정
+        message = question
+      }
+      await getAiAnswerStream(message, (chunk: string) => {
+        if (!started) {
+          // 스트리밍 시작 시 로딩 상태 해제
+          setIsLoading(false)
+          started = true
+        }
+        // 스트리밍 응답을 받으면 displayText와 aiAnswer에 누적
+        setDisplayText((prev) => prev + chunk)
+      })
+    } catch (e: any) {
+      toast.show({
+        message: e.message || 'AI 응답 중 오류가 발생했습니다.',
+        type: 'error',
+      })
+    } finally {
+      setIsStreaming(false)
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (isStreaming) {
+      scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, [displayText])
+
+  const handleAddMessage = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (message.trim() === '') return
+    if (message.length > 1000) {
+      toast.show({
+        message: '메시지는 1000자 이하여야 합니다.',
+        type: 'error',
+      })
       return
     }
-
-    setLoading(true)
-    try {
-      setAiAnswer(`AND 연산자는 두 개 이상의 조건이 모두 '참(True)'일 때만 결과를
-                '참'으로 처리해야 하는 경우에 사용합니다. 둘 중 하나라도
-                '거짓(False)'이면 결과는 '거짓'이 됩니다. 마치 "숙제를 끝내는 것
-                그리고 방 청소를 하는 것" 두 가지를 모두 해야만 외출을 허락받는
-                것과 같습니다.1. 여러 조건을 동시에 만족하는지 확인할 때 (if 문)
-                가장 흔한 사용법입니다. 예를 들어, 로그인 시 아이디와 비밀번호가
-                둘 다 일치해야 로그인이 성공합니다.2. 데이터 범위를 지정하거나
-                필터링할 때`)
-      setShowFullAnswer(true)
-    } catch (e) {
-      alert('답변 요청 중 오류 발생')
-    } finally {
-      setLoading(false)
-    }
+    // 메시지 전송 로직
+    handleGetAnswer(message)
+    setMessage('')
   }
 
   return (
@@ -43,9 +84,8 @@ const AIAnswer = () => {
       />
       <div className="w-176 bg-white rounded-xl drop-shadow-lg  p-4 relative ml-3">
         <div className="absolute -left-3 top-5 w-0 h-0 border-y-8 border-r-14 border-y-transparent border-r-white" />
-        {showFullAnswer ? (
+        {isOpen ? (
           <div>
-            {/* 상단: 챗봇 아이콘 + 이름 */}
             <div className="flex items-center gap-2 mb-6">
               <Avatar
                 name="AI"
@@ -57,34 +97,51 @@ const AIAnswer = () => {
               </span>
             </div>
 
-            {/* 본문 텍스트 (답변) */}
-            <div className="text-gray-500 text-sm leading-relaxed whitespace-pre-line mb-6">
-              <p>{aiAnswer || 'AI의 답변이 아직 준비되지 않았습니다.'}</p>
+            <div className="mb-6">
+              {isLoading && !isStreaming ? (
+                <AIAnswerSkeleton />
+              ) : (
+                <div className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
+                  <MarkdownRenderer content={displayText} />
+                  {!isStreaming && displayText && (
+                    <p className="text-xs text-right text-gray-400 mt-2">
+                      ✅ AI 답변 완료
+                    </p>
+                  )}
+                  <div ref={scrollRef} className="h-20" />
+                </div>
+              )}
             </div>
 
             {/* 하단 입력 영역 */}
-            <div className="relative">
+            <form className="relative" onSubmit={handleAddMessage}>
               <Textarea
+                disabled={isStreaming}
                 rows={3}
                 placeholder="더 궁금한 것이 있다면 이어서 질문해 보세요."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
+                className="
+                          h-12
+                          focus:h-20
+                          transition-all duration-300 ease-in-out
+                          focus:outline-none focus:ring-2 focus:ring-primary"
               />
-              <div className="absolute right-3 bottom-4 text-xs text-gray-400 flex items-center gap-1">
+              <div className="absolute right-3 bottom-5 text-xs text-gray-400 flex items-center gap-1">
                 <p>
                   <span className="text-primary">{message.length}</span>/1000
                 </p>
                 <img src={SendHorizonal} alt="send icon" />
               </div>
-            </div>
+            </form>
           </div>
         ) : (
           <button
-            onClick={handleGetAnswer}
+            onClick={() => handleGetAnswer()}
             className="group w-full text-left leading-6 cursor-pointer"
           >
             <p className="text-gray-500">
-              AND 연산자는 어떤 경우에 사용하는지 궁금합니다.
+              {question.length > 50 ? `${question.slice(0, 50)}...` : question}
             </p>
             <div className="flex text-gray-600 font-bold">
               <p>질문에 대한</p>
