@@ -9,6 +9,7 @@ const Button: React.FC<ButtonProps> = ({
   className,
   children,
   onClick,
+  type = 'button',
 }) => {
   const variantMap = {
     fill: 'bg-primary text-white hover:bg-primary-600 active:bg-primary-700',
@@ -28,6 +29,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      type={type}
       className={cn(
         'font-semibold focus:outline-none transition-colors rounded-sm py-3 px-12',
         getStyles(),
