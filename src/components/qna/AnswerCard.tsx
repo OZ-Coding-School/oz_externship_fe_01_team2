@@ -30,8 +30,14 @@ interface Answer {
   comments: Comment[]
   is_adopted?: boolean
 }
+interface AnswerCardProps {
+  answer: Answer
+  canAdopt: boolean
+  onAdopt: (answerId: number | string) => void
+}
 
-function AnswerCard({ answer }: { answer: Answer }) {
+function AnswerCard({ answer, canAdopt, onAdopt }: AnswerCardProps) {
+  
   const [comments, setComments] = useState<Comment[]>(answer.comments)
   const [orderByDesc, setOrderByDesc] = useState(true)
 
@@ -61,7 +67,8 @@ function AnswerCard({ answer }: { answer: Answer }) {
   return (
     <div
       className={cn(
-        'border border-gray-250 px-9 py-11 rounded-3xl shadow-sm relative'
+        'border border-gray-250 px-9 py-11 rounded-3xl shadow-sm relative',
+        answer.is_adopted ? 'border-primary' : 'border-gray-250'
       )}
     >
       {/* 채택 뱃지 */}
@@ -69,6 +76,16 @@ function AnswerCard({ answer }: { answer: Answer }) {
         <span className="text-white font-semibold bg-primary px-4 rounded-2xl absolute top-0 -translate-y-1/2 left-9 h-9 leading-9">
           질문자 채택
         </span>
+      )}
+
+      {/* 채택하기 버튼 */}
+      {canAdopt && (
+        <button
+          onClick={() => onAdopt(answer.id)}
+          className="absolute right-9 top-8 px-5 py-2 bg-primary text-white rounded-full font-semibold"
+        >
+          채택하기
+        </button>
       )}
 
       {/* 답변자 정보 */}
