@@ -1,20 +1,21 @@
 // src/components/common/MarkdownEditor/MarkdownEditor.tsx
-import React, { useState, useRef, useCallback } from 'react'
 import { Upload, X } from 'lucide-react'
-import type { MarkdownEditorProps, ImageItem } from './MarkdownEditor.types'
-import Toolbar from './Toolbar/Toolbar'
+import React, { useCallback, useRef, useState } from 'react'
+import type { ImageItem, MarkdownEditorProps } from './MarkdownEditor.types'
 import Preview from './Preview/Preview'
+import Toolbar from './Toolbar/Toolbar'
 
-const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
+const MarkdownEditor = ({
   value = '',
   onChange = () => {},
+  updateImageFiles = () => {},
   placeholder,
   height = '500px',
   width = '100%',
   showPreview: initialShowPreview = false,
   className = '',
-}) => {
-  const [content, setContent] = useState(value)
+}: MarkdownEditorProps) => {
+  const content = value
   const [images, setImages] = useState<ImageItem[]>([])
   const [showPreview, setShowPreview] = useState(initialShowPreview)
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null)
@@ -28,7 +29,6 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
   const handleContentChange = useCallback(
     (newContent: string) => {
-      setContent(newContent)
       onChange(newContent)
     },
     [onChange]
@@ -140,10 +140,11 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         }
 
         setImages((prev) => [...prev, imageItem])
+        updateImageFiles((prev: File[]) => [...prev, file]) // Update the parent component with the new image files
         insertImageMarkdown(imageItem, index)
       })
     },
-    [getImageCountInMarkdown, insertImageMarkdown]
+    [getImageCountInMarkdown, insertImageMarkdown, updateImageFiles]
   )
 
   const dragHandlers = {
