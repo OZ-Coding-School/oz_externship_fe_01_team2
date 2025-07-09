@@ -8,6 +8,7 @@ import QnaDetailPage from './pages/QnaDetailPage'
 import QnaListPage from './pages/QnaListPage'
 import SignUpPage from './pages/SignUpPage'
 import SignUpFormPage from './pages/SignUpFormPage'
+import ChangePasswordPage from '../src/pages/ChangePasswordPage'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="mypage" element={<MyPage />} />
           <Route path="mypage/edit" element={<MypageEdit />} />
           <Route path="signupform" element={<SignUpFormPage />} />
+          <Route path="changePassword" element={<ChangePasswordPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
