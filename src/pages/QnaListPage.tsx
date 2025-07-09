@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useMemo, useState } from 'react'
 import QnaSearch from '../components/qna/QnaSearch'
 import QnaTab from '../components/qna/QnaTab'
 import QnaFilterModal from '../components/qna/QnaFilterModal'
@@ -7,7 +7,7 @@ import { transformQnaData } from '../utils/transformQnaData'
 import { mockQnaListResponse } from '../components/Mocks/MockQnaListResponse'
 import type { CategoryFilter } from '../types/qnaFilters.types'
 
-const QnaListPage: React.FC = () => {
+const QnaListPage = () => {
   const [selectedTab, setSelectedTab] = useState('전체보기')
   const [query, setQuery] = useState('')
   const [sortOrder, setSortOrder] = useState<'최신순' | '오래된순'>('최신순')
@@ -18,21 +18,29 @@ const QnaListPage: React.FC = () => {
     detail: '소분류',
   })
 
-  const transformedQuestions = transformQnaData(mockQnaListResponse.results)
+  const transformedQuestions = useMemo(
+    () => transformQnaData(mockQnaListResponse.results),
+    []
+  )
 
-  const filteredQuestions = transformedQuestions.filter((q) => {
+  const filteredQuestions = useMemo(() => {
     const lowerQuery = query.toLowerCase()
-    const matchQuery =
-      q.title.toLowerCase().includes(lowerQuery) ||
-      q.content.toLowerCase().includes(lowerQuery)
 
-    const matchCategory =
-      (filters.main === '대분류' || q.category === filters.main) &&
-      (filters.sub === '중분류' || q.subCategory === filters.sub) &&
-      (filters.detail === '소분류' || q.language === filters.detail)
+    return transformedQuestions.filter((q) => {
+      const matchQuery =
+        q.title.toLowerCase().includes(lowerQuery) ||
+        q.content.toLowerCase().includes(lowerQuery)
 
-    return matchQuery && matchCategory
-  })
+      const matchMain =
+        filters.main === '대분류' || q.category.depth_1 === filters.main
+      const matchSub =
+        filters.sub === '중분류' || q.category.depth_2 === filters.sub
+      const matchDetail =
+        filters.detail === '소분류' || q.category.depth_3 === filters.detail
+
+      return matchQuery && matchMain && matchSub && matchDetail
+    })
+  }, [query, filters, transformedQuestions])
 
   return (
     <>
