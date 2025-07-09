@@ -2,10 +2,10 @@ import { ChevronRight, Link } from 'lucide-react'
 import { useState } from 'react'
 import UserDefaultImage from '../assets/images/common/img_user_default.png'
 import Avatar from '../components/common/Avatar'
-import Button from '../components/common/Button'
 import { mockQnaDetail } from '../components/Mocks/MockQnaDetail'
 import AIAnswer from '../components/qna/AIAnswer'
 import AnswerCard from '../components/qna/AnswerCard'
+import AnswerForm from '../components/qna/AnswerForm'
 import { useToast } from '../hooks/useToast'
 import { formatRelativeTime } from '../utils/formatRelativeTime'
 
@@ -17,10 +17,10 @@ const QnaDetailPage = () => {
     profileUrl: UserDefaultImage,
     role: 'Student',
   })
-  const toast = useToast()
   const [copied, setCopied] = useState(false)
-
   const [qnaData, setQnaData] = useState(mockQnaDetail)
+
+  const toast = useToast()
 
   const handleShare = async () => {
     try {
@@ -97,18 +97,7 @@ const QnaDetailPage = () => {
       </section>
 
       {/* 답변 요청 안내 */}
-      <div className="border border-gray-250 py-10 px-9 rounded-3xl flex items-center justify-between mb-25">
-        <div className="flex items-center gap-3">
-          <Avatar name={user.name} profileUrl={user.profileUrl} />
-          <div>
-            <div className="text-primary text-xs">{user.name}님, </div>
-            <div className="text-lg font-semibold text-gray-800">
-              정보를 공유해 주세요.
-            </div>
-          </div>
-        </div>
-        <Button className="px-0 rounded-full w-28">답변하기</Button>
-      </div>
+      {user && <AnswerForm user={user} questionId={qnaData.id} />}
 
       {/* 답변 개수 */}
       <h2 className="mb-10 flex items-center gap-4 text-2xl font-semibold">
