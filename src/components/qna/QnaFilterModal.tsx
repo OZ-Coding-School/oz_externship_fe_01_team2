@@ -74,7 +74,7 @@ const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
               카테고리 선택
             </h3>
 
-            <div className="flex flex-col gap-4">
+            <div className="w-[600px] flex flex-col gap-4">
               <SingleDropdown
                 options={mainOptions}
                 placeholder="대분류"
