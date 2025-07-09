@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import QnaSearch from '../components/qna/QnaSearch'
 import QnaTab from '../components/qna/QnaTab'
 import QnaFilterModal from '../components/qna/QnaFilterModal'
@@ -6,8 +6,12 @@ import QnaCard from '../components/qna/QnaCard'
 import { transformQnaData } from '../utils/transformQnaData'
 import { mockQnaListResponse } from '../components/Mocks/MockQnaListResponse'
 import type { CategoryFilter } from '../types/qnaFilters.types'
+import Spinner from '../components/common/Spinner'
 
-const QnaListPage: React.FC = () => {
+// 페이지당 질문 수
+const PAGE_SIZE = 5
+
+const QnaListPage = () => {
   const [selectedTab, setSelectedTab] = useState('전체보기')
   const [query, setQuery] = useState('')
   const [sortOrder, setSortOrder] = useState<'최신순' | '오래된순'>('최신순')
@@ -18,21 +22,65 @@ const QnaListPage: React.FC = () => {
     detail: '소분류',
   })
 
-  const transformedQuestions = transformQnaData(mockQnaListResponse.results)
+  const [page, setPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const filteredQuestions = transformedQuestions.filter((q) => {
+  const transformedQuestions = useMemo(
+    () => transformQnaData(mockQnaListResponse.results),
+    []
+  )
+
+  const filteredQuestions = useMemo(() => {
     const lowerQuery = query.toLowerCase()
-    const matchQuery =
-      q.title.toLowerCase().includes(lowerQuery) ||
-      q.content.toLowerCase().includes(lowerQuery)
 
-    const matchCategory =
-      (filters.main === '대분류' || q.category === filters.main) &&
-      (filters.sub === '중분류' || q.subCategory === filters.sub) &&
-      (filters.detail === '소분류' || q.language === filters.detail)
+    return transformedQuestions.filter((q) => {
+      const matchQuery =
+        q.title.toLowerCase().includes(lowerQuery) ||
+        q.content.toLowerCase().includes(lowerQuery)
 
-    return matchQuery && matchCategory
-  })
+      const matchMain =
+        filters.main === '대분류' || q.category.depth_1 === filters.main
+      const matchSub =
+        filters.sub === '중분류' || q.category.depth_2 === filters.sub
+      const matchDetail =
+        filters.detail === '소분류' || q.category.depth_3 === filters.detail
+
+      return matchQuery && matchMain && matchSub && matchDetail
+    })
+  }, [query, filters, transformedQuestions])
+
+  const displayedQuestions = useMemo(() => {
+    return filteredQuestions.slice(0, PAGE_SIZE * page)
+  }, [filteredQuestions, page])
+
+  // 스크롤 이벤트 핸들러
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop
+      const windowHeight = window.innerHeight
+      const docHeight = document.documentElement.scrollHeight
+
+      if (
+        scrollTop + windowHeight >= docHeight - 100 &&
+        !isLoading &&
+        displayedQuestions.length < filteredQuestions.length
+      ) {
+        setIsLoading(true)
+
+        setTimeout(() => {
+          setPage((prev) => prev + 1)
+          setIsLoading(false)
+        }, 500)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [isLoading, displayedQuestions.length, filteredQuestions.length])
+
+  useEffect(() => {
+    setPage(1)
+  }, [query, filters])
 
   return (
     <>
@@ -54,9 +102,12 @@ const QnaListPage: React.FC = () => {
         </div>
 
         <div className="space-y-4">
-          {filteredQuestions.map((q) => (
+          {displayedQuestions.map((q) => (
             <QnaCard key={q.id} question={q} query={query} />
           ))}
+
+          {/* ✅ 로딩 중 표시 */}
+          {isLoading && <Spinner center />}
         </div>
       </div>
 
