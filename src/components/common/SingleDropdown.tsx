@@ -10,6 +10,9 @@ interface SingleDropdownProps {
   onChange?: (selected: string) => void
   disabled?: boolean
   selected?: string
+  className?: string
+  isOpen: boolean
+  onToggle: () => void
 }
 
 const ICON_FILTER_SELECTED = 'filter brightness-95 invert-[7%] contrast-[88%]'
@@ -24,45 +27,37 @@ export default function SingleDropdown({
   onChange,
   disabled = false,
   selected,
+  className = '',
+  isOpen,
+  onToggle,
 }: SingleDropdownProps) {
   const [internalSelected, setInternalSelected] = useState('')
-  const [isOpen, setIsOpen] = useState(false)
   const [hoveredOption, setHoveredOption] = useState<string | null>(null)
 
-  const selectedValue = selected !== undefined ? selected : internalSelected
+  const selectedValue = selected ?? internalSelected
 
   const handleSelect = (option: string) => {
-    if (selected === undefined) {
-      setInternalSelected(option)
-    }
-    setIsOpen(false)
+    if (selected === undefined) setInternalSelected(option)
+    onToggle()
     onChange?.(option)
-  }
-
-  const toggleDropdown = () => {
-    if (!disabled) setIsOpen((open) => !open)
   }
 
   const isSelected = (option: string) => selectedValue === option
 
   return (
-    <div className="relative w-[282px]">
+    <div className={cn('relative', className)}>
       <button
         disabled={disabled}
-        onClick={toggleDropdown}
+        onClick={onToggle}
         className={cn(
-          'w-full h-[48px] rounded px-[16px] py-[10px] flex items-center justify-between border transition-colors',
+          'w-full h-[48px] rounded-[4px] px-4 flex items-center justify-between border-[1.5px]',
+          'text-[14px] font-normal leading-[100%] tracking-[-0.03em]',
           disabled
             ? 'bg-gray-100 border-gray-disabled text-gray-disabled cursor-not-allowed'
-            : 'bg-white border-gray-250 text-gray-700 cursor-pointer'
+            : 'bg-white border-gray-600 text-gray-700 hover:border-gray-700 focus:outline-none focus:border-[#6201E0]'
         )}
       >
-        <span
-          className={cn(
-            'text-[14px] font-normal leading-[100%] tracking-[-0.03em]',
-            selectedValue ? 'text-gray-700' : 'text-gray-400'
-          )}
-        >
+        <span className={selectedValue ? 'text-gray-700' : 'text-gray-400'}>
           {selectedValue || placeholder}
         </span>
         <img
@@ -76,13 +71,7 @@ export default function SingleDropdown({
       </button>
 
       {isOpen && (
-        <div
-          className={cn(
-            'absolute z-50 w-full mt-1 bg-white rounded shadow-lg border border-gray-250',
-            'h-[270px] pt-[5px] pb-[5px] overflow-y-auto',
-            'flex flex-col gap-[10px]'
-          )}
-        >
+        <div className="absolute z-50 w-full mt-1 bg-white rounded-[4px] shadow-lg border border-gray-600">
           {options.map((option) => (
             <button
               key={option}
@@ -90,9 +79,9 @@ export default function SingleDropdown({
               onMouseEnter={() => setHoveredOption(option)}
               onMouseLeave={() => setHoveredOption(null)}
               className={cn(
-                'w-[272px] px-4 h-[48px] py-2 text-left transition-colors flex items-center justify-between',
-                'mx-auto', // ✅ 중앙 정렬을 위한 클래스 추가
+                'w-full px-4 h-[48px] py-2 text-left flex items-center justify-between transition-colors',
                 'text-[14px] font-normal leading-[100%] tracking-[-0.03em]',
+                'first:rounded-t-[4px] last:rounded-b-[4px]',
                 isSelected(option) && 'bg-white text-primary-600 font-semibold',
                 !isSelected(option) &&
                   hoveredOption === option &&
