@@ -10,6 +10,7 @@ import SignUpPage from './pages/SignUpPage'
 import SignUpFormPage from './pages/SignUpFormPage'
 import ChangePasswordPage from '../src/pages/ChangePasswordPage'
 import QnaCreatePage from './pages/QnaCreatePage'
+import ErrorPage from './pages/ErrorPage'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="signupform" element={<SignUpFormPage />} />
           <Route path="changePassword" element={<ChangePasswordPage />} />
           <Route path="qna/create" element={<QnaCreatePage />} />
+          <Route path="*" element={<ErrorPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
