@@ -2,10 +2,12 @@ import UserDefaultImage from '@assets/images/common/img_user_default.png'
 import LogoImage from '@assets/images/common/renewal_ozcoding_logo_black.svg'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import RegisterModal from '../LoginForm/RegisterModal'
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(true) // 로그인 여부
   const [showDropdown, setShowDropdown] = useState(false)
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false)
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev)
@@ -52,6 +54,10 @@ const Header = () => {
             </div>
           ) : (
             <div className="relative w-10 h-10 ">
+              <RegisterModal
+                isOpen={isRegisterOpen}
+                onClose={() => setIsRegisterOpen(false)}
+              />
               <button
                 onClick={toggleDropdown}
                 className="cursor-pointer text-purple-500 text-2xl rounded-full overflow-hidden"
@@ -72,12 +78,12 @@ const Header = () => {
                   <ul className="space-y-1 text-sm">
                     <li>
                       {/* 수강등록 전 */}
-                      <Link
-                        to="/submit"
+                      <button
+                        onClick={() => setIsRegisterOpen(true)}
                         className="block bg-[#EFE6FC] text-[#6201E0] px-2 py-2.5 font-medium"
                       >
                         수강생 등록
-                      </Link>
+                      </button>
                     </li>
                     <li>
                       <Link
