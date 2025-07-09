@@ -1,0 +1,88 @@
+import React from 'react'
+import { LockKeyhole } from 'lucide-react'
+import Modal from '../common/Modal'
+import Button from '../common/Button'
+import PwSuccess from '../common/Popup/PwSuccess'
+import EmailVerification from './EmailVerification'
+import type { ValidationInput, ModalStep } from '../../types/auth'
+
+interface FindPwModalProps {
+  isOpen: boolean
+  onClose: () => void
+  step: ModalStep
+  emailValid: ValidationInput
+  codeValid: ValidationInput
+  isTimerActive: boolean
+  timeLeft: number
+  onSendCode: (event: React.MouseEvent<HTMLButtonElement>) => void
+  onVerifyCode: (event: React.MouseEvent<HTMLButtonElement>) => void
+  onFindPw: () => void
+  formatTime: () => string
+  codeCheckClicked: boolean
+  setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const FindPwModal: React.FC<FindPwModalProps> = ({
+  isOpen,
+  onClose,
+  step,
+  emailValid,
+  codeValid,
+  isTimerActive,
+  timeLeft,
+  onSendCode,
+  onVerifyCode,
+  onFindPw,
+  formatTime,
+  codeCheckClicked,
+  setCodeCheckClicked,
+}) => {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      {step === 'form' ? (
+        <div className="flex flex-col items-center mt-[10px] w-[348px] gap-[40px]">
+          <div className="flex flex-col items-center">
+            <div className="text-primary bg-[#D0B3F6] w-[28px] h-[28px] p-[6px] flex items-center justify-center rounded-full">
+              <LockKeyhole />
+            </div>
+            <h2 className="mt-[13px] font-semibold text-[20px]">
+              비밀번호 찾기
+            </h2>
+            <p className="mt-[10px] text-[14px] text-[#4D4D4D] font-normal">
+              이메일로 비밀번호 재설정 링크를 보내드려요.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-[16px]">
+            <label htmlFor="email" className="text-[16px] font-normal">
+              이메일<span className="text-[#f04141]">*</span>
+            </label>
+            <EmailVerification
+              emailValid={emailValid}
+              codeValid={codeValid}
+              isTimerActive={isTimerActive}
+              timeLeft={timeLeft}
+              onSendCode={onSendCode}
+              onVerifyCode={onVerifyCode}
+              formatTime={formatTime}
+              codeCheckClicked={codeCheckClicked}
+              setCodeCheckClicked={setCodeCheckClicked}
+            />
+          </div>
+
+          <Button
+            variant="fill"
+            className="w-[348px] h-[52px]"
+            onClick={onFindPw}
+          >
+            비밀번호 찾기
+          </Button>
+        </div>
+      ) : (
+        <PwSuccess onClose={onClose} />
+      )}
+    </Modal>
+  )
+}
+
+export default FindPwModal

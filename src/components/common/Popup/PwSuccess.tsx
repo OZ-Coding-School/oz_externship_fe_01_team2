@@ -7,10 +7,10 @@ import { useEffect } from 'react'
 import { useInput } from '../../../hooks/useInput'
 
 interface PwSuccessProps {
-  onCloseModal: () => void
+  onClose: () => void
 }
 
-export default function PwSuccess({ onCloseModal }: PwSuccessProps) {
+export default function PwSuccess({ onClose }: PwSuccessProps) {
   const [showPopup, setShowPopup] = useState(false)
   const navigate = useNavigate()
 
@@ -34,9 +34,9 @@ export default function PwSuccess({ onCloseModal }: PwSuccessProps) {
     if (showPopup) {
       const timer = setTimeout(() => {
         setShowPopup(false)
-        onCloseModal()
+        onClose()
         navigate('/login')
-      }, 2000)
+      }, 5000)
 
       return () => clearTimeout(timer)
     }
