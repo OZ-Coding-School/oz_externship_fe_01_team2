@@ -3,6 +3,7 @@ import Modal from '../common/Modal'
 import Button from '../common/Button'
 import { Check } from 'lucide-react'
 import SingleDropdown from '../common/SingleDropdown'
+import { useState } from 'react'
 
 interface RegisterModalProps {
   isOpen: boolean
@@ -20,12 +21,15 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
   const batchOptions = ['10기', '11기', '12기', '13기', '14기', '15기']
 
   const handleCourseSelect = (value: string) => {
-    console.log('선택한 과정:', value)
+    setSelectedCourse(value)
   }
 
   const handleBatchSelect = (value: string) => {
-    console.log('선택한 기수:', value)
+    setSelectedBatch(value)
   }
+
+  const [selectedCourse, setSelectedCourse] = useState('')
+  const [selectedBatch, setSelectedBatch] = useState('')
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -56,9 +60,9 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
           />
         </div>
         <Button
-          variant="fill"
-          className="w-[348px] h-[52px] font-normal bg-[#6201E0]
-        "
+          variant={selectedCourse && selectedBatch ? 'fill' : 'ghost'}
+          className="w-[348px] h-[52px] font-normal"
+          disabled={!(selectedCourse && selectedBatch)}
         >
           등록하기
         </Button>
