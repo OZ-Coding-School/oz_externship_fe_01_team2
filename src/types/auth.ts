@@ -1,7 +1,9 @@
 export type User = {
+  id: number
   name: string
-  userId: string
+  nickname: string
   profileUrl: string
+  role: 'Student' | 'Mentor' | 'Admin'
 }
 export interface ValidationInput {
   value: string
