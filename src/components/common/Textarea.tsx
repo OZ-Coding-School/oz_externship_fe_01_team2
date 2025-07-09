@@ -1,37 +1,37 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
+import { cn } from '../../utils/cn'
 
 interface TextareaProps {
   value: string
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   placeholder?: string
-  disabled?: boolean
-  error?: string
   rows?: number
+  className?: string
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }
 
-export default function Textarea({
-  value,
-  onChange,
-  placeholder = '',
-  disabled = false,
-  error,
-  rows = 4,
-}: TextareaProps) {
-  return (
-    <div className="w-full">
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+  (
+    { value, onChange, placeholder = '', rows = 4, className = '', onKeyDown },
+    ref
+  ) => {
+    return (
       <textarea
+        ref={ref}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        disabled={disabled}
         rows={rows}
-        className={`
-            w-full px-4 py-3 text-sm rounded-lg transition-colors resize-none
-            ${disabled ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-white text-black'}
-            ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-purple-500'}
-            border focus:outline-none focus:ring-1
-          `}
+        className={cn(
+          'w-full px-4 py-3 text-sm rounded-lg transition-colors resize-none border border-gray-250 focus:border-primary focus:outline-none bg-white text-black',
+          className
+        )}
+        onKeyDown={onKeyDown}
       />
-    </div>
-  )
-}
+    )
+  }
+)
+
+Textarea.displayName = 'Textarea'
+
+export default Textarea
