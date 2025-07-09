@@ -16,6 +16,13 @@ const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
   const [sub, setSub] = useState(DEFAULT_CATEGORY.sub)
   const [detail, setDetail] = useState(DEFAULT_CATEGORY.detail)
 
+  const [openDropdown, setOpenDropdown] = useState<
+    null | 'main' | 'sub' | 'detail'
+  >(null)
+  const toggleDropdown = (key: 'main' | 'sub' | 'detail') => {
+    setOpenDropdown((prev) => (prev === key ? null : key))
+  }
+
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => {
@@ -84,6 +91,9 @@ const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
                   setSub(DEFAULT_CATEGORY.sub)
                   setDetail(DEFAULT_CATEGORY.detail)
                 }}
+                className="w-[488px]"
+                isOpen={openDropdown === 'main'}
+                onToggle={() => toggleDropdown('main')}
               />
 
               <SingleDropdown
@@ -95,6 +105,9 @@ const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
                   setDetail(DEFAULT_CATEGORY.detail)
                 }}
                 disabled={isSubDisabled}
+                className="w-[488px]"
+                isOpen={openDropdown === 'sub'}
+                onToggle={() => toggleDropdown('sub')}
               />
 
               <SingleDropdown
@@ -103,6 +116,9 @@ const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
                 selected={detail}
                 onChange={(selected) => setDetail(selected)}
                 disabled={isDetailDisabled}
+                className="w-[488px]"
+                isOpen={openDropdown === 'detail'}
+                onToggle={() => toggleDropdown('detail')}
               />
             </div>
           </div>
