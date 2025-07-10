@@ -4,7 +4,7 @@ import SocialLoginButtons from '../components/LoginForm/SocialLoginButtons'
 
 export default function SignUpPage() {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+    <div className="flex justify-center items-center min-h-screen">
       <form>
         <AuthHeader
           message="현재 회원이신가요?"
