@@ -1,8 +1,10 @@
 import { X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { getAiAnswerStream } from '../../../api/getAiAnswerStream'
 import SendHorizonal from '../../../assets/icons/message.png'
 import ChatbotBtnImg from '../../../assets/images/common/floating_btn_kakao.png'
 import AiAvatarImg from '../../../assets/images/qna/img_ai_avatar.png'
+import { useToast } from '../../../hooks/useToast'
 import Avatar from '../Avatar'
 import Textarea from '../Textarea'
 
@@ -17,22 +19,49 @@ const AIChatbot = () => {
   ])
   const [isChatOpen, setIsChatOpen] = useState(true)
   const [message, setMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [isStreaming, setIsStreaming] = useState(false)
 
+  const toast = useToast()
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const handleGetAnswer = (msg: string) => {
-    // 사용자 메시지 추가
-    setMessages((prev) => [...prev, { sender: 'user', text: msg }])
+  const handleGetAnswer = async (message = '') => {
+    if (isStreaming) return
 
-    // 봇 응답 더미 메시지 추가 (1초 후)
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { sender: 'bot', text: 'AI가 답변 중입니다...' },
-      ])
-    }, 1000)
+    setIsLoading(true)
+
+    setMessages((prev) => [...prev, { sender: 'user', text: message }])
+    setMessages((prev) => [...prev, { sender: 'bot', text: '' }])
+    try {
+      let fullAnswer = ''
+      await getAiAnswerStream(message, (chunk: string) => {
+        setIsStreaming(true)
+        fullAnswer += chunk
+
+        setMessages((prev) => {
+          const updated = [...prev]
+          const last = updated[updated.length - 1]
+          if (last.sender === 'bot') {
+            updated[updated.length - 1] = {
+              ...last,
+              text: fullAnswer,
+            }
+          }
+          return updated
+        })
+      })
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        toast.show({
+          message: e.message || 'AI 응답 중 오류가 발생했습니다.',
+          type: 'error',
+        })
+      }
+    } finally {
+      setIsStreaming(false)
+      setIsLoading(false)
+    }
   }
-
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [messages])
@@ -51,6 +80,13 @@ const AIChatbot = () => {
   const handleAddMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (message.trim() === '') return
+    if (message.length > 1000) {
+      toast.show({
+        message: '메시지는 1000자 이하여야 합니다.',
+        type: 'error',
+      })
+      return
+    }
     handleGetAnswer(message)
     setMessage('')
   }
@@ -97,13 +133,17 @@ const AIChatbot = () => {
                 className={`flex ${msg.sender === 'user' ? 'justify-end gap-2' : 'justify-start'}`}
               >
                 <div
-                  className={`w-3/4 rounded-xl px-4 py-2 text-sm ${
+                  className={`w-3/4 rounded-xl px-4 py-2 relative text-sm ${
                     msg.sender === 'user'
                       ? 'bg-primary text-white'
                       : 'bg-white text-gray-800 border border-gray-300'
                   }`}
                 >
-                  <span>{msg.text}</span>
+                  {isLoading && !isStreaming && idx === messages.length - 1 ? (
+                    <span className="animate-pulse">...</span>
+                  ) : (
+                    <span>{msg.text}</span>
+                  )}
                   <div ref={scrollRef} className="h-20 absolute" />
                 </div>
                 {msg.sender === 'user' && (
