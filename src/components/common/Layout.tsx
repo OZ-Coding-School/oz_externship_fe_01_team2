@@ -1,4 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom'
+import AIChatbot from './AIChatbot'
 import Footer from './Footer'
 import Header from './Header'
 
@@ -16,6 +17,7 @@ const Layout = () => {
       <main className="container">
         <Outlet />
       </main>
+      <AIChatbot />
       {!isHiddenFooter && <Footer />}
     </div>
   )
