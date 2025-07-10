@@ -20,16 +20,21 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
 
   const batchOptions = ['10기', '11기', '12기', '13기', '14기', '15기']
 
+  const [selectedCourse, setSelectedCourse] = useState('')
+  const [selectedBatch, setSelectedBatch] = useState('')
+
+  const [isCourseOpen, setIsCourseOpen] = useState(false)
+  const [isBatchOpen, setIsBatchOpen] = useState(false)
+
   const handleCourseSelect = (value: string) => {
     setSelectedCourse(value)
+    setIsCourseOpen(false) // 선택하면 닫기
   }
 
   const handleBatchSelect = (value: string) => {
     setSelectedBatch(value)
+    setIsBatchOpen(false)
   }
-
-  const [selectedCourse, setSelectedCourse] = useState('')
-  const [selectedBatch, setSelectedBatch] = useState('')
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -51,12 +56,25 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
             options={courseOptions}
             placeholder="수강중인 과정을 선택해 주세요."
             onChange={handleCourseSelect}
+            selected={selectedCourse}
+            isOpen={isCourseOpen}
+            onToggle={() => {
+              setIsCourseOpen((prev) => !prev)
+              setIsBatchOpen(false) // 다른 드롭다운 닫기
+            }}
+            className="w-[348px] h-[48px]"
           />
 
           <SingleDropdown
             options={batchOptions}
             placeholder="기수를 선택해 주세요."
             onChange={handleBatchSelect}
+            selected={selectedBatch}
+            isOpen={isBatchOpen}
+            onToggle={() => {
+              setIsBatchOpen((prev) => !prev)
+              setIsCourseOpen(false)
+            }}
           />
         </div>
         <Button
