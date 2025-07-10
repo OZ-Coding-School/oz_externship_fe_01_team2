@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { UserRound } from 'lucide-react'
 import Modal from '../common/Modal'
 import FormInput from '../common/FormInput'
@@ -6,6 +6,7 @@ import Button from '../common/Button'
 import IdSuccess from '../common/Popup/IdSuccess'
 import PhoneVerification from './PhoneVerification'
 import type { ValidationInput, ModalStep } from '../../types/auth'
+import { useToast } from '../../hooks/useToast'
 
 interface FindIdModalProps {
   isOpen: boolean
@@ -15,8 +16,10 @@ interface FindIdModalProps {
   phoneValid: ValidationInput
   codeValid: ValidationInput
   validError: boolean
+  setValidError: React.Dispatch<React.SetStateAction<boolean>>
   onFindId: (e: React.MouseEvent<HTMLButtonElement>) => void
   onFindPw: () => void
+  onResetError: () => void
 }
 
 const FindIdModal: React.FC<FindIdModalProps> = ({
@@ -27,9 +30,48 @@ const FindIdModal: React.FC<FindIdModalProps> = ({
   phoneValid,
   codeValid,
   validError,
+  setValidError,
   onFindId,
   onFindPw,
+  onResetError,
 }) => {
+  const [isVerified, setIsVerified] = useState(false)
+  const [isVerifyFailed, setIsVerifyFailed] = useState(false)
+  const toast = useToast()
+  const handleFindIdClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+
+    // 🔴 이름/전화 유효성 검사 먼저
+    if (!nameValid.isValid || !phoneValid.isValid || !codeValid.isValid) {
+      setValidError(true)
+      return
+    }
+
+    // 유효성 검사 통과했으므로 validError는 false로 초기화
+    setValidError(false)
+
+    // 🟡 인증번호 실패 시
+    if (isVerifyFailed) {
+      toast.show({
+        type: 'error',
+        message: '인증번호 확인에 실패했습니다. 다시 시도해주세요.',
+      })
+      return
+    }
+
+    // 🟢 인증 완료되지 않음
+    if (!isVerified) {
+      toast.show({
+        type: 'error',
+        message: '인증을 완료해주세요.',
+      })
+      return
+    }
+
+    // ✅ 모든 조건 통과 시
+    onFindId(e)
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       {step === 'form' ? (
@@ -53,7 +95,10 @@ const FindIdModal: React.FC<FindIdModalProps> = ({
             </label>
             <FormInput
               value={nameValid.value}
-              onChange={nameValid.setValue}
+              onChange={(v) => {
+                nameValid.setValue(v)
+                onResetError()
+              }}
               type="text"
               hasError={!nameValid.isValid && nameValid.value.length > 0}
               errorMessage=""
@@ -68,13 +113,25 @@ const FindIdModal: React.FC<FindIdModalProps> = ({
             <label htmlFor="phone" className="text-sm">
               휴대전화<span className="text-[#f04141]">*</span>
             </label>
-            <PhoneVerification phoneValid={phoneValid} codeValid={codeValid} />
+            <PhoneVerification
+              phoneValid={phoneValid}
+              codeValid={codeValid}
+              onResetError={onResetError}
+              onVerifySuccess={() => {
+                setIsVerified(true)
+                setIsVerifyFailed(false) // ✅ 성공 시 실패 상태 초기화
+              }}
+              onVerifyFail={() => {
+                setIsVerified(false)
+                setIsVerifyFailed(true) // ✅ 실패 상태로 전환
+              }}
+            />
           </div>
 
           <Button
             variant="fill"
             className="w-[348px] h-[52px]"
-            onClick={onFindId}
+            onClick={handleFindIdClick}
           >
             아이디 찾기
           </Button>
