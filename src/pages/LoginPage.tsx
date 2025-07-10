@@ -140,8 +140,10 @@ export default function LoginPage() {
             phoneValid={phoneValid}
             codeValid={codeValid}
             validError={validError}
+            setValidError={setValidError}
             onFindId={handleFindId}
             onFindPw={handleOpenFindPw}
+            onResetError={() => setValidError(false)}
           />
 
           <FindPwModal
