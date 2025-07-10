@@ -5,10 +5,10 @@ import Header from './Header'
 
 const Layout = () => {
   const { pathname } = useLocation()
-  const greyBackgroundRoutes = ['/login']
+  const greyBackgroundRoutes = ['/login', '/signup', '/signupform']
   const hasBg = greyBackgroundRoutes.includes(pathname)
 
-  const hideFooterRoutes = ['/login']
+  const hideFooterRoutes = ['/login', '/signup', '/signupform']
   const isHiddenFooter = hideFooterRoutes.includes(pathname)
 
   return (
