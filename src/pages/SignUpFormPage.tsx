@@ -2,47 +2,29 @@ import Button from '../components/common/Button'
 import FormInput from '../components/common/FormInput'
 import { useInput } from '../hooks/useInput'
 import OzLogo from '../assets/images/common/renewal_ozcoding_logo_black.svg'
+import { VALIDATION_REGEX } from '../constants/validation'
 
 export default function SignUpFormPage() {
-  const name = useInput((v) => {
-    const regex = /^[가-힣]+$/
-    return regex.test(v) && v.length > 0
-  })
+  const name = useInput(
+    (v) => VALIDATION_REGEX.KOREAN_NAME.test(v) && v.length > 0
+  )
 
-  const nickname = useInput((v) => {
-    // 2~10자 이내
-    if (v.length < 2 || v.length > 10) return false
+  const nickname = useInput((v) => VALIDATION_REGEX.NICKNAME.test(v))
 
-    // 한글, 영문 대소문자, 숫자만 허용 (특수문자 제외)
-    const regex = /^[가-힣a-zA-Z0-9]+$/
-    if (!regex.test(v)) return false
+  const birth = useInput((v) => VALIDATION_REGEX.BIRTH.test(v))
 
-    return true
-  })
+  const email = useInput((v) => VALIDATION_REGEX.EMAIL.test(v))
 
-  const birth = useInput((v) => {
-    const regex = /^\d{8}$/ // 숫자 8자리만 허용
-    return regex.test(v)
-  })
+  const emailCode = useInput((v) => VALIDATION_REGEX.EMAIL_CODE.test(v))
 
-  const email = useInput((v) => {
-    const regex = /^[^\s@]+@gmail\.com$/
-    return regex.test(v)
-  })
+  const phone1 = useInput((v) => VALIDATION_REGEX.PHONE_PART1.test(v))
+  const phone2 = useInput((v) => VALIDATION_REGEX.PHONE_PART2.test(v))
+  const phone3 = useInput((v) => VALIDATION_REGEX.PHONE_PART3.test(v))
+  const phone = !!(phone1.isValid && phone2.isValid && phone3.isValid)
 
-  const emailCode = useInput((v) => /^[0-9a-zA-Z]{6,10}$/.test(v))
+  const phoneCode = useInput((v) => VALIDATION_REGEX.PHONE_CODE.test(v))
 
-  const phone1 = useInput((v) => /^\d{3}$/.test(v))
-  const phone2 = useInput((v) => /^\d{4}$/.test(v))
-  const phone3 = useInput((v) => /^\d{4}$/.test(v))
-  const phone = phone1.isValid && phone2.isValid && phone3.isValid
-
-  const phoneCode = useInput((v) => /^\d{6}$/.test(v))
-
-  const password = useInput((v) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,15}$/
-    return regex.test(v)
-  })
+  const password = useInput((v) => VALIDATION_REGEX.PASSWORD.test(v))
 
   const passwordCheck = useInput((v) => v === password.value && v.length > 0)
 
@@ -56,7 +38,7 @@ export default function SignUpFormPage() {
     passwordCheck.isValid
 
   return (
-    <div className="min-h-screen flex items-center justify-center  bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="w-[528px] min-h-[1240px] my-[88px] py-[40px] px-[24px] bg-white">
         <div className="flex flex-col justify-centert items-center gap-[16px] text-center">
           <h2 className="text-m font-bold">마법같이 빠르게 성장시켜줄</h2>
