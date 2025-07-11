@@ -50,11 +50,11 @@ export default function SingleDropdown({
         disabled={disabled}
         onClick={onToggle}
         className={cn(
-          'w-full h-[48px] rounded-[4px] px-4 flex items-center justify-between border-[1.5px]',
+          'w-full h-[48px] rounded-[4px] px-4 flex items-center justify-between border',
           'text-[14px] font-normal leading-[100%] tracking-[-0.03em]',
           disabled
             ? 'bg-gray-100 border-gray-disabled text-gray-disabled cursor-not-allowed'
-            : 'bg-white border-gray-600 text-gray-700 hover:border-gray-700 focus:outline-none focus:border-[#6201E0]'
+            : 'bg-white border-gray-500 text-gray-700 hover:border-gray-700 focus:outline-none focus:border-[#6201E0]'
         )}
       >
         <span className={selectedValue ? 'text-gray-700' : 'text-gray-400'}>
@@ -71,7 +71,7 @@ export default function SingleDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white rounded-[4px] shadow-lg border border-gray-600">
+        <div className="absolute z-50 w-full mt-1 bg-white rounded-[4px] shadow-lg border border-gray-500">
           {options.map((option) => (
             <button
               key={option}
