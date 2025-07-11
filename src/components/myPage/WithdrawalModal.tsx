@@ -1,9 +1,7 @@
-import Button from '@components/common/Button/Button'
-import SingleDropdown from '@components/common/SingleDropdown'
-import Textarea from '@components/common/Textarea'
-import type { WithdrawalModalProps } from '@custom-types/withdrawalModal.types'
+import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { useEffect, useState } from 'react' // useEffect 임포트 추가
+import UserWithdrawalApi from '../../api/user-withdrawal/api'
 
 const reasons = [
   '원하는 클래스가 없어서',
@@ -17,6 +15,14 @@ const reasons = [
 const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
   const [selectedReason, setSelectedReason] = useState('')
   const [additionalComment, setAdditionalComment] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  // Dropdown 열림 상태 관리
+  const [isDropdownOpen, setDropdownOpen] = useState(false)
+  const toggleDropdown = () => setDropdownOpen((prev) => !prev)
+
+  // 이메일은 예시용, 실제로는 props나 전역 상태에서 받아야 합니다.
+  const userEmail = 'user@example.com'
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -25,9 +31,30 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
     }
   }, [])
 
-  const handleConfirm = () => {
-    onConfirm({ reason: selectedReason, comment: additionalComment })
-    onClose()
+  const handleConfirm = async () => {
+    if (!selectedReason) return
+
+    setLoading(true)
+    try {
+      const payload = {
+        email: userEmail,
+        reason: selectedReason,
+        reason_detail: additionalComment || '',
+        due_date: '2025-07-11', // 또는 new Date().toISOString().split('T')[0]
+      }
+
+      const res = await UserWithdrawalApi.withdraw(payload)
+      console.log('탈퇴 완료:', res)
+
+      // 부모 컴포넌트 콜백 호출
+      onConfirm({ reason: selectedReason, comment: additionalComment })
+      onClose()
+    } catch (error) {
+      console.error('탈퇴 실패:', error)
+      alert('탈퇴 요청 중 오류가 발생했습니다. 다시 시도해 주세요.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const isTextareaDisabled = selectedReason !== '기타(직접 입력)'
@@ -43,6 +70,7 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 items-end"
+          type="button"
         >
           <X />
         </button>
@@ -56,22 +84,25 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
           / 쿠폰 내역이 사라지며 환불되지 않습니다. 삭제된 정보는 복구할 수
           없습니다.
         </p>
-        {/* SingleDropdown 적용 */}
+
         <div className="h-[48px] pb-[16px]">
           <SingleDropdown
             options={reasons}
             selected={selectedReason}
             onChange={(selected) => {
               setSelectedReason(selected)
-              // '기타(직접 입력)'이 아닌 다른 이유를 선택하면 추가 의견 초기화
               if (selected !== '기타(직접 입력)') {
                 setAdditionalComment('')
               }
+              setDropdownOpen(false) // 선택 후 닫기
             }}
             placeholder="해당되는 항목을 선택해 주세요."
+            isOpen={isDropdownOpen}
+            onToggle={toggleDropdown}
+            disabled={loading}
           />
         </div>
-        {/* 선택 이후 의견 입력 영역 */}
+
         {selectedReason && (
           <div>
             <p className="text-base font-normal text-gray-600 mt-10 mb-5 leading-[140%] tracking-[-0.03em] text-left">
@@ -79,7 +110,6 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
               서비스 개선에 적극적으로 반영하겠습니다. 감사합니다!
             </p>
 
-            {/* Textarea 컴포넌트에 disabled 프롭스 적용 */}
             <Textarea
               value={additionalComment}
               onChange={(e) => setAdditionalComment(e.target.value)}
@@ -93,8 +123,9 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
                 onClick={handleConfirm}
                 variant="outline"
                 className="px-6 py-3 rounded-md text-base font-semibold mb-6"
+                disabled={loading}
               >
-                회원 탈퇴하기
+                {loading ? '처리 중...' : '회원 탈퇴하기'}
               </Button>
             </div>
           </div>
