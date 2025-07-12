@@ -13,8 +13,14 @@ import { useContext } from 'react'
 import { ToastContext } from '../components/common/Toast/ToastContext'
 import WithdrawnAccountModal from '../components/LoginForm/WithdrawnAccountModal'
 import RecoverAccountModal from '../components/LoginForm/RecoverAccountModal'
+import axios from 'axios'
+import { useNavigate } from 'react-router'
+import { AxiosError } from 'axios'
 
 export default function LoginPage() {
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || 'http://54.180.237.77'
+  const navigate = useNavigate()
   const toastCtx = useContext(ToastContext)
   const [codeCheckClicked, setCodeCheckClicked] = useState(false)
   const [modalType, setModalType] = useState<'withdrawn' | 'recover' | null>(
@@ -99,6 +105,39 @@ export default function LoginPage() {
     setFindPwStep('form')
   }
 
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/v1/auth/login/email`,
+        {
+          email,
+          password,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      const { access, refresh } = response.data
+      localStorage.setItem('accessToken', access)
+      localStorage.setItem('refreshToken', refresh)
+
+      return response.status === 200
+    } catch (err) {
+      const error = err as AxiosError | Error
+      if (
+        axios.isAxiosError<{ message: string; statusCode: number }>(error) &&
+        error.response
+      ) {
+        throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.')
+      } else {
+        throw new Error('서버 오류가 발생했습니다.')
+      }
+    }
+  }
+
   return (
     <div className="flex justify-center">
       <div className="mt-[200px] mb-[392px] w-[348px] h-[488px]">
@@ -167,12 +206,16 @@ export default function LoginPage() {
               variant={isFormValid ? 'fill' : 'ghost'}
               disabled={!isFormValid}
               className="w-[348px] h-[52px]"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault()
-                if (idValid.value === 'deleted@example.com') {
-                  setModalType('withdrawn') // ← 모달 상태 설정
-                } else {
-                  console.log('로그인 성공')
+                try {
+                  const success = await login(idValid.value, pwValid.value)
+                  if (success) {
+                    toastCtx?.show({ message: '로그인 성공!', type: 'success' })
+                    navigate('/')
+                  }
+                } catch (err: any) {
+                  toastCtx?.show({ message: err.message, type: 'error' })
                 }
               }}
             >
