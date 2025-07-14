@@ -26,8 +26,8 @@ const EmailVerification = ({
   setCodeCheckClicked,
 }: EmailVerificationProps) => {
   const handleCodeChange = (value: string) => {
-    const onlyNums = value.replace(/\D/g, '').slice(0, 6)
-    codeValid.setValue(onlyNums)
+    const alphanumeric = value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 6)
+    codeValid.setValue(alphanumeric)
     setCodeCheckClicked(false)
   }
   return (
@@ -38,9 +38,7 @@ const EmailVerification = ({
             value={emailValid.value}
             onChange={emailValid.setValue}
             hasError={!emailValid.isValid && emailValid.value.length > 0}
-            errorMessage=""
             hasSuccess={emailValid.isValid}
-            successMessage=""
             type="text"
             placeholder="가입한 이메일을 입력해주세요."
             className="w-[228px] h-[48px]"
@@ -61,9 +59,7 @@ const EmailVerification = ({
             value={codeValid.value}
             onChange={handleCodeChange}
             hasError={codeCheckClicked && !codeValid.isValid}
-            errorMessage="인증코드가 일치하지 않습니다"
             hasSuccess={codeCheckClicked && codeValid.isValid}
-            successMessage=""
             type="text"
             placeholder="인증코드를 입력해주세요."
             className="w-[228px] h-[48px]"

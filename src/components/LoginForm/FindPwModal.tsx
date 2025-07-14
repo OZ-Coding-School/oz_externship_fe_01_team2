@@ -4,7 +4,7 @@ import PwSuccess from '@components/common/Popup/PwSuccess'
 import EmailVerification from '@components/LoginForm/EmailVerification'
 import type { ModalStep, ValidationInput } from '@custom-types/auth'
 import { LockKeyhole } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface FindPwModalProps {
   isOpen: boolean
@@ -37,6 +37,13 @@ const FindPwModal = ({
   setCodeCheckClicked,
   onSendCode,
 }: FindPwModalProps) => {
+  useEffect(() => {
+    if (!isOpen) {
+      emailValid.setValue('')
+      codeValid.setValue('')
+      setCodeCheckClicked(false)
+    }
+  }, [isOpen, emailValid, codeValid, setCodeCheckClicked])
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       {step === 'form' ? (
