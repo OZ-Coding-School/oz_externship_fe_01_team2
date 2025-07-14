@@ -31,7 +31,7 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({
     try {
       setVerifying(true)
       await axios.post(
-        'http://13.124.239.91/api/v1/auth/find/email/phone/verify/',
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/find/email/phone/verify/`,
         {
           phone: phoneValid.value,
           code: codeValid.value,
@@ -68,7 +68,7 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({
     try {
       setSending(true)
       await axios.post(
-        'http://13.124.239.91/api/v1/auth/find/email/phone/send/',
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/find/email/phone/send/`,
         {
           phone: phoneValid.value,
         }
