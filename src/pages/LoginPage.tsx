@@ -11,12 +11,12 @@ import type { ModalStep } from '@custom-types/auth'
 import { useInput } from '@hooks/useInput'
 import { useTimer } from '@hooks/useTimer'
 import { useToast } from '@hooks/useToast'
-import axios, { AxiosError } from 'axios'
+import { useAuthStore } from '@store/authStore'
+import axios from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 
 export default function LoginPage() {
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://54.180.237.77'
   const navigate = useNavigate()
   const toast = useToast()
   const [codeCheckClicked, setCodeCheckClicked] = useState(false)
@@ -25,6 +25,7 @@ export default function LoginPage() {
   )
   const [isCodeVerified, setIsCodeVerified] = useState(false)
 
+  const { emailLogin } = useAuthStore()
   // 폼 validation hooks
   const nameValid = useInput(
     (v) => VALIDATION_REGEX.KOREAN_NAME.test(v) && v.trim() !== ''
@@ -85,7 +86,7 @@ export default function LoginPage() {
 
       timer.start(TIMER_DURATION)
     } catch (error: unknown) {
-      if (error instanceof Error) {
+      if (axios.isAxiosError<{ message: string }>(error)) {
         toast.show({
           message: error.message,
           type: 'error',
@@ -128,8 +129,15 @@ export default function LoginPage() {
 
       toast.show({ message: '인증이 완료되었습니다!', type: 'success' })
       setIsCodeVerified(true)
-    } catch (err) {
-      toast.show({ message: '인증에 실패했습니다.', type: 'error' })
+    } catch (error: unknown) {
+      if (axios.isAxiosError<{ message: string }>(error)) {
+        toast.show({ message: '인증에 실패했습니다.', type: 'error' })
+      } else {
+        toast.show({
+          message: '알 수 없는 오류가 발생했습니다.',
+          type: 'error',
+        })
+      }
       setIsCodeVerified(false)
     }
   }
@@ -175,52 +183,25 @@ export default function LoginPage() {
   const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     try {
-      const success = await login(idValid.value, pwValid.value)
-      if (success) {
-        toast?.show({ message: '로그인 성공!', type: 'success' })
+      const result = await emailLogin({
+        email: idValid.value,
+        password: pwValid.value,
+      })
+      if (result.success) {
+        toast.show({ message: '로그인 성공!', type: 'success' })
         navigate('/')
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        toast?.show({ message: err.message, type: 'error' })
+    } catch (error: unknown) {
+      if (axios.isAxiosError<{ message: string; statusCode: number }>(error)) {
+        toast.show({
+          message: '이메일 또는 비밀번호가 올바르지 않습니다.',
+          type: 'error',
+        })
       } else {
-        toast?.show({
+        toast.show({
           message: '알 수 없는 오류가 발생했습니다.',
           type: 'error',
         })
-      }
-    }
-  }
-
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/api/v1/auth/login/email`,
-        {
-          email,
-          password,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-
-      const { access, refresh } = response.data
-      localStorage.setItem('accessToken', access)
-      localStorage.setItem('refreshToken', refresh)
-
-      return response.status === 200
-    } catch (err) {
-      const error = err as AxiosError | Error
-      if (
-        axios.isAxiosError<{ message: string; statusCode: number }>(error) &&
-        error.response
-      ) {
-        throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.')
-      } else {
-        throw new Error('서버 오류가 발생했습니다.')
       }
     }
   }
