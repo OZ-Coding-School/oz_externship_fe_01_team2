@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import Modal from '../common/Modal'
-import Button from '../common/Button'
-import EmailVerification from './EmailVerification'
-import type { ValidationInput, ModalStep } from '../../types/auth'
-import { RotateCcw, Check } from 'lucide-react'
+import Button from '@components/common/Button'
+import Modal from '@components/common/Modal'
+import EmailVerification from '@components/LoginForm/EmailVerification'
+import type { ModalStep, ValidationInput } from '@custom-types/auth'
+import { Check, RotateCcw } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 
 interface RecoverAccountModalProps {
   isOpen: boolean

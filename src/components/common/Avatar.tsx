@@ -1,5 +1,5 @@
-import { cn } from '../../utils/cn'
-import { handleImageError } from '../../utils/handleImageError'
+import { cn } from '@utils/cn'
+import { handleImageError } from '@utils/handleImageError'
 
 interface AvatarProps {
   name: string

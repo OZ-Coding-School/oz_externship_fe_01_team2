@@ -1,8 +1,8 @@
-import Button from '../components/common/Button'
-import FormInput from '../components/common/FormInput'
-import { useInput } from '../hooks/useInput'
-import OzLogo from '../assets/images/common/renewal_ozcoding_logo_black.svg'
-import { VALIDATION_REGEX } from '../constants/validation'
+import OzLogo from '@assets/images/common/renewal_ozcoding_logo_black.svg'
+import Button from '@components/common/Button'
+import FormInput from '@components/common/FormInput'
+import { VALIDATION_REGEX } from '@constants/validation'
+import { useInput } from '@hooks/useInput'
 
 export default function SignUpFormPage() {
   const name = useInput(

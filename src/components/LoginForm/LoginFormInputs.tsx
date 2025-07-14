@@ -1,6 +1,6 @@
+import FormInput from '@components/common/FormInput'
+import type { ValidationInput } from '@custom-types/auth'
 import React from 'react'
-import FormInput from '../common/FormInput'
-import type { ValidationInput } from '../../types/auth'
 
 interface LoginFormInputsProps {
   idValid: ValidationInput

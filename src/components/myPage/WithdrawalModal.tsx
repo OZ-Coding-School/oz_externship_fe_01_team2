@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react' // useEffect 임포트 추가
+import Button from '@components/common/Button/Button'
+import SingleDropdown from '@components/common/SingleDropdown'
+import Textarea from '@components/common/Textarea'
+import type { WithdrawalModalProps } from '@custom-types/withdrawalModal.types'
 import { X } from 'lucide-react'
-import type { WithdrawalModalProps } from '../../types/withdrawalModal.types'
-import SingleDropdown from '../common/SingleDropdown'
-import Textarea from '../common/Textarea'
-import Button from '../common/Button/Button'
+import { useEffect, useState } from 'react' // useEffect 임포트 추가
 
 const reasons = [
   '원하는 클래스가 없어서',

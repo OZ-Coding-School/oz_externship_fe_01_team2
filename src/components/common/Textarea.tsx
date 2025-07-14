@@ -1,5 +1,5 @@
+import { cn } from '@utils/cn'
 import React, { forwardRef } from 'react'
-import { cn } from '../../utils/cn'
 
 interface TextareaProps {
   value: string

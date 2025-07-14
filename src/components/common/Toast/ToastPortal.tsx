@@ -1,6 +1,6 @@
+import { type ToastInternal } from '@custom-types/toast'
+import { cn } from '@utils/cn'
 import { Check } from 'lucide-react'
-import { type ToastInternal } from '../../../types/toast'
-import { cn } from '../../../utils/cn'
 
 interface Props {
   toasts: ToastInternal[]

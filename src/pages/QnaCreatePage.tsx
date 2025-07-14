@@ -1,8 +1,8 @@
+import Button from '@components/common/Button'
+import MarkdownEditor from '@components/common/MarkdownEditor'
+import QnaCategorySelect from '@components/qna/QnaCategorySelect'
+import QnaTitleInput from '@components/qna/QnaTitleInput'
 import { useState } from 'react'
-import QnaCategorySelect from '../components/qna/QnaCategorySelect'
-import MarkdownEditor from '../components/common/MarkdownEditor'
-import QnaTitleInput from '../components/qna/QnaTitleInput'
-import Button from '../components/common/Button'
 
 export default function QnaCreatePage() {
   const [title, setTitle] = useState('')

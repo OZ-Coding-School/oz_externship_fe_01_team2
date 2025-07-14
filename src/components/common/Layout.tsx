@@ -1,7 +1,7 @@
+import AIChatbot from '@components/common/AIChatbot'
+import Footer from '@components/common/Footer'
+import Header from '@components/common/Header'
 import { Outlet, useLocation } from 'react-router-dom'
-import AIChatbot from './AIChatbot'
-import Footer from './Footer'
-import Header from './Header'
 
 const Layout = () => {
   const { pathname } = useLocation()

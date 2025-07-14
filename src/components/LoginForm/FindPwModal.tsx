@@ -1,10 +1,10 @@
-import React from 'react'
+import Button from '@components/common/Button'
+import Modal from '@components/common/Modal'
+import PwSuccess from '@components/common/Popup/PwSuccess'
+import EmailVerification from '@components/LoginForm/EmailVerification'
+import type { ModalStep, ValidationInput } from '@custom-types/auth'
 import { LockKeyhole } from 'lucide-react'
-import Modal from '../common/Modal'
-import Button from '../common/Button'
-import PwSuccess from '../common/Popup/PwSuccess'
-import EmailVerification from './EmailVerification'
-import type { ValidationInput, ModalStep } from '../../types/auth'
+import React from 'react'
 
 interface FindPwModalProps {
   isOpen: boolean

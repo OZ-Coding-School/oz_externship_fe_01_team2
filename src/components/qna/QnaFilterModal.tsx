@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import rotateIcon from '@assets/icons/rotate-cw.svg'
+import Button from '@components/common/Button/Button'
+import SingleDropdown from '@components/common/SingleDropdown'
+import { CATEGORY, DEFAULT_CATEGORY } from '@components/qna/category'
+import type { CategoryFilter } from '@custom-types/qnaFilters.types'
 import { X } from 'lucide-react'
-import SingleDropdown from '../common/SingleDropdown'
-import Button from '../common/Button/Button'
-import rotateIcon from '../../assets/icons/rotate-cw.svg'
-import { CATEGORY, DEFAULT_CATEGORY } from '../qna/category'
-import type { CategoryFilter } from '../../../src/types/qnaFilters.types'
+import { useEffect, useState } from 'react'
 
 type Props = {
   onClose: () => void

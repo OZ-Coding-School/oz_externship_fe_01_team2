@@ -1,6 +1,6 @@
-import SingleDropdown from '../../components/common/SingleDropdown'
-import { mockCategories } from '../Mocks/MockCategories'
+import SingleDropdown from '@components/common/SingleDropdown'
 import { useState } from 'react'
+import { mockCategories } from '../Mocks/MockCategories'
 
 interface SelectedCategories {
   major: string | null

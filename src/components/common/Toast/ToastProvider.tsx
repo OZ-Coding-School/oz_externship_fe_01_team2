@@ -1,6 +1,6 @@
+import type { Toast } from '@custom-types/toast'
+import '@styles/animation.css'
 import { useCallback, useState } from 'react'
-import '../../../styles/animation.css'
-import type { Toast } from '../../../types/toast'
 import { ToastContext } from './ToastContext'
 import ToastPortal from './ToastPortal'
 

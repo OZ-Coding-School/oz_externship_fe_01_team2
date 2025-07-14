@@ -1,4 +1,4 @@
-import type { QuestionCard } from '../../types/qnaCard.types'
+import type { QuestionCard } from '@custom-types/qnaCard.types'
 
 export const mockQnaListResponse: { results: QuestionCard[] } = {
   results: [
