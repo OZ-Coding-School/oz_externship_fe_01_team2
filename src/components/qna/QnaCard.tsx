@@ -1,31 +1,30 @@
-// components/qna/QnaCard.tsx
 import defaultThumbnail from '@assets/images/common/img_default.png'
 import defaultAvatar from '@assets/images/common/img_user_default.png'
 import Avatar from '@components/common/Avatar'
-import type { FlatQuestionCard } from '@custom-types/qnaCard.types'
+import { type Question } from '@custom-types/qnaDetail'
 import { cn } from '@utils/cn'
+import { formatRelativeTime } from '@utils/formatRelativeTime'
 import { handleImageError } from '@utils/handleImageError'
 import { highlightText } from '@utils/highlightText'
+import stripMarkdown from '@utils/stripMarkdown'
 import { Link } from 'react-router-dom'
 
-type Props = {
-  question: FlatQuestionCard
+interface QnaCardProps {
+  question: Question
   query?: string
 }
 
-const QnaCard = ({ question, query = '' }: Props) => {
+const QnaCard = ({ question, query = '' }: QnaCardProps) => {
   const {
     id,
     title,
     content,
+    author,
     category,
-    subCategory,
-    language,
-    nickname,
-    time,
+    answer_count: answerCount,
+    view_count: viewCount,
+    created_at: createdAt,
     thumbnail,
-    answerCount,
-    viewCount,
   } = question
 
   const answerBadgeStyle = cn(
@@ -46,11 +45,13 @@ const QnaCard = ({ question, query = '' }: Props) => {
         <div className="flex justify-between">
           <div className="flex-1 pr-5">
             <div className="font-medium text-gray-600 text-xs mb-5">
-              <span>{category}</span>
+              <span>{category.major}</span>
               <span className="mx-1">&gt;</span>
-              <span>{subCategory}</span>
+              <span>{category.middle}</span>
               <span className="mx-1">&gt;</span>
-              <span className="border-b border-gray-400 pb-px">{language}</span>
+              <span className="border-b border-gray-400 pb-px">
+                {category.minor}
+              </span>
             </div>
 
             <h2 className="text-headline-sb text-gray-600 mb-5 line-clamp-2">
@@ -58,7 +59,7 @@ const QnaCard = ({ question, query = '' }: Props) => {
             </h2>
 
             <p className="mb-5 text-sm text-gray-400 leading-relaxed line-clamp-3">
-              {highlightText(content, query)}
+              {highlightText(stripMarkdown(content), query)}
             </p>
           </div>
 
@@ -86,12 +87,14 @@ const QnaCard = ({ question, query = '' }: Props) => {
 
           <div className="flex items-center h-6">
             <Avatar
-              name={nickname}
+              name={author.nickname}
               profileUrl={defaultAvatar}
               className="w-6 h-6 mr-2"
             />
-            <span className="text-xs font-semibold">{nickname}</span>
-            <span className="ml-2 text-xs">{time}</span>
+            <span className="text-xs font-semibold">{author.nickname}</span>
+            <span className="ml-2 text-xs">
+              {formatRelativeTime(createdAt)}
+            </span>
           </div>
         </div>
       </div>
