@@ -16,8 +16,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 
 export default function LoginPage() {
-  const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || 'http://54.180.237.77'
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://54.180.237.77'
   const navigate = useNavigate()
   const toast = useToast()
   const [codeCheckClicked, setCodeCheckClicked] = useState(false)
@@ -67,7 +66,7 @@ export default function LoginPage() {
     event.preventDefault()
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/account/send-reset-code/`,
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/account/send-reset-code/`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -110,7 +109,7 @@ export default function LoginPage() {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/account/verify-code/`,
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/account/verify-code/`,
         {
           method: 'POST',
           headers: {
@@ -129,13 +128,8 @@ export default function LoginPage() {
 
       toast.show({ message: '인증이 완료되었습니다!', type: 'success' })
       setIsCodeVerified(true)
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        toast.show({
-          message: err.message || '인증코드 확인 중 오류가 발생했습니다.',
-          type: 'error',
-        })
-      }
+    } catch (err) {
+      toast.show({ message: '인증에 실패했습니다.', type: 'error' })
       setIsCodeVerified(false)
     }
   }
@@ -292,6 +286,8 @@ export default function LoginPage() {
             formatTime={timer.formatTime}
             codeCheckClicked={codeCheckClicked}
             setCodeCheckClicked={setCodeCheckClicked}
+            isCodeVerified={isCodeVerified}
+            setIsCodeVerified={setIsCodeVerified}
           />
 
           <div className="mt-[12px]">
@@ -331,6 +327,8 @@ export default function LoginPage() {
             formatTime={timer.formatTime}
             codeCheckClicked={codeCheckClicked}
             setCodeCheckClicked={setCodeCheckClicked}
+            isCodeVerified={isCodeVerified}
+            setIsCodeVerified={setIsCodeVerified}
           />
         )}
       </div>

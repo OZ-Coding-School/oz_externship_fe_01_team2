@@ -1,6 +1,6 @@
 export interface FormInputProps {
   placeholder?: string
-  type?: 'text' | 'email' | 'password' | 'number'
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel'
   value?: string
   onChange?: (value: string) => void
   className?: string

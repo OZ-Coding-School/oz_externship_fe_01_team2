@@ -19,6 +19,8 @@ interface FindPwModalProps {
   formatTime: () => string
   codeCheckClicked: boolean
   setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
+  isCodeVerified: boolean
+  setIsCodeVerified: React.Dispatch<React.SetStateAction<boolean>>
   onSendCode: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
@@ -36,6 +38,8 @@ const FindPwModal = ({
   codeCheckClicked,
   setCodeCheckClicked,
   onSendCode,
+  isCodeVerified,
+  setIsCodeVerified,
 }: FindPwModalProps) => {
   useEffect(() => {
     if (!isOpen) {
@@ -74,6 +78,8 @@ const FindPwModal = ({
               formatTime={formatTime}
               codeCheckClicked={codeCheckClicked}
               setCodeCheckClicked={setCodeCheckClicked}
+              setIsCodeVerified={setIsCodeVerified}
+              isCodeVerified={isCodeVerified}
             />
           </div>
 
@@ -86,7 +92,7 @@ const FindPwModal = ({
           </Button>
         </div>
       ) : (
-        <PwSuccess onClose={onClose} />
+        <PwSuccess email={emailValid.value} onClose={onClose} />
       )}
     </Modal>
   )
