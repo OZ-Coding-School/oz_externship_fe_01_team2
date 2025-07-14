@@ -11,8 +11,8 @@ import { useState } from 'react'
 
 interface AnswerCardProps {
   answer: Answer
-  canAdopt: boolean
-  onAdopt: (answerId: number | string) => void
+  canAdopt: boolean | null
+  onAdopt: (answerId: number) => void
 }
 
 function AnswerCard({ answer, canAdopt, onAdopt }: AnswerCardProps) {
