@@ -55,7 +55,6 @@ const MyPage = () => {
   const fetchUserProfile = async () => {
     try {
       const response = await UserProfileApi.getUserProfile()
-      // console.log(response)
       setUserData(response)
     } catch (error) {
       // eslint-disable-next-line no-console

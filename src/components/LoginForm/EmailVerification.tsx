@@ -13,6 +13,8 @@ interface EmailVerificationProps {
   formatTime: () => string
   codeCheckClicked: boolean
   setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
+  isCodeVerified: boolean
+  setIsCodeVerified: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const EmailVerification = ({
@@ -26,22 +28,19 @@ const EmailVerification = ({
   setCodeCheckClicked,
 }: EmailVerificationProps) => {
   const handleCodeChange = (value: string) => {
-    const onlyNums = value.replace(/\D/g, '').slice(0, 6)
-    codeValid.setValue(onlyNums)
+    const alphanumeric = value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 6)
+    codeValid.setValue(alphanumeric)
     setCodeCheckClicked(false)
   }
-
   return (
     <div className="flex flex-col gap-[16px]">
       <div className="flex">
         <div className="relative w-[228px] mr-[8px]">
           <FormInput
             value={emailValid.value}
-            onChange={emailValid.setValue}
+            onChange={(v) => emailValid.setValue(v)}
             hasError={!emailValid.isValid && emailValid.value.length > 0}
-            errorMessage=""
             hasSuccess={emailValid.isValid}
-            successMessage=""
             type="text"
             placeholder="가입한 이메일을 입력해주세요."
             className="w-[228px] h-[48px]"
@@ -62,9 +61,7 @@ const EmailVerification = ({
             value={codeValid.value}
             onChange={handleCodeChange}
             hasError={codeCheckClicked && !codeValid.isValid}
-            errorMessage="인증코드가 일치하지 않습니다"
             hasSuccess={codeCheckClicked && codeValid.isValid}
-            successMessage=""
             type="text"
             placeholder="인증코드를 입력해주세요."
             className="w-[228px] h-[48px]"

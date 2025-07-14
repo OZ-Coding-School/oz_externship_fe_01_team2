@@ -4,7 +4,7 @@ import PwSuccess from '@components/common/Popup/PwSuccess'
 import EmailVerification from '@components/LoginForm/EmailVerification'
 import type { ModalStep, ValidationInput } from '@custom-types/auth'
 import { LockKeyhole } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface FindPwModalProps {
   isOpen: boolean
@@ -14,12 +14,14 @@ interface FindPwModalProps {
   codeValid: ValidationInput
   isTimerActive: boolean
   timeLeft: number
-  onSendCode: (event: React.MouseEvent<HTMLButtonElement>) => void
   onVerifyCode: (event: React.MouseEvent<HTMLButtonElement>) => void
   onFindPw: () => void
   formatTime: () => string
   codeCheckClicked: boolean
   setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
+  isCodeVerified: boolean
+  setIsCodeVerified: React.Dispatch<React.SetStateAction<boolean>>
+  onSendCode: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 const FindPwModal = ({
@@ -30,13 +32,22 @@ const FindPwModal = ({
   codeValid,
   isTimerActive,
   timeLeft,
-  onSendCode,
+  formatTime,
   onVerifyCode,
   onFindPw,
-  formatTime,
   codeCheckClicked,
   setCodeCheckClicked,
+  onSendCode,
+  isCodeVerified,
+  setIsCodeVerified,
 }: FindPwModalProps) => {
+  useEffect(() => {
+    if (!isOpen) {
+      emailValid.setValue('')
+      codeValid.setValue('')
+      setCodeCheckClicked(false)
+    }
+  }, [isOpen, emailValid, codeValid, setCodeCheckClicked])
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       {step === 'form' ? (
@@ -67,6 +78,8 @@ const FindPwModal = ({
               formatTime={formatTime}
               codeCheckClicked={codeCheckClicked}
               setCodeCheckClicked={setCodeCheckClicked}
+              setIsCodeVerified={setIsCodeVerified}
+              isCodeVerified={isCodeVerified}
             />
           </div>
 
@@ -79,7 +92,7 @@ const FindPwModal = ({
           </Button>
         </div>
       ) : (
-        <PwSuccess onClose={onClose} />
+        <PwSuccess email={emailValid.value} onClose={onClose} />
       )}
     </Modal>
   )

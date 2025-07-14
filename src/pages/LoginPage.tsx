@@ -16,14 +16,14 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 
 export default function LoginPage() {
-  const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || 'http://54.180.237.77'
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://54.180.237.77'
   const navigate = useNavigate()
   const toast = useToast()
   const [codeCheckClicked, setCodeCheckClicked] = useState(false)
   const [modalType, setModalType] = useState<'withdrawn' | 'recover' | null>(
     null
   )
+  const [isCodeVerified, setIsCodeVerified] = useState(false)
 
   // 폼 validation hooks
   const nameValid = useInput(
@@ -60,31 +60,100 @@ export default function LoginPage() {
     setFindIdStep('result')
   }
 
-  const handleSendCode = (event: React.MouseEvent<HTMLButtonElement>): void => {
+  const handleSendCode = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): Promise<void> => {
     event.preventDefault()
-    timer.start(TIMER_DURATION)
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/account/send-reset-code/`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailValid.value }),
+        }
+      )
 
-    toast.show({
-      message: '전송 완료! 이메일을 확인해주세요.',
-      type: 'success',
-    })
+      if (!res.ok) {
+        throw new Error('이메일 전송에 실패했습니다.')
+      }
+
+      toast.show({
+        message: '인증 코드가 이메일로 전송되었습니다.',
+        type: 'success',
+      })
+
+      timer.start(TIMER_DURATION)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.show({
+          message: error.message,
+          type: 'error',
+        })
+      }
+    }
   }
 
-  const handleVerifyCode = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleVerifyCode = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     timer.stop()
     setCodeCheckClicked(true)
 
-    if (codeValid.isValid) {
+    if (!emailValid.isValid || !emailCodeValid.isValid) {
+      toast.show({
+        message: '올바른 인증코드를 입력해주세요.',
+        type: 'error',
+      })
+      return
+    }
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/account/verify-code/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: emailValid.value,
+            code: emailCodeValid.value,
+          }),
+        }
+      )
+
+      if (!res.ok) {
+        throw new Error('인증코드 확인에 실패했습니다.')
+      }
+
       toast.show({ message: '인증이 완료되었습니다!', type: 'success' })
+      setIsCodeVerified(true)
+    } catch (err) {
+      toast.show({ message: '인증에 실패했습니다.', type: 'error' })
+      setIsCodeVerified(false)
     }
   }
 
   const handleFindPw = () => {
-    if (emailValid.isValid && emailCodeValid.isValid) {
-      setFindPwStep('result')
-      timer.stop()
+    setCodeCheckClicked(true)
+    if (!emailValid.isValid) {
+      toast.show({
+        message: '올바른 이메일을 입력해주세요.',
+        type: 'error',
+      })
+      return
     }
+
+    if (!isCodeVerified) {
+      toast.show({
+        message: '인증코드 확인이 필요합니다.',
+        type: 'error',
+      })
+      return
+    }
+
+    setFindPwStep('result')
+    timer.stop()
   }
 
   const handleOpenFindPw = () => {
@@ -217,6 +286,8 @@ export default function LoginPage() {
             formatTime={timer.formatTime}
             codeCheckClicked={codeCheckClicked}
             setCodeCheckClicked={setCodeCheckClicked}
+            isCodeVerified={isCodeVerified}
+            setIsCodeVerified={setIsCodeVerified}
           />
 
           <div className="mt-[12px]">
@@ -232,7 +303,7 @@ export default function LoginPage() {
         </form>
         {modalType === 'withdrawn' && (
           <WithdrawnAccountModal
-            isOpen={true}
+            isOpen
             onClose={() => setModalType(null)}
             onRecoverClick={() => {
               // 모달 전환 보장
@@ -243,7 +314,7 @@ export default function LoginPage() {
 
         {modalType === 'recover' && (
           <RecoverAccountModal
-            isOpen={true}
+            isOpen
             onClose={() => setModalType(null)}
             step={findPwStep}
             emailValid={emailValid}
@@ -256,6 +327,8 @@ export default function LoginPage() {
             formatTime={timer.formatTime}
             codeCheckClicked={codeCheckClicked}
             setCodeCheckClicked={setCodeCheckClicked}
+            isCodeVerified={isCodeVerified}
+            setIsCodeVerified={setIsCodeVerified}
           />
         )}
       </div>

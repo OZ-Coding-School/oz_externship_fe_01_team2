@@ -19,6 +19,8 @@ interface RecoverAccountModalProps {
   formatTime: () => string
   codeCheckClicked: boolean
   setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
+  isCodeVerified: boolean
+  setIsCodeVerified: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const RecoverAccountModal = ({
@@ -33,6 +35,8 @@ const RecoverAccountModal = ({
   formatTime,
   codeCheckClicked,
   setCodeCheckClicked,
+  isCodeVerified,
+  setIsCodeVerified,
 }: RecoverAccountModalProps) => {
   const [showPopup, setShowPopup] = useState(false)
 
@@ -82,6 +86,8 @@ const RecoverAccountModal = ({
             formatTime={formatTime}
             codeCheckClicked={codeCheckClicked}
             setCodeCheckClicked={setCodeCheckClicked}
+            isCodeVerified={isCodeVerified}
+            setIsCodeVerified={setIsCodeVerified}
           />
         </div>
 
