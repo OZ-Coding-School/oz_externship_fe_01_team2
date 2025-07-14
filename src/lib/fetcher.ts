@@ -1,5 +1,5 @@
 import { getAccessToken } from '@store/authStore'
-import axios from 'axios'
+import axios, { type AxiosRequestConfig } from 'axios'
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api/v1`
 
@@ -40,7 +40,7 @@ fetcher.interceptors.response.use(
 
       try {
         // 동적 import로 순환 참조 방지
-        const { useAuthStore } = await import('../store/authStore')
+        const { useAuthStore } = await import('@store/authStore')
         const { refreshAccessToken } = useAuthStore.getState()
 
         const success = await refreshAccessToken()
@@ -61,14 +61,18 @@ fetcher.interceptors.response.use(
   }
 )
 
-export const get = <T>(url: string, config?: object): Promise<T> => {
-  return fetcher.get(url, config)
+export const get = async <T>(
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<T> => {
+  const response = await fetcher.get<T>(url, config)
+  return response.data
 }
 
 export const post = <T>(
   url: string,
   data?: unknown,
-  config?: object
+  config?: AxiosRequestConfig
 ): Promise<T> => {
   return fetcher.post(url, data, config)
 }
@@ -76,12 +80,15 @@ export const post = <T>(
 export const put = <T>(
   url: string,
   data?: unknown,
-  config?: object
+  config?: AxiosRequestConfig
 ): Promise<T> => {
   return fetcher.put(url, data, config)
 }
 
-export const del = <T>(url: string, config?: object): Promise<T> => {
+export const del = <T>(
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<T> => {
   return fetcher.delete(url, config)
 }
 
