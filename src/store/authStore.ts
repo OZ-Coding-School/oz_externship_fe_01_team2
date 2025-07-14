@@ -1,5 +1,6 @@
 import AuthApi from '@api/auth/api'
 import type { EmailLoginRequest, User } from '@api/auth/types'
+import axios from 'axios'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -110,7 +111,11 @@ export const useAuthStore = create<AuthState>()(
             success: true,
             message: '로그인이 완료되었습니다!',
           }
-        } catch (error) {
+        } catch (error: unknown) {
+          if (axios.isAxiosError<{ message: string }>(error)) {
+            // eslint-disable-next-line no-console
+            console.error(`[AxiosError] ${error ?? ''}`)
+          }
           set({ isLoading: false })
 
           return {
@@ -124,8 +129,13 @@ export const useAuthStore = create<AuthState>()(
       logout: async (): Promise<void> => {
         try {
           await AuthApi.logout()
-        } catch (error) {
-          console.error('로그아웃 API 호출 실패:', error)
+        } catch (error: unknown) {
+          if (axios.isAxiosError<{ message: string }>(error)) {
+            // eslint-disable-next-line no-console
+            console.error(`[AxiosError] 로그아웃 API 호출 실패 ${error ?? ''}`)
+          }
+          // eslint-disable-next-line no-console
+          console.error('[UnexpectedError]', error)
         } finally {
           set({
             user: null,

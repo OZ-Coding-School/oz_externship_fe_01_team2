@@ -1,15 +1,18 @@
+import { fetchQnaList } from '@api/qna/questionApi'
+import { type QuestionRawResponse } from '@api/qna/types'
 import Spinner from '@components/common/Spinner'
-import { mockQnaListResponse } from '@components/Mocks/MockQnaListResponse'
 import QnaCard from '@components/qna/QnaCard'
 import QnaFilterModal from '@components/qna/QnaFilterModal'
 import QnaSearch from '@components/qna/QnaSearch'
 import QnaTab from '@components/qna/QnaTab'
+import type { Question } from '@custom-types/qnaDetail'
 import type { CategoryFilter } from '@custom-types/qnaFilters.types'
-import { transformQnaData } from '@utils/transformQnaData'
+import { useToast } from '@hooks/useToast'
+import axios from 'axios'
 import { useEffect, useMemo, useState } from 'react'
 
 // 페이지당 질문 수
-const PAGE_SIZE = 5
+const PAGE_SIZE = 10
 
 const QnaListPage = () => {
   const [selectedTab, setSelectedTab] = useState('전체보기')
@@ -17,37 +20,64 @@ const QnaListPage = () => {
   const [sortOrder, setSortOrder] = useState<'최신순' | '오래된순'>('최신순')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [filters, setFilters] = useState<CategoryFilter>({
-    main: '대분류',
-    sub: '중분류',
-    detail: '소분류',
+    major: '대분류',
+    middle: '중분류',
+    minor: '소분류',
   })
+  const toast = useToast()
+
+  const [data, setData] = useState<QuestionRawResponse>()
+
+  const [questions, setQuestions] = useState<Question[]>([])
 
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
 
-  const transformedQuestions = useMemo(
-    () => transformQnaData(mockQnaListResponse.results),
-    []
-  )
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchQnaList({
+          ordering: sortOrder === '최신순' ? '-created_at' : 'created_at',
+          page: page,
+          page_size: PAGE_SIZE,
+          search: query.trim() || '',
+        })
+        setData(response)
+        setQuestions(response.results)
+      } catch (error: unknown) {
+        if (axios.isAxiosError<{ message: string }>(error)) {
+          // eslint-disable-next-line no-console
+          console.error('질문 목록을 불러오는 중 오류 발생:', error.message)
+          toast.show({
+            message: '질문 목록을 불러오지 못했습니다. 다시 시도해주세요.',
+            type: 'error',
+          })
+        }
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchData()
+  }, [page, query, sortOrder, toast])
 
   const filteredQuestions = useMemo(() => {
     const lowerQuery = query.toLowerCase()
 
-    return transformedQuestions.filter((q) => {
+    return questions.filter((q) => {
       const matchQuery =
         q.title.toLowerCase().includes(lowerQuery) ||
         q.content.toLowerCase().includes(lowerQuery)
 
       const matchMain =
-        filters.main === '대분류' || q.category.depth_1 === filters.main
+        filters.major === '대분류' || q.category.major === filters.major
       const matchSub =
-        filters.sub === '중분류' || q.category.depth_2 === filters.sub
+        filters.middle === '중분류' || q.category.middle === filters.middle
       const matchDetail =
-        filters.detail === '소분류' || q.category.depth_3 === filters.detail
+        filters.minor === '소분류' || q.category.minor === filters.minor
 
       return matchQuery && matchMain && matchSub && matchDetail
     })
-  }, [query, filters, transformedQuestions])
+  }, [query, filters, questions])
 
   const displayedQuestions = useMemo(() => {
     return filteredQuestions.slice(0, PAGE_SIZE * page)
@@ -102,6 +132,11 @@ const QnaListPage = () => {
         </div>
 
         <div className="space-y-4">
+          {displayedQuestions.length === 0 && query && (
+            <div className="text-center text-gray-500 py-20">
+              검색 결과가 없습니다.
+            </div>
+          )}
           {displayedQuestions.map((q) => (
             <QnaCard key={q.id} question={q} query={query} />
           ))}

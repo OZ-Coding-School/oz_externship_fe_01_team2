@@ -1,5 +1,5 @@
 export type CategoryFilter = {
-  main: string
-  sub: string
-  detail: string
+  major: string
+  middle: string
+  minor: string
 }
