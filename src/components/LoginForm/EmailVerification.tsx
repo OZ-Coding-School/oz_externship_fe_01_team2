@@ -15,7 +15,7 @@ interface EmailVerificationProps {
   setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const EmailVerification: React.FC<EmailVerificationProps> = ({
+const EmailVerification = ({
   emailValid,
   codeValid,
   isTimerActive,
@@ -24,7 +24,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
   formatTime,
   codeCheckClicked,
   setCodeCheckClicked,
-}) => {
+}: EmailVerificationProps) => {
   const handleCodeChange = (value: string) => {
     const onlyNums = value.replace(/\D/g, '').slice(0, 6)
     codeValid.setValue(onlyNums)

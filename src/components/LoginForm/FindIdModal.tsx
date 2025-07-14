@@ -22,7 +22,7 @@ interface FindIdModalProps {
   onResetError: () => void
 }
 
-const FindIdModal: React.FC<FindIdModalProps> = ({
+const FindIdModal = ({
   isOpen,
   onClose,
   step,
@@ -34,7 +34,7 @@ const FindIdModal: React.FC<FindIdModalProps> = ({
   onFindId,
   onFindPw,
   onResetError,
-}) => {
+}: FindIdModalProps) => {
   const [foundEmail, setFoundEmail] = useState('')
   const [isVerified, setIsVerified] = useState(false)
   const [isVerifyFailed, setIsVerifyFailed] = useState(false)
@@ -92,14 +92,15 @@ const FindIdModal: React.FC<FindIdModalProps> = ({
       const data = await res.json()
       setFoundEmail(data.email) // 이메일 저장
       onFindId(e) // 외부에서 step을 'result'로 바꿔주는 함수
-    } catch (err: any) {
-      toast.show({
-        type: 'error',
-        message: err.message || '오류가 발생했습니다.',
-      })
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.show({
+          type: 'error',
+          message: err.message || '오류가 발생했습니다.',
+        })
+      }
     }
   }
-
   useEffect(() => {
     if (!isOpen) {
       nameValid.setValue('')

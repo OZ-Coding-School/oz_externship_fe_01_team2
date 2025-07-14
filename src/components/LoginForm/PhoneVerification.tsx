@@ -13,13 +13,13 @@ interface PhoneVerificationProps {
   onVerifyFail: () => void
 }
 
-const PhoneVerification: React.FC<PhoneVerificationProps> = ({
+const PhoneVerification = ({
   phoneValid,
   codeValid,
   onResetError,
   onVerifySuccess,
   onVerifyFail,
-}) => {
+}: PhoneVerificationProps) => {
   const toast = useToast()
   const [sending, setSending] = useState(false)
   const [verifying, setVerifying] = useState(false)

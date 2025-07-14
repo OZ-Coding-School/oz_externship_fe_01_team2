@@ -111,8 +111,15 @@ export default function LoginPage() {
         toast?.show({ message: '로그인 성공!', type: 'success' })
         navigate('/')
       }
-    } catch (err: any) {
-      toast?.show({ message: err.message, type: 'error' })
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast?.show({ message: err.message, type: 'error' })
+      } else {
+        toast?.show({
+          message: '알 수 없는 오류가 발생했습니다.',
+          type: 'error',
+        })
+      }
     }
   }
 

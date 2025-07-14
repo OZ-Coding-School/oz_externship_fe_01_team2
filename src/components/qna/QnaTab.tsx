@@ -1,6 +1,6 @@
 import sortIcon from '@assets/icons/arrow-up-down.svg'
 import filterIcon from '@assets/icons/options.svg'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import QnaSortDropdown from './QnaSortDropdown'
 
 type QnaTabProps = {
@@ -13,13 +13,13 @@ type QnaTabProps = {
 
 const tabs = ['전체보기', '답변완료', '답변 대기중']
 
-const QnaTab: React.FC<QnaTabProps> = ({
+const QnaTab = ({
   selectedTab,
   onSelectTab,
   sortOrder,
   onSortChange,
   onClickFilter,
-}) => {
+}: QnaTabProps) => {
   const [showSortModal, setShowSortModal] = useState(false)
 
   return (

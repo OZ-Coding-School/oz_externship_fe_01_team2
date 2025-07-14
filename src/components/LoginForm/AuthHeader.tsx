@@ -1,5 +1,4 @@
 import ozLogo from '@assets/images/common/renewal_ozcoding_logo_black.svg'
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 interface AuthHeaderProps {
@@ -8,11 +7,7 @@ interface AuthHeaderProps {
   linkTo: string
 }
 
-const AuthHeader: React.FC<AuthHeaderProps> = ({
-  message,
-  linkText,
-  linkTo,
-}) => {
+const AuthHeader = ({ message, linkText, linkTo }: AuthHeaderProps) => {
   return (
     <div className="flex flex-col justify-center items-center mb-[64px]">
       <img

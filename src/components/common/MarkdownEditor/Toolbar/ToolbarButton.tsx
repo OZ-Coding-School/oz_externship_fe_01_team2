@@ -9,13 +9,13 @@ interface ToolbarButtonProps {
   children?: React.ReactNode
 }
 
-const ToolbarButton: React.FC<ToolbarButtonProps> = ({
+const ToolbarButton = ({
   icon,
   title,
   onClick,
   isActive = false,
   children,
-}) => (
+}: ToolbarButtonProps) => (
   <button
     onClick={onClick}
     title={title}

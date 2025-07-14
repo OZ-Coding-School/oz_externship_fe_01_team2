@@ -3,14 +3,14 @@ import { cn } from '@utils/cn'
 import React from 'react'
 import type { ButtonProps } from './Button.types'
 
-const Button: React.FC<ButtonProps> = ({
+const Button = ({
   variant = 'fill',
   disabled = false,
   className,
   children,
   onClick,
   type = 'button',
-}) => {
+}: ButtonProps) => {
   const variantMap = {
     fill: 'bg-primary text-white hover:bg-primary-600 active:bg-primary-700',
     outline:

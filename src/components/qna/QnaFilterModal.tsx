@@ -6,12 +6,12 @@ import type { CategoryFilter } from '@custom-types/qnaFilters.types'
 import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-type Props = {
+type QnaFilterModalProps = {
   onClose: () => void
   onApply: (filters: CategoryFilter) => void
 }
 
-const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
+const QnaFilterModal = ({ onClose, onApply }: QnaFilterModalProps) => {
   const [main, setMain] = useState(DEFAULT_CATEGORY.main)
   const [sub, setSub] = useState(DEFAULT_CATEGORY.sub)
   const [detail, setDetail] = useState(DEFAULT_CATEGORY.detail)

@@ -5,7 +5,7 @@ import { cn } from '@utils/cn'
 import React, { useId, useState } from 'react'
 import type { FormInputProps } from './FormInput.types'
 
-const FormInput: React.FC<FormInputProps> = ({
+const FormInput = ({
   placeholder = '',
   type = 'text',
   value,
@@ -18,7 +18,7 @@ const FormInput: React.FC<FormInputProps> = ({
   successMessage = '',
   className,
   disabled = false,
-}) => {
+}: FormInputProps) => {
   const id = useId()
   const [inputValue, setInputValue] = useState(value || '')
   const [isFocused, setIsFocused] = useState(false)

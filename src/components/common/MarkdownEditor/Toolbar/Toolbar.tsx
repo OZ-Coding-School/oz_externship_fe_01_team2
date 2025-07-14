@@ -22,12 +22,12 @@ interface ToolButton {
   onClick: () => void
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({
+const Toolbar = ({
   onInsert,
   showPreview,
   onTogglePreview,
   onImageUpload,
-}) => {
+}: ToolbarProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleImageUploadClick = () => {
