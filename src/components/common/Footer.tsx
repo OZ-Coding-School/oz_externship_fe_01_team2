@@ -1,9 +1,9 @@
+import BlogIcon from '@assets/icons/common/sns_blog.svg'
+import InstagramIcon from '@assets/icons/common/sns_instagram.svg'
+import KakaoIcon from '@assets/icons/common/sns_kakao.svg'
+import YoutubeIcon from '@assets/icons/common/sns_youtube.svg'
+import LogoImage from '@assets/images/common/renewal_ozcoding_logo.svg'
 import { Link } from 'react-router'
-import BlogIcon from '../../assets/icons/common/sns_blog.svg'
-import InstagramIcon from '../../assets/icons/common/sns_instagram.svg'
-import KakaoIcon from '../../assets/icons/common/sns_kakao.svg'
-import YoutubeIcon from '../../assets/icons/common/sns_youtube.svg'
-import LogoImage from '../../assets/images/common/renewal_ozcoding_logo.svg'
 
 const Footer = () => {
   return (

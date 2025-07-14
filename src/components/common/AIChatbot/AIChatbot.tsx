@@ -1,12 +1,12 @@
+import { getAiAnswerStream } from '@api/getAiAnswerStream'
+import SendHorizonal from '@assets/icons/message.png'
+import ChatbotBtnImg from '@assets/images/common/floating_btn_kakao.png'
+import AiAvatarImg from '@assets/images/qna/img_ai_avatar.png'
+import Avatar from '@components/common/Avatar'
+import Textarea from '@components/common/Textarea'
+import { useToast } from '@hooks/useToast'
 import { X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { getAiAnswerStream } from '../../../api/getAiAnswerStream'
-import SendHorizonal from '../../../assets/icons/message.png'
-import ChatbotBtnImg from '../../../assets/images/common/floating_btn_kakao.png'
-import AiAvatarImg from '../../../assets/images/qna/img_ai_avatar.png'
-import { useToast } from '../../../hooks/useToast'
-import Avatar from '../Avatar'
-import Textarea from '../Textarea'
 
 const AIChatbot = () => {
   const user = {
@@ -17,7 +17,7 @@ const AIChatbot = () => {
   const [messages, setMessages] = useState([
     { sender: 'bot', text: '안녕하세요. 무엇을 도와드릴까요?' },
   ])
-  const [isChatOpen, setIsChatOpen] = useState(true)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isStreaming, setIsStreaming] = useState(false)

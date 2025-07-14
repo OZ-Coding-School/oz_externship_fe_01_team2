@@ -1,10 +1,10 @@
-import fetcher from '../../lib/fetcher'
+import fetcher from '@lib/fetcher'
 
 import type {
-  UserProfile,
   NicknameCheck as NicknameCheckResponse,
   UpdateRequest,
   UpdateResponse,
+  UserProfile,
 } from './types'
 
 const UserProfileApi = {

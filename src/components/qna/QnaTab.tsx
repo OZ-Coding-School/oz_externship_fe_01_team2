@@ -1,6 +1,6 @@
+import sortIcon from '@assets/icons/arrow-up-down.svg'
+import filterIcon from '@assets/icons/options.svg'
 import React, { useState } from 'react'
-import sortIcon from '../../assets/icons/arrow-up-down.svg'
-import filterIcon from '../../assets/icons/options.svg'
 import QnaSortDropdown from './QnaSortDropdown'
 
 type QnaTabProps = {

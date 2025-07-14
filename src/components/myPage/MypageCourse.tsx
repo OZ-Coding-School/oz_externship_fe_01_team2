@@ -1,4 +1,4 @@
-import defaultThumbnail from '../../assets/images/thumbnail.png'
+import defaultThumbnail from '@assets/images/thumbnail.png'
 
 const MypageCourse = () => {
   return (

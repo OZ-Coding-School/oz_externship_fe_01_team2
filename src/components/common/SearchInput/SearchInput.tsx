@@ -1,6 +1,6 @@
+import SearchIcon from '@assets/icons/search.svg'
+import XMarkIcon from '@assets/icons/x_mark.svg'
 import React, { useState } from 'react'
-import SearchIcon from '../../../assets/icons/search.svg'
-import XMarkIcon from '../../../assets/icons/x_mark.svg'
 
 const SearchInput: React.FC = () => {
   const [inputValue, setInputValue] = useState('')

@@ -1,7 +1,7 @@
+import Button from '@components/common/Button'
+import FormInput from '@components/common/FormInput'
+import type { ValidationInput } from '@custom-types/auth'
 import React from 'react'
-import FormInput from '../common/FormInput'
-import Button from '../common/Button'
-import type { ValidationInput } from '../../types/auth'
 
 interface EmailVerificationProps {
   emailValid: ValidationInput

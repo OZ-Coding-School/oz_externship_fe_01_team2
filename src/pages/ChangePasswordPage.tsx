@@ -1,5 +1,5 @@
-import Sidebar from '../components/common/Sidebar'
-import PasswordChangeForm from '../components/myPage/ChangePasswordForm'
+import Sidebar from '@components/common/Sidebar'
+import PasswordChangeForm from '@components/myPage/ChangePasswordForm'
 
 const PasswordChangePage = () => {
   return (

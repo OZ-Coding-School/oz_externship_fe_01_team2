@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import SortIcon from '@assets/icons/arrow-up-down.svg'
+import Avatar from '@components/common/Avatar'
+import MarkdownRenderer from '@components/common/MarkdownEditor/MarkdownRenderer'
+import CommentInput from '@components/qna/CommentInput'
+import CommentList from '@components/qna/CommentList'
+import { cn } from '@utils/cn'
+import { formatRelativeTime } from '@utils/formatRelativeTime'
 import { MessageCircle } from 'lucide-react'
-import SortIcon from '../../assets/icons/arrow-up-down.svg'
-import { cn } from '../../utils/cn'
-import Avatar from '../common/Avatar'
-import MarkdownRenderer from '../common/MarkdownEditor/MarkdownRenderer'
-import CommentInput from './CommentInput'
-import CommentList from './CommentList'
-import { formatRelativeTime } from '../../utils/formatRelativeTime'
+import { useState } from 'react'
 
 interface Comment {
   id: number | string
@@ -37,7 +37,6 @@ interface AnswerCardProps {
 }
 
 function AnswerCard({ answer, canAdopt, onAdopt }: AnswerCardProps) {
-  
   const [comments, setComments] = useState<Comment[]>(answer.comments)
   const [orderByDesc, setOrderByDesc] = useState(true)
 

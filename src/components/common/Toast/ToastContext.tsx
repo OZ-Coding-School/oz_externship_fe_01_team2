@@ -1,5 +1,5 @@
+import type { Toast } from '@custom-types/toast'
 import { createContext } from 'react'
-import type { Toast } from '../../../types/toast'
 
 export interface ToastContextProps {
   show: (toast: Omit<Toast, 'id'>) => void

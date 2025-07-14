@@ -1,5 +1,5 @@
 // src/components/qna/QnaTitleInput.tsx
-import { cn } from '../../utils/cn'
+import { cn } from '@utils/cn'
 
 interface Props {
   value: string

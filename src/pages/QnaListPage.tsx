@@ -1,12 +1,12 @@
-import { useMemo, useState, useEffect } from 'react'
-import QnaSearch from '../components/qna/QnaSearch'
-import QnaTab from '../components/qna/QnaTab'
-import QnaFilterModal from '../components/qna/QnaFilterModal'
-import QnaCard from '../components/qna/QnaCard'
-import { transformQnaData } from '../utils/transformQnaData'
-import { mockQnaListResponse } from '../components/Mocks/MockQnaListResponse'
-import type { CategoryFilter } from '../types/qnaFilters.types'
-import Spinner from '../components/common/Spinner'
+import Spinner from '@components/common/Spinner'
+import { mockQnaListResponse } from '@components/Mocks/MockQnaListResponse'
+import QnaCard from '@components/qna/QnaCard'
+import QnaFilterModal from '@components/qna/QnaFilterModal'
+import QnaSearch from '@components/qna/QnaSearch'
+import QnaTab from '@components/qna/QnaTab'
+import type { CategoryFilter } from '@custom-types/qnaFilters.types'
+import { transformQnaData } from '@utils/transformQnaData'
+import { useEffect, useMemo, useState } from 'react'
 
 // 페이지당 질문 수
 const PAGE_SIZE = 5

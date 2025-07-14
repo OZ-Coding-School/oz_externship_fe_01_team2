@@ -1,6 +1,6 @@
-import Avatar from '../common/Avatar'
-import { cn } from '../../utils/cn'
-import { getFullDate } from '../../utils/getFullDate'
+import Avatar from '@components/common/Avatar'
+import { cn } from '@utils/cn'
+import { getFullDate } from '@utils/getFullDate'
 
 interface CommentItemProps {
   comment: {

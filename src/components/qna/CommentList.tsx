@@ -15,7 +15,7 @@ interface CommentListProps {
   className?: string
 }
 
-function CommentList({ comments =[], className = '' }: CommentListProps) {
+function CommentList({ comments = [], className = '' }: CommentListProps) {
   if (!comments.length) {
     return (
       <div className={className + ' text-gray-400 text-center py-8'}>
