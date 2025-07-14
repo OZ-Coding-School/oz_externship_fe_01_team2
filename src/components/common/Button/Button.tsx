@@ -1,7 +1,7 @@
 //src/components/common/Button/Button.tsx
 import { cn } from '@utils/cn'
-import React from 'react'
 import type { ButtonProps } from './Button.types'
+import { Link } from 'react-router-dom'
 
 const Button = ({
   variant = 'fill',
@@ -10,6 +10,7 @@ const Button = ({
   children,
   onClick,
   type = 'button',
+  to,
 }: ButtonProps) => {
   const variantMap = {
     fill: 'bg-primary text-white hover:bg-primary-600 active:bg-primary-700',
@@ -25,6 +26,22 @@ const Button = ({
       return 'bg-gray-200 text-gray-250 cursor-not-allowed'
     }
     return variantMap[variant] || variantMap.fill
+  }
+
+  if (to) {
+    return (
+      <Link
+        to={to}
+        className={cn(
+          'font-semibold focus:outline-none transition-colors rounded-sm py-3 px-12',
+          getStyles(),
+          disabled ? 'cursor-not-allowed' : 'cursor-pointer',
+          className
+        )}
+      >
+        {children}
+      </Link>
+    )
   }
 
   return (
