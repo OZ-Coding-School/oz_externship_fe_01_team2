@@ -1,8 +1,11 @@
+import { fetchCategories } from '@api/qna/questionApi'
+import type { Category } from '@api/qna/types'
 import rotateIcon from '@assets/icons/rotate-cw.svg'
 import Button from '@components/common/Button/Button'
 import SingleDropdown from '@components/common/SingleDropdown'
-import { CATEGORY, DEFAULT_CATEGORY } from '@components/qna/category'
 import type { CategoryFilter } from '@custom-types/qnaFilters.types'
+import { useToast } from '@hooks/useToast'
+import axios from 'axios'
 import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -12,61 +15,67 @@ type QnaFilterModalProps = {
 }
 
 const QnaFilterModal = ({ onClose, onApply }: QnaFilterModalProps) => {
-  const [main, setMain] = useState(DEFAULT_CATEGORY.main)
-  const [sub, setSub] = useState(DEFAULT_CATEGORY.sub)
-  const [detail, setDetail] = useState(DEFAULT_CATEGORY.detail)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [major, setMajor] = useState<string>('')
+  const [middle, setMiddle] = useState<string>('')
+  const [minor, setMinor] = useState<string>('')
+
+  const toast = useToast()
 
   const [openDropdown, setOpenDropdown] = useState<
-    null | 'main' | 'sub' | 'detail'
+    null | 'major' | 'middle' | 'minor'
   >(null)
-  const toggleDropdown = (key: 'main' | 'sub' | 'detail') => {
+  const toggleDropdown = (key: 'major' | 'middle' | 'minor') => {
     setOpenDropdown((prev) => (prev === key ? null : key))
   }
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchCategories()
+        setCategories(response)
+      } catch (error: unknown) {
+        if (axios.isAxiosError<{ message: string }>(error)) {
+          toast.show({ message: error.message, type: 'error' })
+        }
+      }
+    }
+    fetchData()
     document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = 'auto'
     }
-  }, [])
+  }, [toast])
 
   const resetFilters = () => {
-    setMain(DEFAULT_CATEGORY.main)
-    setSub(DEFAULT_CATEGORY.sub)
-    setDetail(DEFAULT_CATEGORY.detail)
+    setMajor('')
+    setMiddle('')
+    setMinor('')
   }
 
-  const mainOptions = Object.keys(CATEGORY) as (keyof typeof CATEGORY)[]
-  type MainKey = keyof typeof CATEGORY
-  type SubKey = keyof (typeof CATEGORY)[MainKey]
+  const majorOptions = categories.map((cat) => cat.name)
+  const selectedMainCategory = categories.find((cat) => cat.name === major)
 
-  const subOptions =
-    main && (main as MainKey) in CATEGORY
-      ? Object.keys(CATEGORY[main as MainKey])
-      : []
+  const middleOptions =
+    selectedMainCategory?.child_categories?.map((cat) => cat.name) || []
+  const selectedSubCategory = selectedMainCategory?.child_categories?.find(
+    (cat) => cat.name === middle
+  )
 
-  const detailOptions =
-    main &&
-    sub &&
-    (main as MainKey) in CATEGORY &&
-    (sub as SubKey) in CATEGORY[main as MainKey]
-      ? CATEGORY[main as MainKey][sub as SubKey]
-      : []
+  const minorOptions =
+    selectedSubCategory?.child_categories?.map((cat) => cat.name) || []
 
-  const isSubDisabled = main === DEFAULT_CATEGORY.main
-  const isDetailDisabled = sub === DEFAULT_CATEGORY.sub
+  const isSubDisabled = !major
+  const isDetailDisabled = !middle
 
   return (
     <div className="fixed inset-0 z-50 flex">
-      {/* Overlay */}
       <div className="fixed inset-0 bg-[#121212]/60" onClick={onClose} />
 
-      {/* Modal Panel */}
       <div
         className="relative ml-auto w-[580px] h-full bg-white rounded-l-lg shadow-lg flex flex-col px-[46px] pt-[45px]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="w-full flex justify-between items-center mb-[60px]">
           <h2 className="text-[32px] font-semibold text-gray-600">필터</h2>
           <button onClick={onClose}>
@@ -74,7 +83,6 @@ const QnaFilterModal = ({ onClose, onApply }: QnaFilterModalProps) => {
           </button>
         </div>
 
-        {/* Category Filters */}
         <div className="flex flex-col gap-5">
           <div>
             <h3 className="text-lg font-bold text-gray-600 mb-[20px]">
@@ -83,48 +91,47 @@ const QnaFilterModal = ({ onClose, onApply }: QnaFilterModalProps) => {
 
             <div className="w-[600px] flex flex-col gap-4">
               <SingleDropdown
-                options={mainOptions}
+                options={majorOptions}
                 placeholder="대분류"
-                selected={main}
+                selected={major}
                 onChange={(selected) => {
-                  setMain(selected)
-                  setSub(DEFAULT_CATEGORY.sub)
-                  setDetail(DEFAULT_CATEGORY.detail)
+                  setMajor(selected)
+                  setMiddle('')
+                  setMinor('')
                 }}
                 className="w-[488px]"
-                isOpen={openDropdown === 'main'}
-                onToggle={() => toggleDropdown('main')}
+                isOpen={openDropdown === 'major'}
+                onToggle={() => toggleDropdown('major')}
               />
 
               <SingleDropdown
-                options={subOptions}
+                options={middleOptions}
                 placeholder="중분류"
-                selected={sub}
+                selected={middle}
                 onChange={(selected) => {
-                  setSub(selected)
-                  setDetail(DEFAULT_CATEGORY.detail)
+                  setMiddle(selected)
+                  setMinor('')
                 }}
                 disabled={isSubDisabled}
                 className="w-[488px]"
-                isOpen={openDropdown === 'sub'}
-                onToggle={() => toggleDropdown('sub')}
+                isOpen={openDropdown === 'middle'}
+                onToggle={() => toggleDropdown('middle')}
               />
 
               <SingleDropdown
-                options={detailOptions}
+                options={minorOptions}
                 placeholder="소분류"
-                selected={detail}
-                onChange={(selected) => setDetail(selected)}
+                selected={minor}
+                onChange={(selected) => setMinor(selected)}
                 disabled={isDetailDisabled}
                 className="w-[488px]"
-                isOpen={openDropdown === 'detail'}
-                onToggle={() => toggleDropdown('detail')}
+                isOpen={openDropdown === 'minor'}
+                onToggle={() => toggleDropdown('minor')}
               />
             </div>
           </div>
         </div>
 
-        {/* Footer */}
         <div
           className="mt-auto flex items-center justify-center py-[20px] border-t border-gray-200 -mx-[46px]"
           style={{ boxShadow: '0px -2px 16px 0px #A0A0A040' }}
@@ -147,7 +154,7 @@ const QnaFilterModal = ({ onClose, onApply }: QnaFilterModalProps) => {
             variant="fill"
             className="w-[278px] h-[54px] text-[20px] rounded-[4px]"
             onClick={() => {
-              onApply({ main, sub, detail })
+              onApply({ major, middle, minor })
               onClose()
             }}
           >
