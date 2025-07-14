@@ -1,3 +1,4 @@
+import '@styles/markdown.css'
 import { cn } from '@utils/cn'
 import 'highlight.js/styles/github.css'
 import React, { type ComponentProps } from 'react'
@@ -36,7 +37,7 @@ const MarkdownRenderer = ({
     },
   }
   return (
-    <div className={cn(`prose prose-sm max-w-none ${className}`)}>
+    <div className={cn(`prose prose-sm max-w-none markdown-body ${className}`)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight, rehypeRaw]}
