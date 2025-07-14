@@ -22,7 +22,7 @@ interface FindPwModalProps {
   setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const FindPwModal: React.FC<FindPwModalProps> = ({
+const FindPwModal = ({
   isOpen,
   onClose,
   step,
@@ -36,7 +36,7 @@ const FindPwModal: React.FC<FindPwModalProps> = ({
   formatTime,
   codeCheckClicked,
   setCodeCheckClicked,
-}) => {
+}: FindPwModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       {step === 'form' ? (

@@ -6,7 +6,7 @@ interface PreviewProps {
   onImageClick?: (imageId: string) => void
 }
 
-const Preview: React.FC<PreviewProps> = ({ content, onImageClick }) => {
+const Preview = ({ content, onImageClick }: PreviewProps) => {
   const parseInlineMarkdown = (text: string): string => {
     return text
       .replace(/<img([^>]*)>/g, '<img$1>')

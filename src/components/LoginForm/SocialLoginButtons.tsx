@@ -1,12 +1,8 @@
-import React from 'react'
-
 interface SocialLoginButtonsProps {
   className?: string
 }
 
-const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({
-  className,
-}) => {
+const SocialLoginButtons = ({ className }: SocialLoginButtonsProps) => {
   return (
     <div className="flex flex-col gap-[12px] mb-[40px]">
       <button
