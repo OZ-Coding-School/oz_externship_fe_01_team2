@@ -1,9 +1,11 @@
 // src/components/common/MarkdownEditor/MarkdownEditor.tsx
+
 import { Upload, X } from 'lucide-react'
 import React, { useCallback, useRef, useState } from 'react'
 import type { ImageItem, MarkdownEditorProps } from './MarkdownEditor.types'
 import Preview from './Preview/Preview'
 import Toolbar from './Toolbar/Toolbar'
+import { uploadQnaImage } from '@api/qna/uploadImage'
 
 const MarkdownEditor = ({
   value = '',
@@ -24,7 +26,6 @@ const MarkdownEditor = ({
     parseInt(height as string) || 500
   )
   const [isResizing, setIsResizing] = useState(false)
-
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleContentChange = useCallback(
@@ -94,7 +95,7 @@ const MarkdownEditor = ({
         if (textareaRef.current) {
           const textarea = textareaRef.current
           const start = textarea.selectionStart
-          const end = textarea.selectionEnd
+          const end = textareaRef.current.selectionEnd
           const markdown = createImageMarkdown(imageItem)
 
           const newContent =
@@ -118,7 +119,7 @@ const MarkdownEditor = ({
   )
 
   const processImageFiles = useCallback(
-    (files: FileList) => {
+    async (files: FileList) => {
       const currentImageCount = getImageCountInMarkdown()
 
       if (currentImageCount + files.length > 5) {
@@ -128,21 +129,26 @@ const MarkdownEditor = ({
         return
       }
 
-      Array.from(files).forEach((file, index) => {
-        if (!file.type.startsWith('image/')) return
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        if (!file.type.startsWith('image/')) continue
 
-        const imageItem: ImageItem = {
-          id: `img_${Date.now()}_${index}`,
-          file,
-          url: URL.createObjectURL(file),
-          width: 300,
-          height: 200,
+        try {
+          const imageUrl = await uploadQnaImage(file)
+          const imageItem: ImageItem = {
+            id: `img_${Date.now()}_${i}`,
+            file,
+            url: imageUrl,
+            width: 300,
+            height: 200,
+          }
+          setImages((prev) => [...prev, imageItem])
+          updateImageFiles((prev: File[]) => [...prev, file])
+          insertImageMarkdown(imageItem, i)
+        } catch (err) {
+          alert('이미지 업로드에 실패했습니다.')
         }
-
-        setImages((prev) => [...prev, imageItem])
-        updateImageFiles((prev: File[]) => [...prev, file]) // Update the parent component with the new image files
-        insertImageMarkdown(imageItem, index)
-      })
+      }
     },
     [getImageCountInMarkdown, insertImageMarkdown, updateImageFiles]
   )

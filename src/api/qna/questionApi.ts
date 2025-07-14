@@ -1,6 +1,10 @@
 import type { QuestionDetail } from '@custom-types/qnaDetail.ts'
-import { get } from '../../lib/fetcher'
-import type { Category, QuestionRawResponse } from './types.ts'
+import { get, post } from '../../lib/fetcher'
+import type {
+  Category,
+  QuestionRawResponse,
+  CreateQuestionRequest,
+} from './types.ts'
 
 export interface QnaListParams {
   ordering?: string
@@ -18,4 +22,7 @@ export const fetchCategories = () => {
 
 export const fetchQnaDetail = (id: number) => {
   return get<QuestionDetail>(`/qna/questions/${id}/`)
+}
+export const createQuestion = (payload: CreateQuestionRequest) => {
+  return post('/qna/questions/create/', payload)
 }

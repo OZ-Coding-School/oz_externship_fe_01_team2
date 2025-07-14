@@ -1,88 +1,116 @@
 import SingleDropdown from '@components/common/SingleDropdown'
-import { useState } from 'react'
-import { mockCategories } from '../Mocks/MockCategories'
+import { useState, useEffect } from 'react'
+import { fetchCategories } from '@api/qna/questionApi'
+import type { Category } from '@api/qna/types'
 
 interface SelectedCategories {
-  major: string | null
-  middle: string | null
-  minor: string | null
+  major: Category | null
+  middle: Category | null
+  minor: Category | null
 }
 
-export default function QnaCategorySelect() {
-  const [selectedCategories, setSelectedCategories] =
-    useState<SelectedCategories>({
-      major: null,
-      middle: null,
-      minor: null,
-    })
+interface QnaCategorySelectProps {
+  onCategoryChange?: (categoryId: number | null) => void
+}
 
-  // 대분류 옵션
-  const majorOptions = mockCategories.map((item) => item.name)
+export default function QnaCategorySelect({
+  onCategoryChange,
+}: QnaCategorySelectProps) {
+  const [categories, setCategories] = useState<Category[]>([])
+  const [selected, setSelected] = useState<SelectedCategories>({
+    major: null,
+    middle: null,
+    minor: null,
+  })
 
-  // 중분류 옵션 (추가!)
-  let middleOptions: string[] = []
-  if (selectedCategories.major) {
-    const selectedMajor = mockCategories.find(
-      (item) => item.name === selectedCategories.major
-    )
-    if (selectedMajor) {
-      middleOptions = selectedMajor.child_categories.map((child) => child.name)
-    }
+  const [openDropdown, setOpenDropdown] = useState<
+    'major' | 'middle' | 'minor' | null
+  >(null)
+
+  useEffect(() => {
+    fetchCategories().then((data) => setCategories(data))
+  }, [])
+
+  const majorOptions = categories.map((item) => ({
+    id: item.id,
+    name: item.name,
+  }))
+
+  let middleOptions: { id: number; name: string }[] = []
+  if (selected.major) {
+    middleOptions =
+      selected.major.child_categories?.map((child) => ({
+        id: child.id,
+        name: child.name,
+      })) ?? []
   }
 
-  // 소분류 옵션 (추가!)
-  let minorOptions: string[] = []
-  if (selectedCategories.middle) {
-    const selectedMajor = mockCategories.find(
-      (item) => item.name === selectedCategories.major
-    )
-    if (selectedMajor) {
-      const selectedMiddle = selectedMajor.child_categories.find(
-        (child) => child.name === selectedCategories.middle
-      )
-      if (selectedMiddle) {
-        minorOptions = selectedMiddle.child_categories.map(
-          (child) => child.name
-        )
-      }
-    }
+  let minorOptions: { id: number; name: string }[] = []
+  if (selected.middle) {
+    minorOptions =
+      selected.middle.child_categories?.map((child) => ({
+        id: child.id,
+        name: child.name,
+      })) ?? []
   }
+
+  const toggleDropdown = (type: 'major' | 'middle' | 'minor') => {
+    setOpenDropdown((prev) => (prev === type ? null : type))
+  }
+
+  // 👇 각 선택 함수 추가!
+  const handleMajor = (name: string) => {
+    const major = categories.find((cat) => cat.name === name) || null
+    setSelected({ major, middle: null, minor: null })
+    setOpenDropdown(null)
+  }
+  const handleMiddle = (name: string) => {
+    const middle =
+      selected.major?.child_categories?.find((cat) => cat.name === name) || null
+    setSelected((prev) => ({ ...prev, middle, minor: null }))
+    setOpenDropdown(null)
+  }
+  const handleMinor = (name: string) => {
+    const minor =
+      selected.middle?.child_categories?.find((cat) => cat.name === name) ||
+      null
+    setSelected((prev) => ({ ...prev, minor }))
+    setOpenDropdown(null)
+  }
+
+  useEffect(() => {
+    if (onCategoryChange) {
+      onCategoryChange(selected.minor ? selected.minor.id : null)
+    }
+  }, [selected.minor, onCategoryChange])
 
   return (
     <div className="grid grid-cols-3 gap-4 mb-6">
       <SingleDropdown
-        options={majorOptions}
+        options={majorOptions.map((c) => c.name)}
         placeholder="대분류 선택"
-        onChange={(selected) => {
-          setSelectedCategories({
-            major: selected,
-            middle: null,
-            minor: null,
-          })
-        }}
+        isOpen={openDropdown === 'major'}
+        onToggle={() => toggleDropdown('major')}
+        selected={selected.major?.name ?? ''}
+        onChange={handleMajor}
       />
       <SingleDropdown
-        options={middleOptions}
+        options={middleOptions.map((c) => c.name)}
         placeholder="중분류 선택"
-        onChange={(selected) => {
-          setSelectedCategories((prevCategories) => ({
-            ...prevCategories,
-            middle: selected,
-            minor: null,
-          }))
-        }}
-        disabled={!selectedCategories.major}
+        isOpen={openDropdown === 'middle'}
+        onToggle={() => toggleDropdown('middle')}
+        selected={selected.middle?.name ?? ''}
+        onChange={handleMiddle}
+        disabled={!selected.major}
       />
       <SingleDropdown
-        options={minorOptions}
+        options={minorOptions.map((c) => c.name)}
         placeholder="소분류 선택"
-        onChange={(selected) => {
-          setSelectedCategories((prevCategories) => ({
-            ...prevCategories,
-            minor: selected,
-          }))
-        }}
-        disabled={!selectedCategories.middle}
+        isOpen={openDropdown === 'minor'}
+        onToggle={() => toggleDropdown('minor')}
+        selected={selected.minor?.name ?? ''}
+        onChange={handleMinor}
+        disabled={!selected.middle}
       />
     </div>
   )
