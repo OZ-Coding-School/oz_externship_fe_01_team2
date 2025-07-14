@@ -31,3 +31,17 @@ export interface CreateQuestionRequest {
   title: string
   content: string
 }
+export interface QnaListParams {
+  ordering?: string
+  page?: number
+  page_size?: number
+  search?: string
+}
+export interface AdoptAnswerParams {
+  answer_id: number
+  question_id: number
+}
+
+export interface AdoptAnswerResponse {
+  message: string
+}
