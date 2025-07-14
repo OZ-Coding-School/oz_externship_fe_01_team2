@@ -1,23 +1,29 @@
 import Avatar from '@components/common/Avatar'
 import Button from '@components/common/Button'
 import MarkdownEditor from '@components/common/MarkdownEditor'
-import type { User } from '@custom-types/auth'
 import { useToast } from '@hooks/useToast'
+import { useAuthStore } from '@store/authStore'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 
 interface AnswerFormProps {
-  user: User
   questionId: number
 }
 
-const AnswerForm = ({ user, questionId }: AnswerFormProps) => {
+const AnswerForm = ({ questionId }: AnswerFormProps) => {
+  const { user } = useAuthStore()
   const [content, setContent] = useState('')
   const [imageFiles, setImageFiles] = useState([] as File[])
   const [isReplying, setIsReplying] = useState(false)
   const toast = useToast()
 
   const navigate = useNavigate()
+
+  if (!user) {
+    return null
+  }
+  const { nickname, profile_image_url: profileUrl } = user
+
   // 답변 작성 후 저장하는 함수
   const handleReset = () => {
     setContent('')
@@ -35,16 +41,6 @@ const AnswerForm = ({ user, questionId }: AnswerFormProps) => {
         toast.show({ message: '답변 내용을 입력해주세요.', type: 'error' })
         return
       }
-      // const response = await axios.post(
-      //   `http://54.180.237.77/api/v1/qna/questions/${questionId}/answers/`,
-      //   formData,
-      //   {
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //       accept: 'application/json',
-      //     },
-      //   }
-      // )
       handleReset()
       toast.show({ message: '답변이 저장되었습니다!', type: 'success' })
       navigate(`/qna/${questionId}`) // 답변 저장 후 해당 질문 페이지로 이동
@@ -56,9 +52,9 @@ const AnswerForm = ({ user, questionId }: AnswerFormProps) => {
     <div className="border border-gray-250 rounded-3xl mb-25">
       <div className="flex items-center justify-between py-10 px-9">
         <div className="flex items-center gap-3">
-          <Avatar name={user.name} profileUrl={user.profileUrl} />
+          <Avatar name={nickname} profileUrl={profileUrl} />
           <div>
-            <div className="text-primary text-xs">{user.name}님, </div>
+            <div className="text-primary text-xs">{nickname}님, </div>
             <div className="text-lg font-semibold text-gray-800">
               정보를 공유해 주세요.
             </div>

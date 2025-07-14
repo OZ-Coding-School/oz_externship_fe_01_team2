@@ -1,3 +1,4 @@
+import type { QuestionDetail } from '@custom-types/qnaDetail.ts'
 import { get } from '../../lib/fetcher'
 import type { Category, QuestionRawResponse } from './types.ts'
 
@@ -13,4 +14,8 @@ export const fetchQnaList = (params: QnaListParams) => {
 
 export const fetchCategories = () => {
   return get<Category[]>('/qna/questions/categories/')
+}
+
+export const fetchQnaDetail = (id: number) => {
+  return get<QuestionDetail>(`/qna/questions/${id}/`)
 }
