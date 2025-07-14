@@ -4,6 +4,8 @@ import Button from '../common/Button'
 import { Check } from 'lucide-react'
 import SingleDropdown from '../common/SingleDropdown'
 import { useState } from 'react'
+import { useToast } from '@hooks/useToast'
+import axios, { AxiosError } from 'axios'
 
 interface RegisterModalProps {
   isOpen: boolean
@@ -17,7 +19,7 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
     'IT스타트업 실무형 사업 개발자(BD) 부트캠프',
     '스타트업 맞춤형 프로덕트 디자이너',
   ]
-
+  const toast = useToast()
   const batchOptions = ['10기', '11기', '12기', '13기', '14기', '15기']
 
   const [selectedCourse, setSelectedCourse] = useState('')
@@ -26,14 +28,52 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
   const [isCourseOpen, setIsCourseOpen] = useState(false)
   const [isBatchOpen, setIsBatchOpen] = useState(false)
 
+  const accessToken = localStorage.getItem('accessToken')
+
   const handleCourseSelect = (value: string) => {
     setSelectedCourse(value)
-    setIsCourseOpen(false) // 선택하면 닫기
+    setIsCourseOpen(false)
   }
 
   const handleBatchSelect = (value: string) => {
     setSelectedBatch(value)
     setIsBatchOpen(false)
+  }
+
+  const handleRegister = async () => {
+    try {
+      const generationNumber = parseInt(selectedBatch.replace('기', ''), 10)
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/users/student/enrollments/`,
+        { generation: generationNumber },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+
+      if (response.status === 201) {
+        toast.show({
+          message: '수강신청에 성공했습니다!',
+          type: 'success',
+        })
+        onClose()
+      }
+    } catch (err) {
+      const error = err as AxiosError
+
+      if (error.response?.status === 400) {
+        toast.show({ message: '이미 신청한 기수입니다.', type: 'error' })
+      } else {
+        toast.show({
+          message: '수강신청에 실패했습니다. 다시 시도해 주세요.',
+          type: 'error',
+        })
+      }
+    }
   }
 
   return (
@@ -81,6 +121,7 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
           variant={selectedCourse && selectedBatch ? 'fill' : 'ghost'}
           className="w-[348px] h-[52px] font-normal"
           disabled={!(selectedCourse && selectedBatch)}
+          onClick={handleRegister}
         >
           등록하기
         </Button>
