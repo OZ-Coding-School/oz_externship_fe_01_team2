@@ -1,9 +1,9 @@
 import type { QuestionDetail } from '@custom-types/qnaDetail.ts'
-import { get, post } from '../../lib/fetcher'
+import { get, post } from '@lib/fetcher'
 import type {
   Category,
-  QuestionRawResponse,
   CreateQuestionRequest,
+  QuestionRawResponse,
 } from './types.ts'
 
 export interface QnaListParams {
