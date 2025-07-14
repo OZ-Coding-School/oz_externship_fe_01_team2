@@ -1,26 +1,51 @@
 import { ChevronRight, Link } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import UserDefaultImage from '../assets/images/common/img_user_default.png'
 import Avatar from '../components/common/Avatar'
-import { mockQnaDetail } from '../components/Mocks/MockQnaDetail'
 import AIAnswer from '../components/qna/AIAnswer'
 import AnswerCard from '../components/qna/AnswerCard'
 import AnswerForm from '../components/qna/AnswerForm'
 import { useToast } from '../hooks/useToast'
 import { formatRelativeTime } from '../utils/formatRelativeTime'
+import { useParams } from 'react-router'
+import { getQuestionDetail } from '../api/qnaQuestions'
+import MarkdownRenderer from '../components/common/MarkdownEditor/MarkdownRenderer'
 
 const QnaDetailPage = () => {
-  const [user] = useState({
-    id: 7,
-    name: '오즈오즈',
-    nickname: 'oz_student',
-    profileUrl: UserDefaultImage,
-    role: 'Student',
-  })
+  const { id } = useParams() // URL에서 질문 ID 가져오기
+  const [user] = useState(null) // 일단 null로 설정
   const [copied, setCopied] = useState(false)
-  const [qnaData, setQnaData] = useState(mockQnaDetail)
+  const [qnaData, setQnaData] = useState(null) // 초기값 null
+  const [isLoading, setIsLoading] = useState(false)
 
   const toast = useToast()
+
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true)
+      getQuestionDetail(Number(id))
+        .then((data) => {
+          console.log('질문 상세 데이터:', data)
+          setQnaData(data)
+        })
+        .catch((error) => {
+          console.error('질문 조회 실패:', error)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+  }, [id, toast])
+
+  if (isLoading || !qnaData) {
+    return (
+      <div className="bg-white min-h-screen px-6 py-10 max-w-4xl mx-auto">
+        <div className="text-center py-20">
+          <div className="text-lg">질문을 불러오는 중...</div>
+        </div>
+      </div>
+    )
+  }
 
   const handleShare = async () => {
     try {
@@ -36,9 +61,9 @@ const QnaDetailPage = () => {
   }
 
   const canAdopt =
-    user.role === 'Student' &&
-    user.id === qnaData.author.id &&
-    !qnaData.answers.some((a) => a.is_adopted)
+    user?.role === 'Student' &&
+    user?.id === qnaData?.author?.id &&
+    !qnaData?.answers?.some((a) => a.is_adopted)
 
   const handleAdopt = (answerId: number | string) => {
     setQnaData((prev) => ({
@@ -54,11 +79,11 @@ const QnaDetailPage = () => {
     <div className="bg-white min-h-screen px-6 py-10 max-w-4xl mx-auto">
       {/* 경로 네비게이션 */}
       <nav className="text-xl font-bold mb-5 flex items-center text-primary">
-        <span>{qnaData.category.depth_1}</span>
+        <span>{qnaData.category.major}</span>
         <ChevronRight />
-        <span>{qnaData.category.depth_2}</span>
+        <span>{qnaData.category.middle}</span>
         <ChevronRight />
-        <span>{qnaData.category.depth_3}</span>
+        <span>{qnaData.category.minor}</span>
       </nav>
 
       {/* 질문 */}
@@ -82,7 +107,13 @@ const QnaDetailPage = () => {
             조회 {qnaData.view_count} · {formatRelativeTime(qnaData.created_at)}
           </div>
         </div>
-        <p className="pt-10 text-body-rg pb-15">{qnaData.content}</p>
+        {/* <p className="pt-10 text-body-rg pb-15">{qnaData.content}</p> */}
+        <div className="pt-10 pb-15">
+          <MarkdownRenderer
+            content={qnaData.content}
+            className="text-body-rg"
+          />
+        </div>
         <AIAnswer question={qnaData.content} />
         <div className="flex justify-end">
           <button

@@ -3,7 +3,7 @@ import { X } from 'lucide-react'
 import SingleDropdown from '../common/SingleDropdown'
 import Button from '../common/Button/Button'
 import rotateIcon from '../../assets/icons/rotate-cw.svg'
-import { CATEGORY, DEFAULT_CATEGORY } from '../qna/category'
+import { fetchCategories } from '../../api/qnaCategory'
 import type { CategoryFilter } from '../../../src/types/qnaFilters.types'
 
 type Props = {
@@ -11,50 +11,119 @@ type Props = {
   onApply: (filters: CategoryFilter) => void
 }
 
-const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
-  const [main, setMain] = useState(DEFAULT_CATEGORY.main)
-  const [sub, setSub] = useState(DEFAULT_CATEGORY.sub)
-  const [detail, setDetail] = useState(DEFAULT_CATEGORY.detail)
+interface Category {
+  id: number
+  name: string
+  type: 'major' | 'middle' | 'minor'
+  parent_category_id: number | null
+}
 
+const INITIAL_FILTER = {
+  major: '대분류',
+  middle: '중분류',
+  minor: '소분류',
+}
+
+const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
+  const [filters, setFilters] = useState(INITIAL_FILTER)
+  const [categories, setCategories] = useState<Category[]>([])
   const [openDropdown, setOpenDropdown] = useState<
-    null | 'main' | 'sub' | 'detail'
+    keyof typeof INITIAL_FILTER | null
   >(null)
-  const toggleDropdown = (key: 'main' | 'sub' | 'detail') => {
-    setOpenDropdown((prev) => (prev === key ? null : key))
-  }
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    loadCategories()
     document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = 'auto'
     }
   }, [])
 
-  const resetFilters = () => {
-    setMain(DEFAULT_CATEGORY.main)
-    setSub(DEFAULT_CATEGORY.sub)
-    setDetail(DEFAULT_CATEGORY.detail)
+  const loadCategories = async () => {
+    try {
+      const data = await fetchCategories()
+      if (Array.isArray(data)) {
+        const transformedCategories = data.map((item) => ({
+          id: item.category_id,
+          name: item.category_name,
+          type: item.category_type as Category['type'],
+          parent_category_id: item.parent_category_id,
+        }))
+        setCategories(transformedCategories)
+      }
+    } catch (error) {
+      console.error('카테고리 로딩 실패:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+  const getCategoryOptions = (type: Category['type'], parentName?: string) => {
+    if (type === 'major') {
+      return categories
+        .filter((cat) => cat.type === 'major')
+        .map((cat) => cat.name)
+    }
+
+    if (!parentName) return []
+
+    const parent = categories.find((cat) => cat.name === parentName)
+    if (!parent) return []
+
+    return categories
+      .filter(
+        (cat) => cat.type === type && cat.parent_category_id === parent.id
+      )
+      .map((cat) => cat.name)
   }
 
-  const mainOptions = Object.keys(CATEGORY) as (keyof typeof CATEGORY)[]
-  type MainKey = keyof typeof CATEGORY
-  type SubKey = keyof (typeof CATEGORY)[MainKey]
+  const updateFilter = (key: keyof CategoryFilter, value: string) => {
+    const newFilters = { ...filters, [key]: value }
 
-  const subOptions =
-    main && (main as MainKey) in CATEGORY
-      ? Object.keys(CATEGORY[main as MainKey])
-      : []
+    // 상위 카테고리 변경 시 하위 카테고리 초기화
+    if (key === 'major') {
+      newFilters.middle = INITIAL_FILTER.middle
+      newFilters.minor = INITIAL_FILTER.minor
+    } else if (key === 'middle') {
+      newFilters.minor = INITIAL_FILTER.minor
+    }
 
-  const detailOptions =
-    main &&
-    sub &&
-    (main as MainKey) in CATEGORY &&
-    (sub as SubKey) in CATEGORY[main as MainKey]
-      ? CATEGORY[main as MainKey][sub as SubKey]
-      : []
+    setFilters(newFilters)
+    setOpenDropdown(null)
+  }
 
-  const isSubDisabled = main === DEFAULT_CATEGORY.main
-  const isDetailDisabled = sub === DEFAULT_CATEGORY.sub
+  // 드롭다운 토글
+  const toggleDropdown = (key: keyof CategoryFilter) => {
+    setOpenDropdown((prev) => (prev === key ? null : key))
+  }
+
+  // 필터 초기화
+  const resetFilters = () => {
+    setFilters(INITIAL_FILTER)
+  }
+
+  // 필터 적용
+  const handleApply = () => {
+    onApply(filters)
+    onClose()
+  }
+
+  // 로딩 화면
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-50 flex">
+        <div className="fixed inset-0 bg-black/60" onClick={onClose} />
+        <div className="relative ml-auto w-[580px] h-full bg-white rounded-l-lg shadow-lg flex items-center justify-center">
+          <div className="text-lg text-gray-600">카테고리 로딩 중...</div>
+        </div>
+      </div>
+    )
+  }
+
+  // 옵션 데이터
+  const majorOptions = getCategoryOptions('major')
+  const middleOptions = getCategoryOptions('middle', filters.major)
+  const minorOptions = getCategoryOptions('minor', filters.middle)
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -83,42 +152,35 @@ const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
 
             <div className="w-[600px] flex flex-col gap-4">
               <SingleDropdown
-                options={mainOptions}
+                options={majorOptions}
                 placeholder="대분류"
-                selected={main}
-                onChange={(selected) => {
-                  setMain(selected)
-                  setSub(DEFAULT_CATEGORY.sub)
-                  setDetail(DEFAULT_CATEGORY.detail)
-                }}
-                className="w-[488px]"
-                isOpen={openDropdown === 'main'}
-                onToggle={() => toggleDropdown('main')}
+                selected={filters.major}
+                onChange={(value) => updateFilter('major', value)}
+                className="w-full max-w-[488px]"
+                isOpen={openDropdown === 'major'}
+                onToggle={() => toggleDropdown('major')}
               />
 
               <SingleDropdown
-                options={subOptions}
+                options={middleOptions}
                 placeholder="중분류"
-                selected={sub}
-                onChange={(selected) => {
-                  setSub(selected)
-                  setDetail(DEFAULT_CATEGORY.detail)
-                }}
-                disabled={isSubDisabled}
-                className="w-[488px]"
-                isOpen={openDropdown === 'sub'}
-                onToggle={() => toggleDropdown('sub')}
+                selected={filters.middle}
+                onChange={(value) => updateFilter('middle', value)}
+                disabled={filters.major === INITIAL_FILTER.major}
+                className="w-full max-w-[488px]"
+                isOpen={openDropdown === 'middle'}
+                onToggle={() => toggleDropdown('middle')}
               />
 
               <SingleDropdown
-                options={detailOptions}
+                options={minorOptions}
                 placeholder="소분류"
-                selected={detail}
-                onChange={(selected) => setDetail(selected)}
-                disabled={isDetailDisabled}
-                className="w-[488px]"
-                isOpen={openDropdown === 'detail'}
-                onToggle={() => toggleDropdown('detail')}
+                selected={filters.minor}
+                onChange={(value) => updateFilter('minor', value)}
+                disabled={filters.middle === INITIAL_FILTER.middle}
+                className="w-full max-w-[488px]"
+                isOpen={openDropdown === 'minor'}
+                onToggle={() => toggleDropdown('minor')}
               />
             </div>
           </div>
@@ -146,14 +208,9 @@ const QnaFilterModal: React.FC<Props> = ({ onClose, onApply }) => {
           <Button
             variant="fill"
             className="w-[278px] h-[54px] text-[20px] rounded-[4px]"
-            onClick={() => {
-              onApply({ main, sub, detail })
-              onClose()
-            }}
+            onClick={handleApply}
           >
-            <div className="font-bold flex items-center justify-center gap-2 cursor-pointer">
-              필터 적용하기
-            </div>
+            필터 적용하기
           </Button>
         </div>
       </div>

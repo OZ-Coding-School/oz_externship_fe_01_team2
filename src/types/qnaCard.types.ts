@@ -8,9 +8,9 @@ export type QuestionCard = {
     profile_image_url: string
   }
   category: {
-    depth_1: string
-    depth_2: string
-    depth_3: string
+    major: string
+    middle: string
+    minor: string
   }
   answer_count: number
   view_count: number
@@ -22,9 +22,11 @@ export type FlatQuestionCard = {
   id: number
   title: string
   content: string
-  category: string // depth_1
-  subCategory: string // depth_2
-  language: string // depth_3
+  category: {
+    major: string
+    middle: string
+    minor: string
+  }
   answerCount: number
   viewCount: number
   nickname: string

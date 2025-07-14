@@ -65,6 +65,7 @@ const QnaSearch = ({ query, setQuery }: Props) => {
       </div>
 
       <Button
+        to="/qna/create"
         variant="fill"
         className="w-[126px] h-[48px] text-[16px] rounded-[4px] flex items-center justify-center gap-2"
         onClick={() => console.log('질문하기 클릭')}

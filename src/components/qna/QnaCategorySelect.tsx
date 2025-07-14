@@ -34,10 +34,7 @@ export default function QnaCategorySelect({
   >(null)
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token')
-    if (!token) return
-
-    fetchCategories(token).then((data) => {
+    fetchCategories().then((data) => {
       if (!Array.isArray(data)) return
 
       const transformedCategories = data.map(
@@ -58,26 +55,20 @@ export default function QnaCategorySelect({
     })
   }, [])
 
-  const findCategoryIdByName = (categoryName: string | null): number | null => {
-    if (!categoryName) return null
-    const category = categories.find((c) => c.name === categoryName)
-    return category ? category.id : null
-  }
-
   const getChildCategoryNames = (
     parentCategoryName: string | null,
     childType: 'middle' | 'minor'
   ): string[] => {
     if (!parentCategoryName) return []
 
-    const parentId = findCategoryIdByName(parentCategoryName)
-    if (!parentId) return []
+    const parentCategory = categories.find((c) => c.name === parentCategoryName)
+    if (!parentCategory) return []
 
     return categories
       .filter(
         (category) =>
           category.type === childType &&
-          category.parent_category_id === parentId
+          category.parent_category_id === parentCategory.id
       )
       .map((category) => category.name)
   }
@@ -92,9 +83,15 @@ export default function QnaCategorySelect({
   )
   const minorOptions = getChildCategoryNames(selectedCategories.middle, 'minor')
 
-
   //여기 잘 모르겠어요
   useEffect(() => {
+    const findCategoryIdByName = (
+      categoryName: string | null
+    ): number | null => {
+      if (!categoryName) return null
+      const category = categories.find((c) => c.name === categoryName)
+      return category ? category.id : null
+    }
     const selectedMinorCategoryId = findCategoryIdByName(
       selectedCategories.minor
     )

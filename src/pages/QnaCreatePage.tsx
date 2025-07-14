@@ -4,7 +4,6 @@ import QnaCategorySelect from '../components/qna/QnaCategorySelect'
 import MarkdownEditor from '../components/common/MarkdownEditor'
 import QnaTitleInput from '../components/qna/QnaTitleInput'
 import Button from '../components/common/Button'
-import Modal from '../components/common/Modal'
 import { useToast } from '../hooks/useToast'
 import { createQuestion } from '../api/qnaQuestions'
 
@@ -16,7 +15,6 @@ export default function QnaCreatePage() {
     null
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showModal, setShowModal] = useState(false)
 
   const navigate = useNavigate()
   const toast = useToast()
@@ -24,24 +22,11 @@ export default function QnaCreatePage() {
   const isSubmitDisabled = !selectedCategoryId || !title.trim() || isSubmitting
 
   const handleSubmit = async () => {
-    if (!content.trim()) {
-      setShowModal(true)
-      return
-    }
-
     setIsSubmitting(true)
 
     try {
-      const token = localStorage.getItem('access_token')
-      if (!token) {
-        toast.show({ message: '로그인이 필요합니다.', type: 'error' })
-        navigate('/login')
-        return
-      }
-
       // FormData로 질문 등록
       const result = await createQuestion(
-        token,
         selectedCategoryId!,
         title.trim(),
         content.trim(),
@@ -100,23 +85,6 @@ export default function QnaCreatePage() {
             {isSubmitting ? '등록 중...' : '등록하기'}
           </Button>
         </div>
-
-        {/* 질문내용 없을 때 모달 */}
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <div className="text-left">
-            <p className="text-lg text-gray-800 mb-12 leading-relaxed">
-              질문 내용을 입력해 주세요.
-            </p>
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowModal(false)}
-                className="bg-primary text-white font-semibold py-3 px-8 rounded-full hover:bg-primary-600 transition-colors"
-              >
-                확인
-              </button>
-            </div>
-          </div>
-        </Modal>
       </div>
     </div>
   )

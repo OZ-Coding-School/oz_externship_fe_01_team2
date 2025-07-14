@@ -1,8 +1,7 @@
-import axios from 'axios'
+import { get, post } from '../lib/fetcher'
 
 // 질문 등록 API (이미지 있든 없든 FormData로 통일)
 export async function createQuestion(
-  token: string,
   categoryId: number,
   title: string,
   content: string,
@@ -18,15 +17,24 @@ export async function createQuestion(
     formData.append('images', file)
   })
 
-  const res = await axios.post(
-    'http://54.180.237.77/api/v1/qna/questions/create/',
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        // Content-Type은 FormData 사용 시 자동으로 설정됨 (multipart/form-data)
-      },
-    }
-  )
-  return res.data
+  const response = await post('/qna/questions/create/', formData, {
+    headers: { 'Content-Type': undefined },
+  })
+
+  return response.data
+}
+
+export async function getQuestionDetail(questionId: number) {
+  const response = await get(`/qna/questions/${questionId}/`)
+  return response.data
+}
+
+export async function getQuestionList(params?: {
+  page?: number
+  search?: string
+  category?: string
+  ordering?: string
+}) {
+  const response = await get('/qna/questions/', { params })
+  return response.data
 }

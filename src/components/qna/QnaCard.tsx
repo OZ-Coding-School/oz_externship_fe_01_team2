@@ -18,9 +18,7 @@ const QnaCard = ({ question, query = '' }: Props) => {
     id,
     title,
     content,
-    category,
-    subCategory,
-    language,
+    category: { major, middle, minor },
     nickname,
     time,
     thumbnail,
@@ -46,11 +44,11 @@ const QnaCard = ({ question, query = '' }: Props) => {
         <div className="flex justify-between">
           <div className="flex-1 pr-5">
             <div className="font-medium text-gray-600 text-xs mb-5">
-              <span>{category}</span>
+              <span>{major}</span>
               <span className="mx-1">&gt;</span>
-              <span>{subCategory}</span>
+              <span>{middle}</span>
               <span className="mx-1">&gt;</span>
-              <span className="border-b border-gray-400 pb-px">{language}</span>
+              <span className="border-b border-gray-400 pb-px">{minor}</span>
             </div>
 
             <h2 className="text-headline-sb text-gray-600 mb-5 line-clamp-2">

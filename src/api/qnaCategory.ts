@@ -1,9 +1,6 @@
-import axios from 'axios'
+import { get } from '../lib/fetcher'
 
-export async function fetchCategories(token: string) {
-  const res = await axios.get(
-    'http://54.180.237.77/api/v1/qna/admin/categories/list/',
-    { headers: { Authorization: `Bearer ${token}` } }
-  )
-  return res.data || []
+export async function fetchCategories() {
+  const response = await get('/qna/admin/categories/list/')
+  return response.data || []
 }
