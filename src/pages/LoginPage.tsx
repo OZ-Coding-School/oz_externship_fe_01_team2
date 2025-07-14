@@ -182,7 +182,7 @@ export default function LoginPage() {
         </form>
         {modalType === 'withdrawn' && (
           <WithdrawnAccountModal
-            isOpen={true}
+            isOpen
             onClose={() => setModalType(null)}
             onRecoverClick={() => {
               // 모달 전환 보장
@@ -193,7 +193,7 @@ export default function LoginPage() {
 
         {modalType === 'recover' && (
           <RecoverAccountModal
-            isOpen={true}
+            isOpen
             onClose={() => setModalType(null)}
             step={findPwStep}
             emailValid={emailValid}

@@ -37,7 +37,6 @@ interface AnswerCardProps {
 }
 
 function AnswerCard({ answer, canAdopt, onAdopt }: AnswerCardProps) {
-  
   const [comments, setComments] = useState<Comment[]>(answer.comments)
   const [orderByDesc, setOrderByDesc] = useState(true)
 
