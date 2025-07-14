@@ -1,8 +1,8 @@
+import pencilIcon from '@assets/icons/pencil.svg'
+import searchIcon from '@assets/icons/search.svg'
+import clearIcon from '@assets/icons/x_mark.svg'
+import Button from '@components/common/Button/Button'
 import { useRef, useState } from 'react'
-import searchIcon from '../../assets/icons/search.svg'
-import clearIcon from '../../assets/icons/x_mark.svg'
-import pencilIcon from '../../assets/icons/pencil.svg'
-import Button from '../common/Button/Button'
 
 type Props = {
   query: string
@@ -67,7 +67,7 @@ const QnaSearch = ({ query, setQuery }: Props) => {
       <Button
         variant="fill"
         className="w-[126px] h-[48px] text-[16px] rounded-[4px] flex items-center justify-center gap-2"
-        onClick={() => console.log('질문하기 클릭')}
+        onClick={() => {}}
       >
         <img src={pencilIcon} alt="질문하기" className="w-[20px] h-[20px]" />
         <span className="whitespace-nowrap">질문하기</span>

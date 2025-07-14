@@ -1,13 +1,13 @@
+import UserProfileApi from '@api/user-profile/api'
+import CamaraIcon from '@assets/icons/Camera.svg'
+import userAvatar from '@assets/images/common/img_user_default.png'
+import Avatar from '@components/common/Avatar'
+import Button from '@components/common/Button/Button'
+import FormInput from '@components/common/FormInput/FormInput'
+import Sidebar from '@components/common/Sidebar'
+import type { UserProfile } from '@custom-types/UserProfile.type'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Sidebar from '../components/common/Sidebar'
-import Button from '../components/common/Button/Button'
-import userAvatar from '../assets/images/common/img_user_default.png'
-import Avatar from '../components/common/Avatar'
-import CamaraIcon from '../assets/icons/Camera.svg'
-import FormInput from '../components/common/FormInput/FormInput'
-import type { UserProfile } from '../types/UserProfile.type'
-import UserProfileApi from '../api/user-profile/api'
 
 const MypageEdit = () => {
   const navigate = useNavigate()
@@ -40,6 +40,7 @@ const MypageEdit = () => {
         const data = await UserProfileApi.getUserProfile()
         setUserData(data)
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('프로필 정보를 불러오는 데 실패했습니다.', error)
       }
     }
@@ -94,6 +95,7 @@ const MypageEdit = () => {
       alert('저장되었습니다!')
       navigate(-1)
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('저장 중 오류 발생:', error)
       alert('저장에 실패했습니다.')
     }

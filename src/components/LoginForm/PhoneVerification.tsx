@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import FormInput from '../common/FormInput'
-import Button from '../common/Button'
-import type { ValidationInput } from '../../types/auth'
+import Button from '@components/common/Button'
+import FormInput from '@components/common/FormInput'
+import type { ValidationInput } from '@custom-types/auth'
+import { useToast } from '@hooks/useToast'
 import axios from 'axios'
-import { useToast } from '../../hooks/useToast'
+import React, { useState } from 'react'
 
 interface PhoneVerificationProps {
   phoneValid: ValidationInput
@@ -25,7 +25,6 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({
   const [verifying, setVerifying] = useState(false)
   const [sendClicked, setSendClicked] = useState(false)
   const [verifyClicked, setVerifyClicked] = useState(false)
-  console.log(sending, sendClicked)
   const handleVerifyCode = async () => {
     if (!phoneValid.isValid || !codeValid.isValid || verifyClicked) return
 
@@ -39,7 +38,6 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({
       setVerifyClicked(true)
       onVerifySuccess()
     } catch (err) {
-      console.error(err)
       toast.show({
         type: 'error',
         message: '인증번호가 올바르지 않거나 만료되었습니다.',
@@ -71,12 +69,13 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({
       })
       toast.show({ type: 'success', message: '인증번호가 발송되었습니다.' })
       setSendClicked(true)
-    } catch (error) {
-      console.error(error)
-      toast.show({
-        type: 'error',
-        message: '인증번호 전송에 실패했습니다.',
-      })
+    } catch (error: unknown) {
+      if (axios.isAxiosError<{ message: string }>(error)) {
+        toast.show({
+          type: 'error',
+          message: '인증번호 전송에 실패했습니다.',
+        })
+      }
     } finally {
       setSending(false)
     }

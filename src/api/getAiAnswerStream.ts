@@ -42,6 +42,7 @@ export async function getAiAnswerStream(
             onChunk(content)
           }
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.error('JSON 파싱 오류:', err, line)
         }
       }

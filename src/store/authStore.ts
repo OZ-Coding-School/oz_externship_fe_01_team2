@@ -1,7 +1,7 @@
+import AuthApi from '@api/auth/api'
+import type { EmailLoginRequest, User } from '@api/auth/types'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { User, EmailLoginRequest } from '../api/auth/types'
-import AuthApi from '../api/auth/api'
 
 interface AuthState {
   // 상태
@@ -75,8 +75,8 @@ export const useAuthStore = create<AuthState>()(
           set({ accessToken: response.access })
           return true
         } catch (error) {
-          console.error('토큰 갱신 실패:', error)
-          // 토큰 갱신 실패 시 로그아웃 처리
+          // eslint-disable-next-line no-console
+          console.error(`[ERROR] ${error ?? ''}`)
           set({
             user: null,
             accessToken: null,

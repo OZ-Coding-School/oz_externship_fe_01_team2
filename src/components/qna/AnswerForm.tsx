@@ -1,9 +1,10 @@
+import Avatar from '@components/common/Avatar'
+import Button from '@components/common/Button'
+import MarkdownEditor from '@components/common/MarkdownEditor'
+import type { User } from '@custom-types/auth'
+import { useToast } from '@hooks/useToast'
 import { useState } from 'react'
-import { useToast } from '../../hooks/useToast'
-import type { User } from '../../types/auth'
-import Avatar from '../common/Avatar'
-import Button from '../common/Button'
-import MarkdownEditor from '../common/MarkdownEditor'
+import { useNavigate } from 'react-router'
 
 interface AnswerFormProps {
   user: User
@@ -16,6 +17,7 @@ const AnswerForm = ({ user, questionId }: AnswerFormProps) => {
   const [isReplying, setIsReplying] = useState(false)
   const toast = useToast()
 
+  const navigate = useNavigate()
   // 답변 작성 후 저장하는 함수
   const handleReset = () => {
     setContent('')
@@ -45,6 +47,7 @@ const AnswerForm = ({ user, questionId }: AnswerFormProps) => {
       // )
       handleReset()
       toast.show({ message: '답변이 저장되었습니다!', type: 'success' })
+      navigate(`/qna/${questionId}`) // 답변 저장 후 해당 질문 페이지로 이동
     } catch {
       toast.show({ message: '답변 저장 실패', type: 'error' })
     }

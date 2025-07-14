@@ -1,10 +1,9 @@
-import { LockKeyhole, Check } from 'lucide-react'
-import FormInput from '../FormInput'
-import Button from '../Button'
-import { useState } from 'react'
+import Button from '@components/common/Button'
+import FormInput from '@components/common/FormInput'
+import { useInput } from '@hooks/useInput'
+import { Check, LockKeyhole } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
-import { useInput } from '../../../hooks/useInput'
 
 interface PwSuccessProps {
   onClose: () => void
@@ -40,7 +39,7 @@ export default function PwSuccess({ onClose }: PwSuccessProps) {
 
       return () => clearTimeout(timer)
     }
-  }, [showPopup, navigate])
+  }, [showPopup, navigate, onClose])
 
   return (
     <div className="flex flex-col items-center mt-[10px] w-[348px] gap-[40px]">
