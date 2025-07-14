@@ -13,13 +13,13 @@ interface PhoneVerificationProps {
   onVerifyFail: () => void
 }
 
-const PhoneVerification: React.FC<PhoneVerificationProps> = ({
+const PhoneVerification = ({
   phoneValid,
   codeValid,
   onResetError,
   onVerifySuccess,
   onVerifyFail,
-}) => {
+}: PhoneVerificationProps) => {
   const toast = useToast()
   const [sending, setSending] = useState(false)
   const [verifying, setVerifying] = useState(false)
@@ -30,10 +30,13 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({
 
     try {
       setVerifying(true)
-      await axios.post('http://13.124.239.91/api/v1/auth/phone/verify-code/', {
-        phone: phoneValid.value,
-        code: codeValid.value,
-      })
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/find/email/phone/verify/`,
+        {
+          phone: phoneValid.value,
+          code: codeValid.value,
+        }
+      )
       toast.show({ type: 'success', message: '인증이 완료되었습니다.' })
       setVerifyClicked(true)
       onVerifySuccess()
@@ -64,9 +67,12 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({
 
     try {
       setSending(true)
-      await axios.post('http://13.124.239.91/api/v1/auth/phone/send-code/', {
-        phone: phoneValid.value,
-      })
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/find/email/phone/send/`,
+        {
+          phone: phoneValid.value,
+        }
+      )
       toast.show({ type: 'success', message: '인증번호가 발송되었습니다.' })
       setSendClicked(true)
     } catch (error: unknown) {

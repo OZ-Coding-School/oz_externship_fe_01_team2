@@ -7,10 +7,7 @@ interface LoginFormInputsProps {
   pwValid: ValidationInput
 }
 
-const LoginFormInputs: React.FC<LoginFormInputsProps> = ({
-  idValid,
-  pwValid,
-}) => {
+const LoginFormInputs = ({ idValid, pwValid }: LoginFormInputsProps) => {
   return (
     <div className="flex flex-col gap-[12px]">
       <FormInput

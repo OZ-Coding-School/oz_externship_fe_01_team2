@@ -1,8 +1,8 @@
 import SearchIcon from '@assets/icons/search.svg'
 import XMarkIcon from '@assets/icons/x_mark.svg'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-const SearchInput: React.FC = () => {
+const SearchInput = () => {
   const [inputValue, setInputValue] = useState('')
   const [isFocused, setIsFocused] = useState(false)
 

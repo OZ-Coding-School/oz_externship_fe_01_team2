@@ -21,7 +21,7 @@ interface RecoverAccountModalProps {
   setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const RecoverAccountModal: React.FC<RecoverAccountModalProps> = ({
+const RecoverAccountModal = ({
   isOpen,
   onClose,
   emailValid,
@@ -33,7 +33,7 @@ const RecoverAccountModal: React.FC<RecoverAccountModalProps> = ({
   formatTime,
   codeCheckClicked,
   setCodeCheckClicked,
-}) => {
+}: RecoverAccountModalProps) => {
   const [showPopup, setShowPopup] = useState(false)
 
   const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {

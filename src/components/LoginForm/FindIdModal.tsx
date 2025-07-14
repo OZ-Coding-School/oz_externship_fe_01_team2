@@ -5,8 +5,8 @@ import IdSuccess from '@components/common/Popup/IdSuccess'
 import PhoneVerification from '@components/LoginForm/PhoneVerification'
 import type { ModalStep, ValidationInput } from '@custom-types/auth'
 import { useToast } from '@hooks/useToast'
+import React, { useState, useEffect } from 'react'
 import { UserRound } from 'lucide-react'
-import React, { useState } from 'react'
 
 interface FindIdModalProps {
   isOpen: boolean
@@ -22,7 +22,7 @@ interface FindIdModalProps {
   onResetError: () => void
 }
 
-const FindIdModal: React.FC<FindIdModalProps> = ({
+const FindIdModal = ({
   isOpen,
   onClose,
   step,
@@ -34,11 +34,12 @@ const FindIdModal: React.FC<FindIdModalProps> = ({
   onFindId,
   onFindPw,
   onResetError,
-}) => {
+}: FindIdModalProps) => {
+  const [foundEmail, setFoundEmail] = useState('')
   const [isVerified, setIsVerified] = useState(false)
   const [isVerifyFailed, setIsVerifyFailed] = useState(false)
   const toast = useToast()
-  const handleFindIdClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFindIdClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
 
     // 🔴 이름/전화 유효성 검사 먼저
@@ -68,9 +69,48 @@ const FindIdModal: React.FC<FindIdModalProps> = ({
       return
     }
 
-    // ✅ 모든 조건 통과 시
-    onFindId(e)
+    try {
+      // ✅ 여기서 API 요청
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/account/find-email/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: nameValid.value,
+            phone_number: phoneValid.value,
+          }),
+        }
+      )
+
+      if (!res.ok) {
+        throw new Error('이메일을 찾을 수 없습니다.')
+      }
+
+      const data = await res.json()
+      setFoundEmail(data.email) // 이메일 저장
+      onFindId(e) // 외부에서 step을 'result'로 바꿔주는 함수
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.show({
+          type: 'error',
+          message: err.message || '오류가 발생했습니다.',
+        })
+      }
+    }
   }
+  useEffect(() => {
+    if (!isOpen) {
+      nameValid.setValue('')
+      phoneValid.setValue('')
+      codeValid.setValue('')
+      setIsVerified(false)
+      setIsVerifyFailed(false)
+      setValidError(false)
+    }
+  }, [isOpen])
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -137,11 +177,7 @@ const FindIdModal: React.FC<FindIdModalProps> = ({
           </Button>
         </div>
       ) : (
-        <IdSuccess
-          email="example@gmail.com"
-          onFindPw={onFindPw}
-          onClose={onClose}
-        />
+        <IdSuccess email={foundEmail} onFindPw={onFindPw} onClose={onClose} />
       )}
     </Modal>
   )
