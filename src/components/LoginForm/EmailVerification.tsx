@@ -30,7 +30,6 @@ const EmailVerification = ({
     codeValid.setValue(onlyNums)
     setCodeCheckClicked(false)
   }
-
   return (
     <div className="flex flex-col gap-[16px]">
       <div className="flex">
