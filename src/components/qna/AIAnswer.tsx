@@ -1,12 +1,13 @@
+import { getAiAnswerStream } from '@api/getAiAnswerStream'
+import SendHorizonal from '@assets/icons/message.png'
+import AiAvatarImg from '@assets/images/qna/img_ai_avatar.png'
+import Avatar from '@components/common/Avatar'
+import MarkdownRenderer from '@components/common/MarkdownEditor/MarkdownRenderer'
+import Textarea from '@components/common/Textarea'
+import { useToast } from '@hooks/useToast'
+import axios from 'axios'
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { getAiAnswerStream } from '../../api/getAiAnswerStream'
-import SendHorizonal from '../../assets/icons/message.png'
-import AiAvatarImg from '../../assets/images/qna/img_ai_avatar.png'
-import { useToast } from '../../hooks/useToast'
-import Avatar from '../common/Avatar'
-import MarkdownRenderer from '../common/MarkdownEditor/MarkdownRenderer'
-import Textarea from '../common/Textarea'
 import AIAnswerSkeleton from './AIAnswerSkeleton'
 
 const AIAnswer = ({ question }: { question: string }) => {
@@ -43,11 +44,13 @@ const AIAnswer = ({ question }: { question: string }) => {
         // 스트리밍 응답을 받으면 displayText와 aiAnswer에 누적
         setDisplayText((prev) => prev + chunk)
       })
-    } catch (e: any) {
-      toast.show({
-        message: e.message || 'AI 응답 중 오류가 발생했습니다.',
-        type: 'error',
-      })
+    } catch (error: unknown) {
+      if (axios.isAxiosError<{ message: string }>(error)) {
+        toast.show({
+          message: error.message || 'AI 응답 중 오류가 발생했습니다.',
+          type: 'error',
+        })
+      }
     } finally {
       setIsStreaming(false)
       setIsLoading(false)
@@ -58,7 +61,7 @@ const AIAnswer = ({ question }: { question: string }) => {
     if (isStreaming) {
       scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
     }
-  }, [displayText])
+  }, [displayText, isStreaming])
 
   const handleAddMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

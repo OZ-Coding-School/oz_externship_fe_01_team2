@@ -1,5 +1,5 @@
+import { getAccessToken } from '@store/authStore'
 import axios from 'axios'
-import { getAccessToken } from '../store/authStore'
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api/v1`
 
@@ -51,6 +51,7 @@ fetcher.interceptors.response.use(
           return fetcher(originalRequest)
         }
       } catch (refreshError) {
+        // eslint-disable-next-line no-console
         console.error('토큰 갱신 실패:', refreshError)
       }
       window.location.href = '/login'
