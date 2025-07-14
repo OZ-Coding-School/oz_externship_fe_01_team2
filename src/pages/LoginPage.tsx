@@ -9,19 +9,18 @@ import SocialLoginButtons from '../components/LoginForm/SocialLoginButtons'
 import LoginFormInputs from '../components/LoginForm/LoginFormInputs'
 import FindIdModal from '../components/LoginForm/FindIdModal'
 import FindPwModal from '../components/LoginForm/FindPwModal'
-import { useContext } from 'react'
-import { ToastContext } from '../components/common/Toast/ToastContext'
 import WithdrawnAccountModal from '../components/LoginForm/WithdrawnAccountModal'
 import RecoverAccountModal from '../components/LoginForm/RecoverAccountModal'
 import axios from 'axios'
 import { useNavigate } from 'react-router'
 import { AxiosError } from 'axios'
+import { useToast } from '../hooks/useToast'
 
 export default function LoginPage() {
   const API_BASE_URL =
     import.meta.env.VITE_API_BASE_URL || 'http://54.180.237.77'
   const navigate = useNavigate()
-  const toastCtx = useContext(ToastContext)
+  const toast = useToast()
   const [codeCheckClicked, setCodeCheckClicked] = useState(false)
   const [modalType, setModalType] = useState<'withdrawn' | 'recover' | null>(
     null
@@ -66,7 +65,7 @@ export default function LoginPage() {
     event.preventDefault()
     timer.start(TIMER_DURATION)
 
-    toastCtx?.show({
+    toast.show({
       message: '전송 완료! 이메일을 확인해주세요.',
       type: 'success',
     })
@@ -78,7 +77,7 @@ export default function LoginPage() {
     setCodeCheckClicked(true)
 
     if (codeValid.isValid) {
-      toastCtx?.show({ message: '인증이 완료되었습니다!', type: 'success' })
+      toast.show({ message: '인증이 완료되었습니다!', type: 'success' })
     }
   }
 
@@ -103,6 +102,19 @@ export default function LoginPage() {
   const handleCloseFindPw = () => {
     setIsFindPwOpen(false)
     setFindPwStep('form')
+  }
+
+  const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    try {
+      const success = await login(idValid.value, pwValid.value)
+      if (success) {
+        toast?.show({ message: '로그인 성공!', type: 'success' })
+        navigate('/')
+      }
+    } catch (err: any) {
+      toast?.show({ message: err.message, type: 'error' })
+    }
   }
 
   const login = async (email: string, password: string) => {
@@ -206,18 +218,7 @@ export default function LoginPage() {
               variant={isFormValid ? 'fill' : 'ghost'}
               disabled={!isFormValid}
               className="w-[348px] h-[52px]"
-              onClick={async (e) => {
-                e.preventDefault()
-                try {
-                  const success = await login(idValid.value, pwValid.value)
-                  if (success) {
-                    toastCtx?.show({ message: '로그인 성공!', type: 'success' })
-                    navigate('/')
-                  }
-                } catch (err: any) {
-                  toastCtx?.show({ message: err.message, type: 'error' })
-                }
-              }}
+              onClick={handleLogin}
             >
               일반회원 로그인
             </Button>

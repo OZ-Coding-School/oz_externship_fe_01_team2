@@ -6,7 +6,7 @@ import MypageCourse from '../components/myPage/MypageCourse'
 import Button from '../components/common/Button/Button'
 import WithdrawalModal from '../components/myPage/WithdrawalModal'
 import UserProfileApi from '../api/user-profile/api'
-import UserWithdrawalApi from '../api/user-withdrawal/api' // API 임포트
+// import UserWithdrawalApi from '../api/user-withdrawal/api' // API 임포트
 import type { UserProfile } from '../types/UserProfile.type'
 
 const MyPage = () => {
