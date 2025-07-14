@@ -60,17 +60,45 @@ export default function LoginPage() {
     setFindIdStep('result')
   }
 
-  const handleSendCode = (event: React.MouseEvent<HTMLButtonElement>): void => {
+  const handleSendCode = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): Promise<void> => {
     event.preventDefault()
-    timer.start(TIMER_DURATION)
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/account/send-reset-code/`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailValid.value }),
+        }
+      )
 
-    toast.show({
-      message: '전송 완료! 이메일을 확인해주세요.',
-      type: 'success',
-    })
+      if (!res.ok) {
+        throw new Error('이메일 전송에 실패했습니다.')
+      }
+
+      toast.show({
+        message: '전송 완료! 이메일을 확인해주세요.',
+        type: 'success',
+      })
+      toast.show({
+        message: '인증 코드가 이메일로 전송되었습니다.',
+        type: 'success',
+      })
+
+      timer.start(TIMER_DURATION)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.show({
+          message: error.message,
+          type: 'error',
+        })
+      }
+    }
   }
 
-  const handleVerifyCode = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleVerifyCode = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     timer.stop()
     setCodeCheckClicked(true)

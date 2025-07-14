@@ -14,12 +14,12 @@ interface FindPwModalProps {
   codeValid: ValidationInput
   isTimerActive: boolean
   timeLeft: number
-  onSendCode: (event: React.MouseEvent<HTMLButtonElement>) => void
   onVerifyCode: (event: React.MouseEvent<HTMLButtonElement>) => void
   onFindPw: () => void
   formatTime: () => string
   codeCheckClicked: boolean
   setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
+  onSendCode: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 const FindPwModal = ({
@@ -30,12 +30,12 @@ const FindPwModal = ({
   codeValid,
   isTimerActive,
   timeLeft,
-  onSendCode,
+  formatTime,
   onVerifyCode,
   onFindPw,
-  formatTime,
   codeCheckClicked,
   setCodeCheckClicked,
+  onSendCode,
 }: FindPwModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

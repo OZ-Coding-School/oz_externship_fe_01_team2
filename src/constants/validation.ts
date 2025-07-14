@@ -10,7 +10,7 @@ export const VALIDATION_REGEX = {
   PHONE: /^\d{11}$/,
   PHONE_CODE: /^\d{6}$/,
   PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,15}$/,
-  CODE: /^\d{6}$/,
+  CODE: /^[A-Z0-9]{6}$/,
 } as const
 
 export const TIMER_DURATION = 300
