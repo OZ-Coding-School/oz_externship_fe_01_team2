@@ -3,7 +3,7 @@ import FormInput from '@components/common/FormInput'
 import type { ValidationInput } from '@custom-types/auth'
 import { useToast } from '@hooks/useToast'
 import axios from 'axios'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 interface PhoneVerificationProps {
   phoneValid: ValidationInput
@@ -31,7 +31,7 @@ const PhoneVerification = ({
     try {
       setVerifying(true)
       await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/find/email/phone/verify/`,
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/find/email/phone/verify/`,
         {
           phone: phoneValid.value,
           code: codeValid.value,
@@ -68,7 +68,7 @@ const PhoneVerification = ({
     try {
       setSending(true)
       await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/find/email/phone/send/`,
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/find/email/phone/send/`,
         {
           phone: phoneValid.value,
         }
@@ -95,10 +95,8 @@ const PhoneVerification = ({
             value={phoneValid.value}
             onChange={handlePhoneChange}
             hasError={!phoneValid.isValid && phoneValid.value.length > 0}
-            errorMessage=""
             hasSuccess={phoneValid.isValid}
-            successMessage=""
-            type="text"
+            type="tel"
             placeholder="숫자만 입력해주세요"
             className="w-[228px] h-[48px]"
           />

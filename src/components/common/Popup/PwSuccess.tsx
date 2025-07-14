@@ -1,17 +1,20 @@
 import Button from '@components/common/Button'
 import FormInput from '@components/common/FormInput'
 import { useInput } from '@hooks/useInput'
+import { useToast } from '@hooks/useToast'
 import { Check, LockKeyhole } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface PwSuccessProps {
   onClose: () => void
+  email: string
 }
 
-export default function PwSuccess({ onClose }: PwSuccessProps) {
+export default function PwSuccess({ onClose, email }: PwSuccessProps) {
   const [showPopup, setShowPopup] = useState(false)
   const navigate = useNavigate()
+  const toast = useToast()
 
   const password = useInput((v) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,15}$/
@@ -22,13 +25,53 @@ export default function PwSuccess({ onClose }: PwSuccessProps) {
     return v === password.value && v.length > 0
   })
 
-  const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleConfirm = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    if (password.isValid && passwordCheck.isValid) {
+
+    if (!password.isValid || !passwordCheck.isValid) return
+
+    try {
+      const accessToken = localStorage.getItem('accessToken')
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/account/change-password/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            email,
+            new_password: password.value,
+            new_password_confirm: passwordCheck.value,
+          }),
+        }
+      )
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.message || '비밀번호 변경에 실패했습니다.')
+      }
+
       setShowPopup(true)
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.show({
+          message: err.message || '비밀번호 변경에 실패했습니다.',
+          type: 'error',
+        })
+      }
     }
   }
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken')
+    if (!accessToken) {
+      alert('비정상적인 접근입니다.')
+      navigate('/login')
+    }
+  }, [])
   useEffect(() => {
     if (showPopup) {
       const timer = setTimeout(() => {

@@ -13,6 +13,8 @@ interface EmailVerificationProps {
   formatTime: () => string
   codeCheckClicked: boolean
   setCodeCheckClicked: React.Dispatch<React.SetStateAction<boolean>>
+  isCodeVerified: boolean
+  setIsCodeVerified: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const EmailVerification = ({
@@ -36,7 +38,7 @@ const EmailVerification = ({
         <div className="relative w-[228px] mr-[8px]">
           <FormInput
             value={emailValid.value}
-            onChange={emailValid.setValue}
+            onChange={(v) => emailValid.setValue(v)}
             hasError={!emailValid.isValid && emailValid.value.length > 0}
             hasSuccess={emailValid.isValid}
             type="text"

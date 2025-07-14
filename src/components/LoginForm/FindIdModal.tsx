@@ -72,7 +72,7 @@ const FindIdModal = ({
     try {
       // ✅ 여기서 API 요청
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/account/find-email/`,
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/account/find-email/`,
         {
           method: 'POST',
           headers: {
