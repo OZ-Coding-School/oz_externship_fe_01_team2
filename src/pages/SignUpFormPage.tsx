@@ -3,6 +3,8 @@ import Button from '@components/common/Button'
 import FormInput from '@components/common/FormInput'
 import { VALIDATION_REGEX } from '@constants/validation'
 import { useInput } from '@hooks/useInput'
+import axios from 'axios'
+import { useToast } from '@hooks/useToast'
 
 export default function SignUpFormPage() {
   const name = useInput(
@@ -36,6 +38,34 @@ export default function SignUpFormPage() {
     phoneCode.isValid &&
     password.isValid &&
     passwordCheck.isValid
+
+  const toast = useToast()
+
+  const handleCheckNickname = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/profile/nickname-check/`,
+        {
+          nickname: nickname.value,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      toast.show({
+        message: '사용 가능한 닉네임입니다.',
+        type: 'success',
+      })
+    } catch (error) {
+      toast.show({
+        message: '이미 사용 중인 닉네임입니다.',
+        type: 'error',
+      })
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -90,9 +120,7 @@ export default function SignUpFormPage() {
                     placeholder="닉네임을 입력해주세요"
                     type="text"
                     hasError={!nickname.isValid && nickname.value.length > 0}
-                    errorMessage=""
                     hasSuccess={nickname.isValid}
-                    successMessage="사용 가능한 닉네임입니다"
                     className="w-[356px] h-[48px]"
                   />
 
@@ -101,6 +129,7 @@ export default function SignUpFormPage() {
                       variant={nickname.isValid ? 'check' : 'outline'}
                       className="w-[112px] h-[48px] p-0"
                       disabled={!nickname.isValid}
+                      onClick={handleCheckNickname}
                     >
                       중복확인
                     </Button>
