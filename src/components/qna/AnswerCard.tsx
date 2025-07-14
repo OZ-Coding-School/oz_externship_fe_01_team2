@@ -3,33 +3,12 @@ import Avatar from '@components/common/Avatar'
 import MarkdownRenderer from '@components/common/MarkdownEditor/MarkdownRenderer'
 import CommentInput from '@components/qna/CommentInput'
 import CommentList from '@components/qna/CommentList'
+import type { Answer, Comment } from '@custom-types/qnaDetail'
 import { cn } from '@utils/cn'
 import { formatRelativeTime } from '@utils/formatRelativeTime'
 import { MessageCircle } from 'lucide-react'
 import { useState } from 'react'
 
-interface Comment {
-  id: number | string
-  content: string
-  author: {
-    nickname: string
-    profile_image_url: string
-  }
-  created_at: string
-}
-
-interface Answer {
-  id: number | string
-  author: {
-    id: number | string
-    nickname: string
-    profile_image_url: string
-  }
-  created_at: string
-  content: string
-  comments: Comment[]
-  is_adopted?: boolean
-}
 interface AnswerCardProps {
   answer: Answer
   canAdopt: boolean

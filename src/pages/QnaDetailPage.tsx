@@ -1,13 +1,17 @@
+import { fetchQnaDetail } from '@api/qna/questionApi'
 import UserDefaultImage from '@assets/images/common/img_user_default.png'
 import Avatar from '@components/common/Avatar'
-import { mockQnaDetail } from '@components/Mocks/MockQnaDetail'
+import MarkdownRenderer from '@components/common/MarkdownEditor/MarkdownRenderer'
 import AIAnswer from '@components/qna/AIAnswer'
 import AnswerCard from '@components/qna/AnswerCard'
 import AnswerForm from '@components/qna/AnswerForm'
+import type { QuestionDetail } from '@custom-types/qnaDetail'
 import { useToast } from '@hooks/useToast'
 import { formatRelativeTime } from '@utils/formatRelativeTime'
+import axios from 'axios'
 import { ChevronRight, Link } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
 
 const QnaDetailPage = () => {
   const [user] = useState({
@@ -17,10 +21,32 @@ const QnaDetailPage = () => {
     profileUrl: UserDefaultImage,
     role: 'Student',
   })
+  const { id: questionId } = useParams()
   const [copied, setCopied] = useState(false)
-  const [qnaData, setQnaData] = useState(mockQnaDetail)
+  const [qnaData, setQnaData] = useState<QuestionDetail>()
 
   const toast = useToast()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchQnaDetail(Number(questionId))
+        setQnaData(response)
+      } catch (error: unknown) {
+        if (axios.isAxiosError<{ message: string }>(error)) {
+          // eslint-disable-next-line no-console
+          console.error('질문 목록을 불러오는 중 오류 발생:', error.message)
+          toast.show({
+            message: '질문 목록을 불러오지 못했습니다. ',
+            type: 'error',
+          })
+          navigate(-1)
+        }
+      }
+    }
+    fetchData()
+  }, [])
 
   const handleShare = async () => {
     try {
@@ -35,18 +61,16 @@ const QnaDetailPage = () => {
     }
   }
 
+  if (!qnaData) {
+    navigate('/error')
+    return null
+  }
   const canAdopt =
     user.role === 'Student' &&
     user.id === qnaData.author.id &&
     !qnaData.answers.some((a) => a.is_adopted)
 
   const handleAdopt = (answerId: number | string) => {
-    setQnaData((prev) => ({
-      ...prev,
-      answers: prev.answers.map((a) =>
-        a.id === answerId ? { ...a, is_adopted: true } : a
-      ),
-    }))
     toast.show({ message: '답변을 채택했습니다!', type: 'success' })
   }
 
@@ -54,11 +78,11 @@ const QnaDetailPage = () => {
     <div className="bg-white min-h-screen px-6 py-10 max-w-4xl mx-auto">
       {/* 경로 네비게이션 */}
       <nav className="text-xl font-bold mb-5 flex items-center text-primary">
-        <span>{qnaData.category.depth_1}</span>
+        <span>{qnaData.category.major}</span>
         <ChevronRight />
-        <span>{qnaData.category.depth_2}</span>
+        <span>{qnaData.category.middle}</span>
         <ChevronRight />
-        <span>{qnaData.category.depth_3}</span>
+        <span>{qnaData.category.minor}</span>
       </nav>
 
       {/* 질문 */}
@@ -82,7 +106,9 @@ const QnaDetailPage = () => {
             조회 {qnaData.view_count} · {formatRelativeTime(qnaData.created_at)}
           </div>
         </div>
-        <p className="pt-10 text-body-rg pb-15">{qnaData.content}</p>
+        <div className="pt-10 text-body-rg pb-15">
+          <MarkdownRenderer content={qnaData.content} />
+        </div>
         <AIAnswer question={qnaData.content} />
         <div className="flex justify-end">
           <button
@@ -97,7 +123,7 @@ const QnaDetailPage = () => {
       </section>
 
       {/* 답변 요청 안내 */}
-      {user && <AnswerForm user={user} questionId={qnaData.id} />}
+      {user && <AnswerForm questionId={qnaData.id} />}
 
       {/* 답변 개수 */}
       <h2 className="mb-10 flex items-center gap-4 text-2xl font-semibold">
@@ -111,6 +137,11 @@ const QnaDetailPage = () => {
 
       {/* 답변 카드 목록 */}
       <div className="space-y-10">
+        {qnaData.answers.length === 0 && (
+          <div className="text-center text-gray-500 py-20">
+            아직 답변이 없습니다.
+          </div>
+        )}
         {qnaData.answers.map((answer) => (
           <AnswerCard
             key={answer.id}
