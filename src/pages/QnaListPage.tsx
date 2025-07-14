@@ -12,7 +12,7 @@ import axios from 'axios'
 import { useEffect, useMemo, useState } from 'react'
 
 // 페이지당 질문 수
-const PAGE_SIZE = 5
+const PAGE_SIZE = 10
 
 const QnaListPage = () => {
   const [selectedTab, setSelectedTab] = useState('전체보기')
@@ -46,7 +46,12 @@ const QnaListPage = () => {
         setQuestions(response.results)
       } catch (error: unknown) {
         if (axios.isAxiosError<{ message: string }>(error)) {
-          toast.show({ message: error.message, type: 'error' })
+          // eslint-disable-next-line no-console
+          console.error('질문 목록을 불러오는 중 오류 발생:', error.message)
+          toast.show({
+            message: '질문 목록을 불러오지 못했습니다. 다시 시도해주세요.',
+            type: 'error',
+          })
         }
       } finally {
         setIsLoading(false)
@@ -127,6 +132,11 @@ const QnaListPage = () => {
         </div>
 
         <div className="space-y-4">
+          {displayedQuestions.length === 0 && query && (
+            <div className="text-center text-gray-500 py-20">
+              검색 결과가 없습니다.
+            </div>
+          )}
           {displayedQuestions.map((q) => (
             <QnaCard key={q.id} question={q} query={query} />
           ))}
