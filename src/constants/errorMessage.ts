@@ -1,4 +1,4 @@
-import { ErrorCode } from '../types/errorCodes'
+import { ErrorCode } from '@custom-types/errorCodes'
 
 export const ERROR_MESSAGES = {
   [ErrorCode.NOT_FOUND]: {

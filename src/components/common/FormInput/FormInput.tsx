@@ -1,9 +1,9 @@
 // src/components/common/FormInput/FormInput.tsx
 
+import SuccessIcon from '@assets/icons/success.svg'
+import { cn } from '@utils/cn'
 import React, { useId, useState } from 'react'
-import { cn } from '../../../utils/cn'
 import type { FormInputProps } from './FormInput.types'
-import SuccessIcon from '../../../assets/icons/success.svg'
 
 const FormInput: React.FC<FormInputProps> = ({
   placeholder = '',

@@ -1,6 +1,6 @@
 // components/LoginForm/WithdrawnAccountModal.tsx
-import Modal from '../common/Modal'
-import Button from '../common/Button'
+import Button from '@components/common/Button'
+import Modal from '@components/common/Modal'
 import { Meh } from 'lucide-react'
 
 interface WithdrawnAccountModalProps {

@@ -1,6 +1,6 @@
 //src/components/common/Button/Button.tsx
+import { cn } from '@utils/cn'
 import React from 'react'
-import { cn } from '../../../utils/cn'
 import type { ButtonProps } from './Button.types'
 
 const Button: React.FC<ButtonProps> = ({

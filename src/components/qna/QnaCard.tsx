@@ -1,12 +1,12 @@
 // components/qna/QnaCard.tsx
+import defaultThumbnail from '@assets/images/common/img_default.png'
+import defaultAvatar from '@assets/images/common/img_user_default.png'
+import Avatar from '@components/common/Avatar'
+import type { FlatQuestionCard } from '@custom-types/qnaCard.types'
+import { cn } from '@utils/cn'
+import { handleImageError } from '@utils/handleImageError'
+import { highlightText } from '@utils/highlightText'
 import { Link } from 'react-router-dom'
-import { highlightText } from '../../utils/highlightText'
-import { handleImageError } from '../../utils/handleImageError'
-import { cn } from '../../utils/cn'
-import Avatar from '../common/Avatar'
-import defaultAvatar from '../../assets/images/common/img_user_default.png'
-import defaultThumbnail from '../../assets/images/common/img_default.png'
-import type { FlatQuestionCard } from '../../types/qnaCard.types'
 
 type Props = {
   question: FlatQuestionCard

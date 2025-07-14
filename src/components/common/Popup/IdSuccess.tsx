@@ -1,5 +1,5 @@
+import Button from '@components/common/Button'
 import { UserRound } from 'lucide-react'
-import Button from '../Button'
 
 interface IdSuccessProps {
   email: string

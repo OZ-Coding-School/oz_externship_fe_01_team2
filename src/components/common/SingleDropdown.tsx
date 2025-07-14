@@ -1,7 +1,7 @@
-import ExpandMoreIcon from '../../assets/icons/common/expand_more.svg'
-import ExpandLessIcon from '../../assets/icons/common/expand_less.svg'
-import CheckMarkIcon from '../../assets/icons/common/check_mark.svg'
-import { cn } from '../../utils/cn'
+import CheckMarkIcon from '@assets/icons/common/check_mark.svg'
+import ExpandLessIcon from '@assets/icons/common/expand_less.svg'
+import ExpandMoreIcon from '@assets/icons/common/expand_more.svg'
+import { cn } from '@utils/cn'
 import { useState } from 'react'
 
 interface SingleDropdownProps {

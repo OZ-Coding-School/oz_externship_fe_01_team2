@@ -1,7 +1,7 @@
 // components/myPage/MypageProfile.tsx
-import Avatar from '../common/Avatar'
-import userAvatar from '../../assets/images/common/img_user_default.png'
-import type { UserProfile } from '../../types/UserProfile.type'
+import userAvatar from '@assets/images/common/img_user_default.png'
+import Avatar from '@components/common/Avatar'
+import type { UserProfile } from '@custom-types/UserProfile.type'
 
 interface MypageProfileProps {
   userData: UserProfile

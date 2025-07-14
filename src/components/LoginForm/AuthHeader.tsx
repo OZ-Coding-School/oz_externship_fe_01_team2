@@ -1,6 +1,6 @@
+import ozLogo from '@assets/images/common/renewal_ozcoding_logo_black.svg'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import ozLogo from '../../assets/images/common/renewal_ozcoding_logo_black.svg'
 
 interface AuthHeaderProps {
   message: string

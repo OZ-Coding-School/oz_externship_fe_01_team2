@@ -1,13 +1,13 @@
+import UserDefaultImage from '@assets/images/common/img_user_default.png'
+import Avatar from '@components/common/Avatar'
+import { mockQnaDetail } from '@components/Mocks/MockQnaDetail'
+import AIAnswer from '@components/qna/AIAnswer'
+import AnswerCard from '@components/qna/AnswerCard'
+import AnswerForm from '@components/qna/AnswerForm'
+import { useToast } from '@hooks/useToast'
+import { formatRelativeTime } from '@utils/formatRelativeTime'
 import { ChevronRight, Link } from 'lucide-react'
 import { useState } from 'react'
-import UserDefaultImage from '../assets/images/common/img_user_default.png'
-import Avatar from '../components/common/Avatar'
-import { mockQnaDetail } from '../components/Mocks/MockQnaDetail'
-import AIAnswer from '../components/qna/AIAnswer'
-import AnswerCard from '../components/qna/AnswerCard'
-import AnswerForm from '../components/qna/AnswerForm'
-import { useToast } from '../hooks/useToast'
-import { formatRelativeTime } from '../utils/formatRelativeTime'
 
 const QnaDetailPage = () => {
   const [user] = useState({

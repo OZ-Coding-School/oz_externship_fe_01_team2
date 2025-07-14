@@ -1,6 +1,6 @@
 // components/qna/QnaSortDropdown.tsx
 
-import SortButton from '../common/Button/SortButton'
+import SortButton from '@components/common/Button/SortButton'
 
 type Props = {
   currentSort: string

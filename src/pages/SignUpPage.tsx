@@ -1,6 +1,6 @@
+import AuthHeader from '@components/LoginForm/AuthHeader'
+import SocialLoginButtons from '@components/LoginForm/SocialLoginButtons'
 import { Link } from 'react-router-dom'
-import AuthHeader from '../components/LoginForm/AuthHeader'
-import SocialLoginButtons from '../components/LoginForm/SocialLoginButtons'
 
 export default function SignUpPage() {
   return (

@@ -1,7 +1,7 @@
+import Button from '@components/common/Button'
+import { ERROR_MESSAGES } from '@constants/errorMessage'
+import { ErrorCode } from '@custom-types/errorCodes'
 import { Link, useLocation } from 'react-router-dom'
-import Button from '../components/common/Button'
-import { ERROR_MESSAGES } from '../constants/errorMessage'
-import { ErrorCode } from '../types/errorCodes'
 
 interface ErrorState {
   code?: ErrorCode

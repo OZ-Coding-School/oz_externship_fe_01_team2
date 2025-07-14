@@ -1,9 +1,9 @@
 // src/pages/PasswordChangeForm.tsx
 
-import { useState, useCallback } from 'react'
-import FormInput from '../common/FormInput/FormInput'
-import Button from '../common/Button/Button'
-// import { cn } from '../utils/cn' // cn 유틸리티가 필요하면 주석 해제하고 사용
+import Button from '@components/common/Button/Button'
+import FormInput from '@components/common/FormInput/FormInput'
+import { useCallback, useState } from 'react'
+// import { cn } from '@utils/cn' // cn 유틸리티가 필요하면 주석 해제하고 사용
 
 const ChangePasswordForm = () => {
   const [password, setPassword] = useState('')
@@ -92,7 +92,7 @@ const ChangePasswordForm = () => {
     )
 
     if (isPwValidOnSubmit && isConfirmPwValidOnSubmit) {
-      console.log('비밀번호 변경 시도:', password)
+      // console.log('비밀번호 변경 시도:', password)
       setSuccessMessage('비밀번호가 성공적으로 변경되었습니다!')
       setPassword('')
       setConfirmPassword('')

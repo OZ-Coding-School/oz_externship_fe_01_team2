@@ -1,13 +1,13 @@
+import UserProfileApi from '@api/user-profile/api'
+import Button from '@components/common/Button/Button'
+import Sidebar from '@components/common/Sidebar'
+import MypageCourse from '@components/myPage/MypageCourse'
+import MypageProfile from '@components/myPage/MypageProfile'
+import WithdrawalModal from '@components/myPage/WithdrawalModal'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Sidebar from '../components/common/Sidebar'
-import MypageProfile from '../components/myPage/MypageProfile'
-import MypageCourse from '../components/myPage/MypageCourse'
-import Button from '../components/common/Button/Button'
-import WithdrawalModal from '../components/myPage/WithdrawalModal'
-import UserProfileApi from '../api/user-profile/api'
-// import UserWithdrawalApi from '../api/user-withdrawal/api' // API 임포트
-import type { UserProfile } from '../types/UserProfile.type'
+// import UserWithdrawalApi from '@api/user-withdrawal/api' // API 임포트
+import type { UserProfile } from '@custom-types/UserProfile.type'
 
 const MyPage = () => {
   const [showModal, setShowModal] = useState(false)
@@ -40,6 +40,7 @@ const MyPage = () => {
       setShowModal(false)
       navigate('/') // 탈퇴 후 메인페이지로 이동하거나 원하는 페이지로 이동
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('회원 탈퇴 실패', error)
       alert(
         '회원 탈퇴 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
@@ -54,9 +55,10 @@ const MyPage = () => {
   const fetchUserProfile = async () => {
     try {
       const response = await UserProfileApi.getUserProfile()
-      console.log(response)
+      // console.log(response)
       setUserData(response)
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('API 실패', error)
     }
   }

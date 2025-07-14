@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import Button from '@components/common/Button'
+import FormInput from '@components/common/FormInput'
+import Modal from '@components/common/Modal'
+import IdSuccess from '@components/common/Popup/IdSuccess'
+import PhoneVerification from '@components/LoginForm/PhoneVerification'
+import type { ModalStep, ValidationInput } from '@custom-types/auth'
+import { useToast } from '@hooks/useToast'
 import { UserRound } from 'lucide-react'
-import Modal from '../common/Modal'
-import FormInput from '../common/FormInput'
-import Button from '../common/Button'
-import IdSuccess from '../common/Popup/IdSuccess'
-import PhoneVerification from './PhoneVerification'
-import type { ValidationInput, ModalStep } from '../../types/auth'
-import { useToast } from '../../hooks/useToast'
+import React, { useState } from 'react'
 
 interface FindIdModalProps {
   isOpen: boolean

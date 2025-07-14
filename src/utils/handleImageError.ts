@@ -1,6 +1,6 @@
+import defaultImage from '@assets/images/common/img_default.png'
+import defaultAvatar from '@assets/images/common/img_user_default.png'
 import React from 'react'
-import defaultImage from '../assets/images/common/img_default.png'
-import defaultAvatar from '../assets/images/common/img_user_default.png'
 
 export const handleImageError = (
   e: React.SyntheticEvent<HTMLImageElement>,
