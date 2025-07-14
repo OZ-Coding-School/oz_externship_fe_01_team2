@@ -5,8 +5,8 @@ import IdSuccess from '@components/common/Popup/IdSuccess'
 import PhoneVerification from '@components/LoginForm/PhoneVerification'
 import type { ModalStep, ValidationInput } from '@custom-types/auth'
 import { useToast } from '@hooks/useToast'
+import React, { useState, useEffect } from 'react'
 import { UserRound } from 'lucide-react'
-import React, { useState } from 'react'
 
 interface FindIdModalProps {
   isOpen: boolean
@@ -99,6 +99,17 @@ const FindIdModal: React.FC<FindIdModalProps> = ({
       })
     }
   }
+
+  useEffect(() => {
+    if (!isOpen) {
+      nameValid.setValue('')
+      phoneValid.setValue('')
+      codeValid.setValue('')
+      setIsVerified(false)
+      setIsVerifyFailed(false)
+      setValidError(false)
+    }
+  }, [isOpen])
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
