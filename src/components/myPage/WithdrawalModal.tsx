@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
-import { useEffect, useState } from 'react' // useEffect 임포트 추가
 import UserWithdrawalApi from '../../api/user-withdrawal/api'
+import SingleDropdown from '../common/SingleDropdown'
+import Textarea from '../common/Textarea'
+import Button from '../common/Button/Button'
+import type { WithdrawalModalProps } from '../../types/withdrawalModal.types'
 
 const reasons = [
   '원하는 클래스가 없어서',
