@@ -92,7 +92,6 @@ const ChangePasswordForm = () => {
     )
 
     if (isPwValidOnSubmit && isConfirmPwValidOnSubmit) {
-      // console.log('비밀번호 변경 시도:', password)
       setSuccessMessage('비밀번호가 성공적으로 변경되었습니다!')
       setPassword('')
       setConfirmPassword('')
