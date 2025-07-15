@@ -1,4 +1,4 @@
-import { fetchAdoptedAnswer, fetchCreateComment } from '@api/qna/answerApi'
+import { createComment, fetchAdoptedAnswer } from '@api/qna/answerApi'
 import { fetchQnaDetail } from '@api/qna/questionApi'
 import Avatar from '@components/common/Avatar'
 import Button from '@components/common/Button'
@@ -60,7 +60,7 @@ const QnaDetailPage = () => {
   // 댓글 등록
   const handleAddComment = async (answerId: number, content: string) => {
     try {
-      await fetchCreateComment(answerId, content)
+      await createComment(answerId, content)
       toast.show({
         message: '댓글이 등록되었습니다.',
         type: 'success',

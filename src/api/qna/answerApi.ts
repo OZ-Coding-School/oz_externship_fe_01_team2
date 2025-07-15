@@ -14,7 +14,7 @@ export const fetchAdoptedAnswer = ({
   )
 }
 
-export const fetchCreateComment = (
+export const createComment = (
   answer_id: number,
   content: string
 ): Promise<CreateCommentResponse> => {
