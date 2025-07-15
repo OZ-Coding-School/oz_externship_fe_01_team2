@@ -1,5 +1,5 @@
+import { fetchAdoptedAnswer } from '@api/qna/answerApi'
 import { fetchQnaDetail } from '@api/qna/questionApi'
-import UserDefaultImage from '@assets/images/common/img_user_default.png'
 import Avatar from '@components/common/Avatar'
 import MarkdownRenderer from '@components/common/MarkdownEditor/MarkdownRenderer'
 import AIAnswer from '@components/qna/AIAnswer'
@@ -7,6 +7,7 @@ import AnswerCard from '@components/qna/AnswerCard'
 import AnswerForm from '@components/qna/AnswerForm'
 import type { QuestionDetail } from '@custom-types/qnaDetail'
 import { useToast } from '@hooks/useToast'
+import { useAuthStore } from '@store/authStore'
 import { formatRelativeTime } from '@utils/formatRelativeTime'
 import axios from 'axios'
 import { ChevronRight, Link } from 'lucide-react'
@@ -14,13 +15,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 
 const QnaDetailPage = () => {
-  const [user] = useState({
-    id: 7,
-    name: '오즈오즈',
-    nickname: 'oz_student',
-    profileUrl: UserDefaultImage,
-    role: 'Student',
-  })
+  const { user } = useAuthStore()
   const { id: questionId } = useParams()
   const [copied, setCopied] = useState(false)
   const [qnaData, setQnaData] = useState<QuestionDetail>()
@@ -65,13 +60,39 @@ const QnaDetailPage = () => {
     navigate('/error')
     return null
   }
+
   const canAdopt =
-    user.role === 'Student' &&
-    user.id === qnaData.author.id &&
+    user &&
+    user.role === 'STUDENT' &&
+    user.nickname === qnaData.author.nickname &&
     !qnaData.answers.some((a) => a.is_adopted)
 
-  const handleAdopt = (answerId: number | string) => {
-    toast.show({ message: '답변을 채택했습니다!', type: 'success' })
+  const handleAdopt = (answerId: number) => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchAdoptedAnswer({
+          answer_id: answerId,
+          question_id: Number(questionId),
+        })
+        toast.show({
+          message: response.message || '답변을 채택했습니다!',
+          type: 'success',
+        })
+        const updatedQna = await fetchQnaDetail(Number(questionId))
+        setQnaData(updatedQna)
+      } catch (error: unknown) {
+        if (axios.isAxiosError<{ message: string }>(error)) {
+          // eslint-disable-next-line no-console
+          console.error('axios Error:', error.message)
+          toast.show({
+            message: '답변 채택에 실패했습니다. ',
+            type: 'error',
+          })
+          navigate(-1)
+        }
+      }
+    }
+    fetchData()
   }
 
   return (
