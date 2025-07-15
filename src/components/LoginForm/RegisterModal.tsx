@@ -6,6 +6,7 @@ import SingleDropdown from '../common/SingleDropdown'
 import { useState } from 'react'
 import { useToast } from '@hooks/useToast'
 import axios, { AxiosError } from 'axios'
+import { getAccessToken } from '@store/authStore'
 
 interface RegisterModalProps {
   isOpen: boolean
@@ -28,7 +29,7 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
   const [isCourseOpen, setIsCourseOpen] = useState(false)
   const [isBatchOpen, setIsBatchOpen] = useState(false)
 
-  const accessToken = localStorage.getItem('accessToken')
+  const accessToken = getAccessToken()
 
   const handleCourseSelect = (value: string) => {
     setSelectedCourse(value)
