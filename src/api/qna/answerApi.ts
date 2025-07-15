@@ -3,6 +3,7 @@ import type {
   AdoptAnswerParams,
   AdoptAnswerResponse,
   CreateCommentResponse,
+  CreateAnswerResponse,
 } from './types'
 
 export const fetchAdoptedAnswer = ({
@@ -21,5 +22,15 @@ export const createComment = (
   return post<CreateCommentResponse>(
     `/qna/questions/answers/${answer_id}/comments/`,
     { content }
+  )
+}
+
+export const createAnswer = (
+  question_id: number,
+  formData: FormData
+): Promise<CreateAnswerResponse> => {
+  return post<CreateAnswerResponse>(
+    `/qna/questions/${question_id}/answers/`,
+    formData
   )
 }
