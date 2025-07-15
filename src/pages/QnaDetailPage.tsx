@@ -135,9 +135,10 @@ const QnaDetailPage = () => {
             </div>
             {canEdit && (
               <Button
+                to={`/qna/${questionId}/edit`}
                 variant="check"
                 className="flex items-center gap-1 px-4 py-2 text-xs"
-                onClick={() => navigate(`/qna/${questionId}/edit`)}
+                onClick={() => {}}
               >
                 수정
               </Button>
