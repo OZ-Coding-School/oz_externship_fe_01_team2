@@ -3,69 +3,127 @@ import Button from '@components/common/Button'
 import FormInput from '@components/common/FormInput'
 import { VALIDATION_REGEX } from '@constants/validation'
 import { useInput } from '@hooks/useInput'
-import axios from 'axios'
-import { useToast } from '@hooks/useToast'
+import { useSignUpApi } from '@hooks/useSignApi'
+import { useState } from 'react'
+import { useNavigate } from 'react-router'
 
 export default function SignUpFormPage() {
+  const navigate = useNavigate()
+
+  const {
+    checkNicknameDuplicate,
+    loading,
+    sendEmailVerificationCode,
+    verifyEmailCode,
+    sendPhoneVerificationCode,
+    verifyPhoneCode,
+    signUp,
+  } = useSignUpApi()
+
+  const handleCheckNickname = async () => {
+    if (!nickname.isValid) return
+    const success = await checkNicknameDuplicate(nickname.value)
+    setIsNicknameChecked(success)
+  }
+
+  const handleSendEmailCode = async () => {
+    if (!email.isValid) return
+    const success = await sendEmailVerificationCode(email.value)
+    if (success) setIsEmailCodeSent(true)
+  }
+  const handleVerifyEmailCode = async () => {
+    if (!email.isValid || !emailCode.isValid) return
+    await verifyEmailCode(
+      email.value,
+      emailCode.value,
+      () => setIsEmailVerified(true),
+      () => setIsEmailVerified(false)
+    )
+  }
+  const handleSendPhoneCode = async () => {
+    if (!isPhoneValid) return
+
+    const phoneNumber = phone1.value + phone2.value + phone3.value
+    const success = await sendPhoneVerificationCode(phoneNumber)
+    if (success) {
+      setIsPhoneCodeSent(true)
+    }
+  }
+
+  const handleVerifyPhoneCode = async () => {
+    if (!phoneCode.isValid) return
+
+    const fullPhone = phone1.value + phone2.value + phone3.value
+    const success = await verifyPhoneCode(fullPhone, phoneCode.value)
+    if (success) {
+      setIsPhoneVerified(true)
+    }
+  }
+
+  const handleSignUp = async () => {
+    if (!isFormValid || !isEmailVerified || !isPhoneVerified) return
+
+    await signUp({
+      email: email.value,
+      password: password.value,
+      password_confirm: passwordCheck.value,
+      name: name.value,
+      nickname: nickname.value,
+      gender: gender === '남' ? 'MALE' : 'FEMALE',
+      phone_number: phone1.value + phone2.value + phone3.value,
+      birthday: birth.value,
+      self_introduction: introduction.value,
+    })
+
+    navigate('/login')
+  }
+
   const name = useInput(
     (v) => VALIDATION_REGEX.KOREAN_NAME.test(v) && v.length > 0
   )
 
   const nickname = useInput((v) => VALIDATION_REGEX.NICKNAME.test(v))
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false)
 
   const birth = useInput((v) => VALIDATION_REGEX.BIRTH.test(v))
 
   const email = useInput((v) => VALIDATION_REGEX.EMAIL.test(v))
 
   const emailCode = useInput((v) => VALIDATION_REGEX.EMAIL_CODE.test(v))
+  const [isEmailVerified, setIsEmailVerified] = useState(false)
+  const [isEmailCodeSent, setIsEmailCodeSent] = useState(false)
 
   const phone1 = useInput((v) => VALIDATION_REGEX.PHONE_PART1.test(v))
   const phone2 = useInput((v) => VALIDATION_REGEX.PHONE_PART2.test(v))
   const phone3 = useInput((v) => VALIDATION_REGEX.PHONE_PART3.test(v))
-  const phone = !!(phone1.isValid && phone2.isValid && phone3.isValid)
+  const phone = `${phone1.value}${phone2.value}${phone3.value}`
+  const isPhoneValid = phone1.isValid && phone2.isValid && phone3.isValid
+  const [isPhoneCodeSent, setIsPhoneCodeSent] = useState(false)
 
   const phoneCode = useInput((v) => VALIDATION_REGEX.PHONE_CODE.test(v))
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false)
 
   const password = useInput((v) => VALIDATION_REGEX.PASSWORD.test(v))
 
   const passwordCheck = useInput((v) => v === password.value && v.length > 0)
 
+  const introduction = useInput((v) => v.length > 0)
+
+  const [gender, setGender] = useState<'남' | '여' | ''>('')
+
   const isFormValid =
     nickname.isValid &&
     email.isValid &&
     emailCode.isValid &&
+    isEmailVerified &&
+    isPhoneVerified &&
     phone &&
     phoneCode.isValid &&
     password.isValid &&
-    passwordCheck.isValid
-
-  const toast = useToast()
-
-  const handleCheckNickname = async () => {
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/v1/auth/profile/nickname-check/`,
-        {
-          nickname: nickname.value,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-
-      toast.show({
-        message: '사용 가능한 닉네임입니다.',
-        type: 'success',
-      })
-    } catch (error) {
-      toast.show({
-        message: '이미 사용 중인 닉네임입니다.',
-        type: 'error',
-      })
-    }
-  }
+    passwordCheck.isValid &&
+    introduction.isValid &&
+    gender !== '' &&
+    isNicknameChecked
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -99,9 +157,7 @@ export default function SignUpFormPage() {
                   placeholder="이름을 입력해주세요"
                   type="text"
                   hasError={!name.isValid && name.value.length > 0}
-                  errorMessage="이름은 한글만 입력 가능합니다"
                   hasSuccess={name.isValid}
-                  successMessage="정상적으로 입력되었습니다"
                   className="w-[480px] h-[48px]"
                 ></FormInput>
               </div>
@@ -128,7 +184,7 @@ export default function SignUpFormPage() {
                     <Button
                       variant={nickname.isValid ? 'check' : 'outline'}
                       className="w-[112px] h-[48px] p-0"
-                      disabled={!nickname.isValid}
+                      disabled={!nickname.isValid || loading}
                       onClick={handleCheckNickname}
                     >
                       중복확인
@@ -155,9 +211,35 @@ export default function SignUpFormPage() {
                   hasError={!birth.isValid && birth.value.length > 0}
                   errorMessage="숫자 8자리로 입력해주세요 (예: 19990101)"
                   hasSuccess={birth.isValid}
-                  successMessage="올바른 형식입니다"
                   className="w-[480px] h-[48px]"
                 ></FormInput>
+              </div>
+
+              <div className="flex flex-col gap-[20px] justify-between">
+                <label htmlFor="introduction" className="text-[16px]">
+                  성별
+                  <span className="text-[16px] font-normal text-[#f04141]">
+                    *
+                  </span>
+                </label>
+                <div className="flex gap-[20px]">
+                  <Button
+                    variant={gender === '남' ? 'check' : 'outline'}
+                    className="w-[80px] h-[42px] rounded-[100px] p-0"
+                    disabled={gender === '남'}
+                    onClick={() => setGender('남')}
+                  >
+                    남
+                  </Button>
+                  <Button
+                    variant={gender === '여' ? 'check' : 'outline'}
+                    className="w-[80px] h-[42px] rounded-[100px] p-0"
+                    disabled={gender === '여'}
+                    onClick={() => setGender('여')}
+                  >
+                    여
+                  </Button>
+                </div>
               </div>
 
               <div className="flex flex-col justify-center w-[480px] gap-[20px]">
@@ -179,17 +261,20 @@ export default function SignUpFormPage() {
                       placeholder="이메일 (example@gmail.com)"
                       type="email"
                       hasError={!email.isValid && email.value.length > 0}
-                      errorMessage=""
                       hasSuccess={email.isValid}
-                      successMessage="사용 가능한 이메일입니다"
                       className="w-[356px] h-[48px]"
                     ></FormInput>
 
                     <div className="shrink-0">
                       <Button
-                        variant={email.isValid ? 'check' : 'outline'}
+                        variant={
+                          !isEmailCodeSent && email.isValid
+                            ? 'check'
+                            : 'outline'
+                        }
                         className="w-[112px] h-[48px] p-0"
                         disabled={!email.isValid}
+                        onClick={handleSendEmailCode}
                       >
                         인증코드전송
                       </Button>
@@ -202,7 +287,7 @@ export default function SignUpFormPage() {
                       onChange={(value: string) => {
                         const base62Only = value
                           .replace(/[^0-9a-zA-Z]/g, '')
-                          .slice(0, 10)
+                          .slice(0, 6)
                         emailCode.setValue(base62Only)
                       }}
                       placeholder="전송된 코드를 입력해주세요"
@@ -210,17 +295,20 @@ export default function SignUpFormPage() {
                       hasError={
                         !emailCode.isValid && emailCode.value.length > 0
                       }
-                      errorMessage=""
                       hasSuccess={emailCode.isValid}
-                      successMessage="이메일 인증이 완료되었습니다"
                       className="w-[356px] h-[48px]"
                     ></FormInput>
 
                     <div className="shrink-0">
                       <Button
-                        variant={emailCode.isValid ? 'outline' : 'check'}
+                        variant={
+                          emailCode.isValid && !isEmailVerified
+                            ? 'check'
+                            : 'outline'
+                        }
                         className="w-[112px] h-[48px] p-0"
-                        disabled={!emailCode.isValid}
+                        disabled={!emailCode.isValid || isEmailVerified}
+                        onClick={handleVerifyEmailCode}
                       >
                         인증코드확인
                       </Button>
@@ -290,9 +378,12 @@ export default function SignUpFormPage() {
                     </div>
 
                     <Button
-                      variant={phone ? 'check' : 'outline'}
+                      variant={
+                        isPhoneValid && !isPhoneCodeSent ? 'check' : 'outline'
+                      }
                       className="w-[112px] h-[48px] p-0"
-                      disabled={!phone}
+                      disabled={!isPhoneValid}
+                      onClick={handleSendPhoneCode}
                     >
                       인증번호전송
                     </Button>
@@ -310,17 +401,20 @@ export default function SignUpFormPage() {
                       hasError={
                         !phoneCode.isValid && phoneCode.value.length > 0
                       }
-                      errorMessage=""
                       hasSuccess={phoneCode.isValid}
-                      successMessage="휴대전화 인증이 완료되었습니다"
                       className="w-[356px] h-[48px]"
                     ></FormInput>
 
                     <div className="shrink-0">
                       <Button
-                        variant={phoneCode.isValid ? 'outline' : 'check'}
+                        variant={
+                          phoneCode.isValid && !isPhoneVerified
+                            ? 'check'
+                            : 'outline'
+                        }
                         className="w-[112px] h-[48px] p-0"
-                        disabled={!phoneCode.isValid}
+                        disabled={!phoneCode.isValid || isPhoneVerified}
+                        onClick={handleVerifyPhoneCode}
                       >
                         인증번호확인
                       </Button>
@@ -368,6 +462,27 @@ export default function SignUpFormPage() {
                   ></FormInput>
                 </div>
               </div>
+              <div className="flex flex-col gap-[20px] justify-between">
+                <label htmlFor="introduction" className="text-[16px]">
+                  자기소개
+                  <span className="text-[16px] font-normal text-[#f04141]">
+                    *
+                  </span>
+                </label>
+                <FormInput
+                  value={introduction.value}
+                  onChange={(value: string) => {
+                    introduction.setValue(value)
+                  }}
+                  placeholder="간단한 소개를 입력해주세요"
+                  type="text"
+                  hasError={
+                    !introduction.isValid && introduction.value.length > 0
+                  }
+                  hasSuccess={introduction.isValid}
+                  className="w-[480px] h-[48px]"
+                ></FormInput>
+              </div>
             </div>
           </fieldset>
 
@@ -375,7 +490,8 @@ export default function SignUpFormPage() {
             <Button
               variant={isFormValid ? 'fill' : 'ghost'}
               className="w-[480px] h-[52px]"
-              disabled={!isFormValid}
+              disabled={!isFormValid || !isEmailVerified || !isPhoneVerified}
+              onClick={handleSignUp}
             >
               가입하기
             </Button>
