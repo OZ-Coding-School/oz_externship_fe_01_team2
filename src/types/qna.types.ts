@@ -8,6 +8,7 @@ export interface CreateQuestionRequest {
   categoryId: number
   title: string
   content: string
+  image_urls?: string[]
 }
 
 export interface Question {

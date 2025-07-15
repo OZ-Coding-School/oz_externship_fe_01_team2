@@ -27,7 +27,7 @@ export interface ParentCategory {
 }
 
 export interface CreateQuestionRequest {
-  categoryId: number
+  category_id: number
   title: string
   content: string
 }

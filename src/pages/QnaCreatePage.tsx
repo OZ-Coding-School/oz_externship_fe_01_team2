@@ -29,10 +29,11 @@ export default function QnaCreatePage() {
       toast.show({ message: '필수 항목을 모두 입력해 주세요.', type: 'error' })
       return
     }
+
     setIsSubmitting(true)
     try {
       const payload: CreateQuestionRequest = {
-        categoryId,
+        category_id: categoryId,
         title: title.trim(),
         content: content.trim(),
       }

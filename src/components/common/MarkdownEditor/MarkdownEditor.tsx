@@ -1,4 +1,4 @@
-// src/components/common/MarkdownEditor/MarkdownEditor.tsx
+// src/components/common/MarkdownEditor/MarkdownEditor.tsx - 콘솔 로그 제거
 
 import { Upload, X } from 'lucide-react'
 import React, { useCallback, useRef, useState } from 'react'
@@ -22,6 +22,7 @@ const MarkdownEditor = ({
   const [showPreview, setShowPreview] = useState(initialShowPreview)
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [editorHeight, setEditorHeight] = useState(
     parseInt(height as string) || 500
   )
@@ -129,25 +130,35 @@ const MarkdownEditor = ({
         return
       }
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i]
-        if (!file.type.startsWith('image/')) continue
+      setIsUploading(true)
 
-        try {
-          const imageUrl = await uploadQnaImage(file)
-          const imageItem: ImageItem = {
-            id: `img_${Date.now()}_${i}`,
-            file,
-            url: imageUrl,
-            width: 300,
-            height: 200,
+      try {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i]
+          if (!file.type.startsWith('image/')) continue
+
+          try {
+            const imageUrl = await uploadQnaImage(file)
+
+            const imageItem: ImageItem = {
+              id: `img_${Date.now()}_${i}`,
+              file,
+              url: imageUrl,
+              width: 300,
+              height: 200,
+            }
+
+            setImages((prev) => [...prev, imageItem])
+            updateImageFiles((prev: File[]) => [...prev, file])
+            insertImageMarkdown(imageItem, i)
+          } catch (err) {
+            alert(
+              `${file.name} 업로드에 실패했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`
+            )
           }
-          setImages((prev) => [...prev, imageItem])
-          updateImageFiles((prev: File[]) => [...prev, file])
-          insertImageMarkdown(imageItem, i)
-        } catch (err) {
-          alert('이미지 업로드에 실패했습니다.')
         }
+      } finally {
+        setIsUploading(false)
       }
     },
     [getImageCountInMarkdown, insertImageMarkdown, updateImageFiles]
@@ -271,6 +282,15 @@ const MarkdownEditor = ({
     </div>
   )
 
+  const UploadingOverlay = () => (
+    <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-20">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2" />
+        <p className="text-blue-700 font-medium">이미지 업로드 중...</p>
+      </div>
+    </div>
+  )
+
   const ImageEditModal = () => {
     if (!selectedImage) return null
 
@@ -361,6 +381,7 @@ const MarkdownEditor = ({
         {...dragHandlers}
       >
         {isDragOver && <DragOverlay />}
+        {isUploading && <UploadingOverlay />}
 
         <Toolbar
           onInsert={insertText}
@@ -380,6 +401,7 @@ const MarkdownEditor = ({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               className="w-full h-full p-4 border-none outline-none resize-none font-mono text-sm leading-relaxed"
+              disabled={isUploading}
             />
           </div>
 
