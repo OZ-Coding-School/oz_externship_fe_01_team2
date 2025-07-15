@@ -24,6 +24,9 @@ const Header = () => {
   const logout = async () => {
     try {
       await authLogout()
+      toast.show({ message: '로그아웃 했습니다!', type: 'success' })
+      navigate('/')
+      setShowDropdown(false)
     } catch (error: unknown) {
       if (axios.isAxiosError<{ message: string }>(error)) {
         toast.show({
@@ -36,10 +39,6 @@ const Header = () => {
           type: 'error',
         })
       }
-    } finally {
-      toast.show({ message: '로그아웃 했습니다!', type: 'success' })
-      navigate('/')
-      setShowDropdown(false)
     }
   }
 
