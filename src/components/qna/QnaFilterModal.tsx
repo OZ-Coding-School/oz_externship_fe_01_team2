@@ -45,7 +45,7 @@ const QnaFilterModal = ({ onClose, onApply }: QnaFilterModalProps) => {
     return () => {
       document.body.style.overflow = 'auto'
     }
-  }, [toast])
+  }, [])
 
   const resetFilters = () => {
     setMajor('')

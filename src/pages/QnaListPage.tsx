@@ -54,7 +54,7 @@ const QnaListPage = () => {
       }
     }
     fetchData()
-  }, [page, query, sortOrder, toast])
+  }, [page, query, sortOrder])
 
   const filteredQuestions = useMemo(() => {
     const lowerQuery = query.toLowerCase()

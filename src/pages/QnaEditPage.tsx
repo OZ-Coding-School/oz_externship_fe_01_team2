@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import QnaCategorySelect from '@components/qna/QnaCategorySelect'
-import QnaTitleInput from '@components/qna/QnaTitleInput'
-import MarkdownEditor from '@components/common/MarkdownEditor/MarkdownEditor'
-import Button from '@components/common/Button'
-import { useToast } from '@hooks/useToast'
 import {
+  fetchCategories,
   fetchQnaDetail,
   updateQuestion,
-  fetchCategories,
 } from '@api/qna/questionApi'
-import type { CreateQuestionRequest, Category } from '@api/qna/types'
+import type { Category, CreateQuestionRequest } from '@api/qna/types'
+import Button from '@components/common/Button'
+import MarkdownEditor from '@components/common/MarkdownEditor/MarkdownEditor'
+import QnaCategorySelect from '@components/qna/QnaCategorySelect'
+import QnaTitleInput from '@components/qna/QnaTitleInput'
+import { useToast } from '@hooks/useToast'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export default function QnaEditPage() {
   const { id } = useParams<{ id: string }>()
@@ -83,7 +83,7 @@ export default function QnaEditPage() {
     }
 
     loadQuestionData()
-  }, [id, navigate, toast])
+  }, [id, navigate])
 
   // 폼 유효성 검사
   const isFormValid =
