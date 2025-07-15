@@ -3,7 +3,7 @@ import Avatar from '@components/common/Avatar'
 import MarkdownRenderer from '@components/common/MarkdownEditor/MarkdownRenderer'
 import CommentInput from '@components/qna/CommentInput'
 import CommentList from '@components/qna/CommentList'
-import type { Answer, Comment } from '@custom-types/qnaDetail'
+import type { Answer } from '@custom-types/qnaDetail'
 import { cn } from '@utils/cn'
 import { formatRelativeTime } from '@utils/formatRelativeTime'
 import { MessageCircle } from 'lucide-react'
@@ -13,34 +13,22 @@ interface AnswerCardProps {
   answer: Answer
   canAdopt: boolean | null
   onAdopt: (answerId: number) => void
+  onAddComment: (answerId: number, text: string) => void
 }
 
-function AnswerCard({ answer, canAdopt, onAdopt }: AnswerCardProps) {
-  const [comments, setComments] = useState<Comment[]>(answer.comments)
+const AnswerCard = ({
+  answer,
+  canAdopt,
+  onAdopt,
+  onAddComment,
+}: AnswerCardProps) => {
   const [orderByDesc, setOrderByDesc] = useState(true)
 
-  const sortedComments = [...comments].sort((a, b) => {
+  const sortedComments = [...answer.comments].sort((a, b) => {
     const aTime = new Date(a.created_at).getTime()
     const bTime = new Date(b.created_at).getTime()
     return orderByDesc ? bTime - aTime : aTime - bTime
   })
-
-  // 댓글 등록
-  const handleAddComment = (text: string) => {
-    const newComment: Comment = {
-      id: Math.random().toString(36).slice(2),
-      content: text,
-      author: {
-        nickname: '백지헌',
-        profile_image_url:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEg4LXysUccw39DpXCFKIRkJv6-mzFCNl7fw&s',
-      },
-      created_at: new Date().toISOString(),
-    }
-    setComments((prev) =>
-      orderByDesc ? [newComment, ...prev] : [...prev, newComment]
-    )
-  }
 
   return (
     <div
@@ -89,7 +77,9 @@ function AnswerCard({ answer, canAdopt, onAdopt }: AnswerCardProps) {
       <div className="flex items-center justify-between mb-5 mt-6 pt-4 text-sm text-gray-700">
         <div className="flex items-center gap-3 font-semibold">
           <MessageCircle />
-          <span className="font-bold text-xl">댓글 {comments.length}개</span>
+          <span className="font-bold text-xl">
+            댓글 {answer.comments.length}개
+          </span>
         </div>
         <button
           type="button"
@@ -104,7 +94,7 @@ function AnswerCard({ answer, canAdopt, onAdopt }: AnswerCardProps) {
       </div>
 
       {/* 댓글 입력창 */}
-      <CommentInput onSubmit={handleAddComment} />
+      <CommentInput onSubmit={(text) => onAddComment(answer.id, text)} />
 
       {/* 댓글 목록 */}
       <CommentList comments={sortedComments} className="mt-2" />
