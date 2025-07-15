@@ -1,5 +1,5 @@
 import type { QuestionDetail } from '@custom-types/qnaDetail.ts'
-import { get, post } from '@lib/fetcher'
+import { get, post, patch } from '@lib/fetcher'
 import type {
   Category,
   CreateQuestionRequest,
@@ -25,4 +25,10 @@ export const fetchQnaDetail = (id: number) => {
 }
 export const createQuestion = (payload: CreateQuestionRequest) => {
   return post('/qna/questions/create/', payload)
+}
+export const updateQuestion = (
+  questionId: number,
+  payload: CreateQuestionRequest
+) => {
+  return patch(`/qna/questions/${questionId}/update/`, payload)
 }

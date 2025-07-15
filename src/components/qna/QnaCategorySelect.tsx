@@ -10,10 +10,12 @@ interface SelectedCategories {
 }
 
 interface QnaCategorySelectProps {
+  value?: number | null
   onCategoryChange?: (categoryId: number | null) => void
 }
 
 export default function QnaCategorySelect({
+  value,
   onCategoryChange,
 }: QnaCategorySelectProps) {
   const [categories, setCategories] = useState<Category[]>([])
@@ -30,6 +32,33 @@ export default function QnaCategorySelect({
   useEffect(() => {
     fetchCategories().then((data) => setCategories(data))
   }, [])
+
+  useEffect(() => {
+    if (value && categories.length > 0) {
+      // 소분류 ID로부터 대분류-중분류-소분류 찾기
+      const findCategoryPath = (minorId: number) => {
+        for (const major of categories) {
+          if (major.child_categories) {
+            for (const middle of major.child_categories) {
+              if (middle.child_categories) {
+                const minor = middle.child_categories.find(
+                  (m) => m.id === minorId
+                )
+                if (minor) {
+                  return { major, middle, minor }
+                }
+              }
+            }
+          }
+        }
+        return null
+      }
+      const categoryPath = findCategoryPath(value)
+      if (categoryPath) {
+        setSelected(categoryPath)
+      }
+    }
+  }, [value, categories])
 
   const majorOptions = categories.map((item) => ({
     id: item.id,
@@ -58,7 +87,6 @@ export default function QnaCategorySelect({
     setOpenDropdown((prev) => (prev === type ? null : type))
   }
 
-  // 👇 각 선택 함수 추가!
   const handleMajor = (name: string) => {
     const major = categories.find((cat) => cat.name === name) || null
     setSelected({ major, middle: null, minor: null })
