@@ -10,7 +10,6 @@ import Avatar from './Avatar'
 
 const Header = () => {
   const { user, logout: authLogout } = useAuthStore()
-  // const [isLoggedIn, setIsLoggedIn] = useState(true) // 로그인 여부
   const [showDropdown, setShowDropdown] = useState(false)
   const [isRegisterOpen, setIsRegisterOpen] = useState(false)
 
@@ -44,14 +43,11 @@ const Header = () => {
 
   return (
     <header className="border-b border-gray-200 bg-white">
-      {/* 상단 공지 배너 */}
       <div className="bg-black text-white h-12 flex items-center justify-center">
         🚨 선착순 모집! 국비지원 받고 4주 완성
       </div>
 
-      {/* 메인 헤더 */}
       <div className="container flex justify-between items-center h-16">
-        {/* 좌측 로고 및 네비 */}
         <div className="flex items-center gap-15">
           <Link to="/">
             <img src={LogoImage} alt="oz코딩스쿨" />
@@ -66,7 +62,6 @@ const Header = () => {
           </nav>
         </div>
 
-        {/* 우측 로그인 / 유저 메뉴 */}
         <div className="text-base text-gray-600">
           {!user ? (
             <div className="flex gap-2.5 items-center">
@@ -84,7 +79,10 @@ const Header = () => {
                 isOpen={isRegisterOpen}
                 onClose={() => setIsRegisterOpen(false)}
               />
-              <button onClick={toggleDropdown} className="cursor-pointer">
+              <button
+                onClick={toggleDropdown}
+                className="cursor-pointer w-full h-full"
+              >
                 <Avatar
                   name={user.nickname}
                   profileUrl={user.profile_image_url || UserDefaultImage}
@@ -105,7 +103,7 @@ const Header = () => {
                       {/* 수강등록 전 */}
                       <button
                         onClick={() => setIsRegisterOpen(true)}
-                        className="block bg-[#EFE6FC] text-[#6201E0] px-2 py-2.5 font-medium"
+                        className="cursor-pointer block w-full bg-primary-100 text-primary px-2 py-2.5 font-medium text-left"
                       >
                         수강생 등록
                       </button>
@@ -113,7 +111,7 @@ const Header = () => {
                     <li>
                       <Link
                         to="/mypage"
-                        className="block hover:bg-[#EFE6FC] transition-all duration-300 hover:text-[#6201E0] px-2 py-2.5 font-medium"
+                        className="cursor-pointer block w-full transition-all duration-300 hover:text-primary px-2 py-2.5 font-medium"
                       >
                         마이페이지
                       </Link>
@@ -121,7 +119,7 @@ const Header = () => {
                     <li>
                       <button
                         onClick={logout}
-                        className="w-full cursor-pointer transition-all duration-300 text-left block hover:text-[#6201E0] px-2 py-2.5 font-medium"
+                        className="w-full cursor-pointer transition-all duration-300 text-left block hover:text-primary px-2 py-2.5 font-medium"
                       >
                         로그아웃
                       </button>
