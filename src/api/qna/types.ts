@@ -53,3 +53,19 @@ export interface AdoptAnswerParams {
 export interface AdoptAnswerResponse {
   message: string
 }
+
+export interface CreateAnswerResponse {
+  id: number
+  question_id: number
+  author: {
+    id: number
+    nickname: string
+    profile_image_url: string
+    role: string
+  }
+  content: string
+  is_adopted: boolean
+  created_at: string
+  updated_at: string
+  comments: string[]
+}
