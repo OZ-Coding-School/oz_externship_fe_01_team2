@@ -5,6 +5,8 @@ import SingleDropdown from '../common/SingleDropdown'
 import Textarea from '../common/Textarea'
 import Button from '../common/Button/Button'
 import type { WithdrawalModalProps } from '../../types/withdrawalModal.types'
+import { toast } from 'react-toastify'
+import { useAuthStore } from '../../store/authStore'
 
 const reasons = [
   '원하는 클래스가 없어서',
@@ -19,13 +21,11 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
   const [selectedReason, setSelectedReason] = useState('')
   const [additionalComment, setAdditionalComment] = useState('')
   const [loading, setLoading] = useState(false)
-
-  // Dropdown 열림 상태 관리
   const [isDropdownOpen, setDropdownOpen] = useState(false)
+
   const toggleDropdown = () => setDropdownOpen((prev) => !prev)
 
-  // 이메일은 예시용, 실제로는 props나 전역 상태에서 받아야 합니다.
-  const userEmail = 'user@example.com'
+  const userEmail = useAuthStore().user?.email
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -35,7 +35,7 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
   }, [])
 
   const handleConfirm = async () => {
-    if (!selectedReason) return
+    if (!selectedReason || !userEmail) return
 
     setLoading(true)
     try {
@@ -43,18 +43,17 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
         email: userEmail,
         reason: selectedReason,
         reason_detail: additionalComment || '',
-        due_date: '2025-07-11', // 또는 new Date().toISOString().split('T')[0]
+        due_date: new Date().toISOString().split('T')[0],
       }
 
-      const res = await UserWithdrawalApi.withdraw(payload)
-      console.log('탈퇴 완료:', res)
+      await UserWithdrawalApi.withdraw(payload)
 
-      // 부모 컴포넌트 콜백 호출
       onConfirm({ reason: selectedReason, comment: additionalComment })
       onClose()
-    } catch (error) {
-      console.error('탈퇴 실패:', error)
-      alert('탈퇴 요청 중 오류가 발생했습니다. 다시 시도해 주세요.')
+    } catch (error: unknown) {
+      // eslint-disable-next-line no-console
+      console.error(`[ERROR] ${error ?? ''}`)
+      toast.error('탈퇴 요청 중 오류가 발생했습니다. 다시 시도해 주세요.')
     } finally {
       setLoading(false)
     }
@@ -69,7 +68,6 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
           ${selectedReason ? 'h-auto' : 'h-[535px]'}
         `}
       >
-        {/* 닫기 버튼 */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 items-end"
@@ -77,7 +75,7 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
         >
           <X />
         </button>
-        {/* 제목 및 설명 */}
+
         <h2 className="text-xl font-bold pt-[10px] mb-10 text-left leading-normal tracking-tight">
           오즈코딩스쿨을 탈퇴하시는 이유는 무엇인가요?
         </h2>
@@ -97,7 +95,7 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
               if (selected !== '기타(직접 입력)') {
                 setAdditionalComment('')
               }
-              setDropdownOpen(false) // 선택 후 닫기
+              setDropdownOpen(false)
             }}
             placeholder="해당되는 항목을 선택해 주세요."
             isOpen={isDropdownOpen}
