@@ -1,8 +1,7 @@
 import Button from '@components/common/Button/Button'
 import Textarea from '@components/common/Textarea'
-import { ToastContext } from '@components/common/Toast/ToastContext'
 import { cn } from '@utils/cn'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 const NOTICE =
   '개인정보를 공유 및 요청하거나, 명예 훼손, 무단 광고, 불법 정보 유포시 모니터링 후 삭제될 수 있습니다.'
 const DEFAULT_MAX_LENGTH = 300
@@ -19,17 +18,12 @@ function CommentInput({
   className = '',
 }: CommentInputProps) {
   const [value, setValue] = useState('')
-  const toast = useContext(ToastContext)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const trimmed = value.trim()
     if (!trimmed) return
     onSubmit(trimmed)
     setValue('')
-    toast?.show({
-      type: 'success',
-      message: '댓글이 등록되었어요.',
-    })
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

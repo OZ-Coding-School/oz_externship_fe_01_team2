@@ -1,4 +1,4 @@
-import { fetchAdoptedAnswer } from '@api/qna/answerApi'
+import { createComment, fetchAdoptedAnswer } from '@api/qna/answerApi'
 import { fetchQnaDetail } from '@api/qna/questionApi'
 import Avatar from '@components/common/Avatar'
 import Button from '@components/common/Button'
@@ -54,6 +54,28 @@ const QnaDetailPage = () => {
       toast.show({ message: 'URL이 복사되었습니다!', type: 'success' })
     } catch {
       toast.show({ message: 'URL 복사 실패', type: 'error' })
+    }
+  }
+
+  // 댓글 등록
+  const handleAddComment = async (answerId: number, content: string) => {
+    try {
+      await createComment(answerId, content)
+      toast.show({
+        message: '댓글이 등록되었습니다.',
+        type: 'success',
+      })
+      const updatedQna = await fetchQnaDetail(Number(questionId))
+      setQnaData(updatedQna)
+    } catch (error: unknown) {
+      if (axios.isAxiosError<{ message: string }>(error)) {
+        // eslint-disable-next-line no-console
+        console.error('댓글등록 중 오류 발생:', error.message)
+        toast.show({
+          message: error.message || '댓글등록에 실패했습니다. ',
+          type: 'error',
+        })
+      }
     }
   }
 
@@ -187,6 +209,7 @@ const QnaDetailPage = () => {
             answer={answer}
             canAdopt={canAdopt}
             onAdopt={handleAdopt}
+            onAddComment={handleAddComment}
           />
         ))}
       </div>
