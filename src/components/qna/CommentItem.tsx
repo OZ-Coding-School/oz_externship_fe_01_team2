@@ -1,6 +1,6 @@
 import Avatar from '@components/common/Avatar'
 import { cn } from '@utils/cn'
-import { getFullDate } from '@utils/getFullDate'
+import { formatRelativeTime } from '@utils/formatRelativeTime'
 
 interface CommentItemProps {
   comment: {
@@ -34,7 +34,7 @@ function CommentItem({ comment, className = '' }: CommentItemProps) {
             {comment.author.nickname}
           </span>
           <span className="text-xs text-gray-400">
-            {getFullDate(comment.created_at)}
+            {formatRelativeTime(comment.created_at)}
           </span>
         </div>
         <div className="whitespace-pre-wrap break-words text-gray-800">
