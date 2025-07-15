@@ -1,15 +1,28 @@
-const API_URL = import.meta.env.VITE_API_URL
+import { post } from '@lib/fetcher'
 
 export async function uploadQnaImage(file: File): Promise<string> {
   const formData = new FormData()
-  formData.append('image', file)
+  formData.append('image_files', file)
 
-  const res = await fetch(`${API_URL}/api/v1/qna/images/upload/`, {
-    method: 'POST',
-    body: formData,
-  })
+  try {
+    const data = await post<{
+      upload_success?: string[]
+      url?: string
+      image_url?: string
+    }>('/qna/images/upload/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
 
-  if (!res.ok) throw new Error('이미지 업로드 실패')
-  const data = await res.json()
-  return data.url || data.image_url
+    const imageUrl = data.upload_success?.[0] || data.url || data.image_url
+
+    if (!imageUrl) {
+      throw new Error('이미지 URL을 받을 수 없습니다')
+    }
+
+    return imageUrl
+  } catch (error) {
+    throw new Error('이미지 업로드 실패')
+  }
 }
