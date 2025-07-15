@@ -180,7 +180,7 @@ export default function LoginPage() {
     setFindPwStep('form')
   }
 
-  const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
       const result = await emailLogin({
@@ -209,7 +209,7 @@ export default function LoginPage() {
   return (
     <div className="flex justify-center">
       <div className="mt-[200px] mb-[392px] w-[348px] h-[488px]">
-        <form>
+        <form onSubmit={handleLogin}>
           <AuthHeader
             message="아직 회원이 아니신가요?"
             linkText="회원가입하기"
@@ -273,10 +273,11 @@ export default function LoginPage() {
 
           <div className="mt-[12px]">
             <Button
+              type="submit"
               variant={isFormValid ? 'fill' : 'ghost'}
               disabled={!isFormValid}
               className="w-[348px] h-[52px]"
-              onClick={handleLogin}
+              // onClick={handleLogin}
             >
               일반회원 로그인
             </Button>

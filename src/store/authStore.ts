@@ -128,15 +128,7 @@ export const useAuthStore = create<AuthState>()(
       // 로그아웃
       logout: async (): Promise<void> => {
         try {
-          await AuthApi.logout()
-        } catch (error: unknown) {
-          if (axios.isAxiosError<{ message: string }>(error)) {
-            // eslint-disable-next-line no-console
-            console.error(`[AxiosError] 로그아웃 API 호출 실패 ${error ?? ''}`)
-          }
-          // eslint-disable-next-line no-console
-          console.error('[UnexpectedError]', error)
-        } finally {
+          // await AuthApi.logout()
           set({
             user: null,
             accessToken: null,
@@ -144,6 +136,11 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             isLoading: false,
           })
+
+          localStorage.removeItem('auth-storage')
+        } catch (error: unknown) {
+          // eslint-disable-next-line no-console
+          console.error('[UnexpectedError]', error)
         }
       },
 
