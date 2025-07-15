@@ -69,3 +69,19 @@ export interface CreateAnswerResponse {
   updated_at: string
   comments: string[]
 }
+
+export interface UpdateAnswerResponse {
+  id: number
+  question_id: number
+  author: {
+    id: number
+    nickname: string
+    profile_image_url: string
+    role: string
+  }
+  content: string
+  is_adopted: boolean
+  created_at: string
+  updated_at: string
+  comments: string[]
+}

@@ -42,7 +42,7 @@ const QnaDetailPage = () => {
       }
     }
     fetchData()
-  }, [])
+  }, [questionId, toast, navigate])
 
   const handleShare = async () => {
     try {
@@ -193,7 +193,7 @@ const QnaDetailPage = () => {
       </section>
 
       {/* 답변 요청 안내 */}
-      {user && (
+      {user && user.nickname !== qnaData.author.nickname && (
         <AnswerForm questionId={qnaData.id} onAnswerSubmit={refreshQnaData} />
       )}
 
@@ -218,9 +218,11 @@ const QnaDetailPage = () => {
           <AnswerCard
             key={answer.id}
             answer={answer}
+            questionId={qnaData.id}
             canAdopt={canAdopt}
             onAdopt={handleAdopt}
             onAddComment={handleAddComment}
+            onAnswerUpdate={refreshQnaData}
           />
         ))}
       </div>

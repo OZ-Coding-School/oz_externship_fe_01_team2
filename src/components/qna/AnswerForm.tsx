@@ -4,30 +4,51 @@ import MarkdownEditor from '@components/common/MarkdownEditor'
 import { useToast } from '@hooks/useToast'
 import { useAuthStore } from '@store/authStore'
 import { useState } from 'react'
-import { createAnswer } from '@api/qna/answerApi'
+import { createAnswer, updateAnswer } from '@api/qna/answerApi'
 
 interface AnswerFormProps {
   questionId: number
   onAnswerSubmit?: () => void
+  editingAnswer?: {
+    id: number
+    content: string
+  } | null
+  onCancelEdit?: () => void
 }
 
-const AnswerForm = ({ questionId, onAnswerSubmit }: AnswerFormProps) => {
+const AnswerForm = ({
+  questionId,
+  onAnswerSubmit,
+  editingAnswer,
+  onCancelEdit,
+}: AnswerFormProps) => {
   const { user } = useAuthStore()
   const [content, setContent] = useState('')
   const [imageFiles, setImageFiles] = useState([] as File[])
   const [isReplying, setIsReplying] = useState(false)
   const toast = useToast()
 
+  const isEditMode = !!editingAnswer
+
   if (!user) {
     return null
   }
   const { nickname, profile_image_url: profileUrl } = user
+
+  const handleStartEdit = () => {
+    if (editingAnswer) {
+      setContent(editingAnswer.content)
+      setIsReplying(true)
+      onCancelEdit?.()
+    }
+  }
 
   // 답변 작성 후 저장하는 함수
   const handleReset = () => {
     setContent('')
     setImageFiles([])
     setIsReplying(false)
+    onCancelEdit?.()
   }
 
   const handleSubmit = async () => {
@@ -42,16 +63,26 @@ const AnswerForm = ({ questionId, onAnswerSubmit }: AnswerFormProps) => {
         toast.show({ message: '답변 내용을 입력해주세요.', type: 'error' })
         return
       }
-
-      await createAnswer(questionId, formData)
+      if (isEditMode && editingAnswer) {
+        // 수정 모드: PUT API 호출
+        await updateAnswer(questionId, editingAnswer.id, formData)
+        toast.show({ message: '답변이 수정되었습니다!', type: 'success' })
+      } else {
+        // 신규 작성 모드: POST API 호출
+        await createAnswer(questionId, formData)
+        toast.show({ message: '답변이 저장되었습니다!', type: 'success' })
+      }
 
       handleReset()
-      toast.show({ message: '답변이 저장되었습니다!', type: 'success' })
-
       onAnswerSubmit?.()
     } catch {
-      toast.show({ message: '답변 저장 실패', type: 'error' })
+      const errorMessage = isEditMode ? '답변 수정 실패' : '답변 저장 실패'
+      toast.show({ message: errorMessage, type: 'error' })
     }
+  }
+
+  if (isEditMode && !isReplying) {
+    handleStartEdit()
   }
 
   return (
@@ -62,7 +93,7 @@ const AnswerForm = ({ questionId, onAnswerSubmit }: AnswerFormProps) => {
           <div>
             <div className="text-primary text-xs">{nickname}님, </div>
             <div className="text-lg font-semibold text-gray-800">
-              정보를 공유해 주세요.
+              {isEditMode ? '답변을 수정해 주세요.' : '정보를 공유해 주세요.'}
             </div>
           </div>
         </div>
@@ -76,7 +107,7 @@ const AnswerForm = ({ questionId, onAnswerSubmit }: AnswerFormProps) => {
               취소하기
             </Button>
             <Button className="px-0 rounded-full w-28" onClick={handleSubmit}>
-              저장하기
+              {isEditMode ? '수정하기' : '저장하기'}
             </Button>
           </div>
         ) : (
@@ -84,7 +115,7 @@ const AnswerForm = ({ questionId, onAnswerSubmit }: AnswerFormProps) => {
             className="px-0 rounded-full w-28"
             onClick={() => setIsReplying(true)}
           >
-            답변하기
+            {isEditMode ? '수정하기' : '답변하기'}
           </Button>
         )}
       </div>
