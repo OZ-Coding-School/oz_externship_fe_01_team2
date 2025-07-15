@@ -31,15 +31,12 @@ export default function PwSuccess({ onClose, email }: PwSuccessProps) {
     if (!password.isValid || !passwordCheck.isValid) return
 
     try {
-      const accessToken = localStorage.getItem('accessToken')
-
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/v1/auth/account/change-password/`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             email,
@@ -65,13 +62,6 @@ export default function PwSuccess({ onClose, email }: PwSuccessProps) {
     }
   }
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken')
-    if (!accessToken) {
-      alert('비정상적인 접근입니다.')
-      navigate('/login')
-    }
-  }, [])
   useEffect(() => {
     if (showPopup) {
       const timer = setTimeout(() => {

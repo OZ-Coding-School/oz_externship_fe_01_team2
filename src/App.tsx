@@ -12,6 +12,7 @@ import SignUpFormPage from '@pages/SignUpFormPage'
 import SignUpPage from '@pages/SignUpPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import QnaEditPage from '@pages/QnaEditPage'
+import KakaoCallbackPage from '@api/auth/KakaoCallbackPage'
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="qna/create" element={<QnaCreatePage />} />
           <Route path="*" element={<ErrorPage />} />
           <Route path="qna/:id/edit" element={<QnaEditPage />} />
+          <Route path="/auth/callback/kakao" element={<KakaoCallbackPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
