@@ -31,7 +31,7 @@ export interface CreateQuestionRequest {
   title: string
   content: string
 }
-export interface fetchCreateCommentParams {
+export interface createCommentParams {
   answer_id: number
   content: string
 }
