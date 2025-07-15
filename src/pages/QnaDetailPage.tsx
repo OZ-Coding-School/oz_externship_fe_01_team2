@@ -1,6 +1,7 @@
 import { fetchAdoptedAnswer } from '@api/qna/answerApi'
 import { fetchQnaDetail } from '@api/qna/questionApi'
 import Avatar from '@components/common/Avatar'
+import Button from '@components/common/Button'
 import MarkdownRenderer from '@components/common/MarkdownEditor/MarkdownRenderer'
 import AIAnswer from '@components/qna/AIAnswer'
 import AnswerCard from '@components/qna/AnswerCard'
@@ -67,6 +68,8 @@ const QnaDetailPage = () => {
     user.nickname === qnaData.author.nickname &&
     !qnaData.answers.some((a) => a.is_adopted)
 
+  const canEdit = user && user.nickname === qnaData.author.nickname
+
   const handleAdopt = (answerId: number) => {
     const fetchData = async () => {
       try {
@@ -114,24 +117,39 @@ const QnaDetailPage = () => {
               <span className="text-primary text-4xl mr-4">Q.</span>{' '}
               {qnaData.title}
             </h1>
+
             <div className="flex items-center gap-3 shrink-0">
               <Avatar
                 name={qnaData.author.nickname}
                 profileUrl={qnaData.author.profile_image_url}
               />
+
               <div className="text-gray-600">{qnaData.author.nickname} </div>
             </div>
           </div>
 
-          <div className="text-sm text-gray-400">
-            조회 {qnaData.view_count} · {formatRelativeTime(qnaData.created_at)}
+          <div className="flex items-center justify-between text-sm text-gray-400">
+            <div>
+              조회 {qnaData.view_count} ·{' '}
+              {formatRelativeTime(qnaData.created_at)}
+            </div>
+            {canEdit && (
+              <Button
+                to={`/qna/${questionId}/edit`}
+                variant="check"
+                className="flex items-center gap-1 px-4 py-2 text-xs"
+                onClick={() => {}}
+              >
+                수정
+              </Button>
+            )}
           </div>
         </div>
         <div className="pt-10 text-body-rg pb-15">
           <MarkdownRenderer content={qnaData.content} />
         </div>
         <AIAnswer question={qnaData.content} />
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <button
             type="button"
             className="text-sm font-semibold flex items-center gap-2 text-gray-400 py-2 px-3 rounded-full border border-gray-250 cursor-pointer"
