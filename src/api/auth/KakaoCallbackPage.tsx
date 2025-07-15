@@ -1,10 +1,12 @@
+import { useToast } from '@hooks/useToast'
+import axios from 'axios'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
 
 export default function KakaoCallbackPage() {
   const navigate = useNavigate()
 
+  const toast = useToast()
   useEffect(() => {
     const fetchKakaoToken = async () => {
       const urlParams = new URLSearchParams(window.location.search)
@@ -28,10 +30,22 @@ export default function KakaoCallbackPage() {
 
         // ✅ 로그인 완료 후 이동
         navigate('/')
-      } catch (err) {
-        alert('카카오 로그인에 실패했습니다.')
-        console.error(err)
-        navigate('/login')
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          toast.show({
+            message:
+              error.response?.data?.message || '카카오 로그인에 실패했습니다.',
+            type: 'error',
+          })
+          // alert(error.response?.data?.message || '카카오 로그인에 실패했습니다.')
+        } else if (error instanceof Error) {
+          toast.show({
+            message: error.message || '카카오 로그인에 실패했습니다.',
+            type: 'error',
+          })
+          alert('카카오 로그인에 실패했습니다.')
+          navigate('/login')
+        }
       }
     }
 

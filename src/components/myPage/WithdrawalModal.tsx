@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
+import UserWithdrawalApi from '@api/user-withdrawal/api'
+import Button from '@components/common/Button/Button'
+import SingleDropdown from '@components/common/SingleDropdown'
+import Textarea from '@components/common/Textarea'
+import type { WithdrawalModalProps } from '@custom-types/withdrawalModal.types'
+import { useToast } from '@hooks/useToast'
+import { useAuthStore } from '@store/authStore'
+import { isAxiosError } from 'axios'
 import { X } from 'lucide-react'
-import UserWithdrawalApi from '../../api/user-withdrawal/api'
-import SingleDropdown from '../common/SingleDropdown'
-import Textarea from '../common/Textarea'
-import Button from '../common/Button/Button'
-import type { WithdrawalModalProps } from '../../types/withdrawalModal.types'
-import { toast } from 'react-toastify'
-import { useAuthStore } from '../../store/authStore'
+import { useEffect, useState } from 'react'
 
 const reasons = [
   '원하는 클래스가 없어서',
@@ -27,6 +28,7 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
 
   const userEmail = useAuthStore().user?.email
 
+  const toast = useToast()
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => {
@@ -51,9 +53,17 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
       onConfirm({ reason: selectedReason, comment: additionalComment })
       onClose()
     } catch (error: unknown) {
-      // eslint-disable-next-line no-console
-      console.error(`[ERROR] ${error ?? ''}`)
-      toast.error('탈퇴 요청 중 오류가 발생했습니다. 다시 시도해 주세요.')
+      if (isAxiosError<{ message: string }>(error)) {
+        toast.show({
+          message: error.message || '탈퇴 요청 중 오류가 발생했습니다.',
+          type: 'error',
+        })
+      } else {
+        toast.show({
+          message: '알 수 없는 오류가 발생했습니다.',
+          type: 'error',
+        })
+      }
     } finally {
       setLoading(false)
     }
