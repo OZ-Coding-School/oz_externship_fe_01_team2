@@ -6,7 +6,7 @@ import MypageProfile from '@components/myPage/MypageProfile'
 import WithdrawalModal from '@components/myPage/WithdrawalModal'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-// import UserWithdrawalApi from '@api/user-withdrawal/api' // API 임포트
+import UserWithdrawalApi from '@api/user-withdrawal/api' // API 임포트
 import type { UserProfile } from '@custom-types/UserProfile.type'
 
 const MyPage = () => {

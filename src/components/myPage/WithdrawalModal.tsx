@@ -1,9 +1,12 @@
-import Button from '@components/common/Button/Button'
-import SingleDropdown from '@components/common/SingleDropdown'
-import Textarea from '@components/common/Textarea'
-import type { WithdrawalModalProps } from '@custom-types/withdrawalModal.types'
+import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
-import { useEffect, useState } from 'react' // useEffect 임포트 추가
+import UserWithdrawalApi from '../../api/user-withdrawal/api'
+import SingleDropdown from '../common/SingleDropdown'
+import Textarea from '../common/Textarea'
+import Button from '../common/Button/Button'
+import type { WithdrawalModalProps } from '../../types/withdrawalModal.types'
+import { toast } from 'react-toastify'
+import { useAuthStore } from '../../store/authStore'
 
 const reasons = [
   '원하는 클래스가 없어서',
@@ -17,6 +20,12 @@ const reasons = [
 const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
   const [selectedReason, setSelectedReason] = useState('')
   const [additionalComment, setAdditionalComment] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [isDropdownOpen, setDropdownOpen] = useState(false)
+
+  const toggleDropdown = () => setDropdownOpen((prev) => !prev)
+
+  const userEmail = useAuthStore().user?.email
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -25,9 +34,29 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
     }
   }, [])
 
-  const handleConfirm = () => {
-    onConfirm({ reason: selectedReason, comment: additionalComment })
-    onClose()
+  const handleConfirm = async () => {
+    if (!selectedReason || !userEmail) return
+
+    setLoading(true)
+    try {
+      const payload = {
+        email: userEmail,
+        reason: selectedReason,
+        reason_detail: additionalComment || '',
+        due_date: new Date().toISOString().split('T')[0],
+      }
+
+      await UserWithdrawalApi.withdraw(payload)
+
+      onConfirm({ reason: selectedReason, comment: additionalComment })
+      onClose()
+    } catch (error: unknown) {
+      // eslint-disable-next-line no-console
+      console.error(`[ERROR] ${error ?? ''}`)
+      toast.error('탈퇴 요청 중 오류가 발생했습니다. 다시 시도해 주세요.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const isTextareaDisabled = selectedReason !== '기타(직접 입력)'
@@ -39,14 +68,14 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
           ${selectedReason ? 'h-auto' : 'h-[535px]'}
         `}
       >
-        {/* 닫기 버튼 */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 items-end"
+          type="button"
         >
           <X />
         </button>
-        {/* 제목 및 설명 */}
+
         <h2 className="text-xl font-bold pt-[10px] mb-10 text-left leading-normal tracking-tight">
           오즈코딩스쿨을 탈퇴하시는 이유는 무엇인가요?
         </h2>
@@ -56,22 +85,25 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
           / 쿠폰 내역이 사라지며 환불되지 않습니다. 삭제된 정보는 복구할 수
           없습니다.
         </p>
-        {/* SingleDropdown 적용 */}
+
         <div className="h-[48px] pb-[16px]">
           <SingleDropdown
             options={reasons}
             selected={selectedReason}
             onChange={(selected) => {
               setSelectedReason(selected)
-              // '기타(직접 입력)'이 아닌 다른 이유를 선택하면 추가 의견 초기화
               if (selected !== '기타(직접 입력)') {
                 setAdditionalComment('')
               }
+              setDropdownOpen(false)
             }}
             placeholder="해당되는 항목을 선택해 주세요."
+            isOpen={isDropdownOpen}
+            onToggle={toggleDropdown}
+            disabled={loading}
           />
         </div>
-        {/* 선택 이후 의견 입력 영역 */}
+
         {selectedReason && (
           <div>
             <p className="text-base font-normal text-gray-600 mt-10 mb-5 leading-[140%] tracking-[-0.03em] text-left">
@@ -79,7 +111,6 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
               서비스 개선에 적극적으로 반영하겠습니다. 감사합니다!
             </p>
 
-            {/* Textarea 컴포넌트에 disabled 프롭스 적용 */}
             <Textarea
               value={additionalComment}
               onChange={(e) => setAdditionalComment(e.target.value)}
@@ -93,8 +124,9 @@ const WithdrawalModal = ({ onClose, onConfirm }: WithdrawalModalProps) => {
                 onClick={handleConfirm}
                 variant="outline"
                 className="px-6 py-3 rounded-md text-base font-semibold mb-6"
+                disabled={loading}
               >
-                회원 탈퇴하기
+                {loading ? '처리 중...' : '회원 탈퇴하기'}
               </Button>
             </div>
           </div>

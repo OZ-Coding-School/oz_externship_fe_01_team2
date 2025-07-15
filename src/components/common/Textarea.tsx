@@ -8,11 +8,20 @@ interface TextareaProps {
   rows?: number
   className?: string
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
+  disabled?: boolean
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
-    { value, onChange, placeholder = '', rows = 4, className = '', onKeyDown },
+    {
+      value,
+      onChange,
+      placeholder = '',
+      rows = 4,
+      className = '',
+      onKeyDown,
+      disabled = false,
+    },
     ref
   ) => {
     return (
@@ -27,6 +36,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           className
         )}
         onKeyDown={onKeyDown}
+        disabled={disabled}
       />
     )
   }
