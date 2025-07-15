@@ -1,14 +1,15 @@
 // src/pages/QnaCreatePage.tsx
 
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import QnaCategorySelect from '@components/qna/QnaCategorySelect'
-import QnaTitleInput from '@components/qna/QnaTitleInput'
-import MarkdownEditor from '@components/common/MarkdownEditor/MarkdownEditor'
-import Button from '@components/common/Button'
-import { useToast } from '@hooks/useToast'
 import { createQuestion } from '@api/qna/questionApi'
 import type { CreateQuestionRequest } from '@api/qna/types'
+import Button from '@components/common/Button'
+import MarkdownEditor from '@components/common/MarkdownEditor/MarkdownEditor'
+import QnaCategorySelect from '@components/qna/QnaCategorySelect'
+import QnaTitleInput from '@components/qna/QnaTitleInput'
+import { useToast } from '@hooks/useToast'
+import { isAxiosError } from 'axios'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export default function QnaCreatePage() {
   const [categoryId, setCategoryId] = useState<number | null>(null)
@@ -40,8 +41,18 @@ export default function QnaCreatePage() {
       const result = await createQuestion(payload)
       toast.show({ message: '질문이 등록되었습니다!', type: 'success' })
       navigate(`/qna/${result.id}`)
-    } catch (error) {
-      toast.show({ message: '질문 등록에 실패했습니다.', type: 'error' })
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        toast.show({
+          message: error.response?.data?.message || '질문 등록에 실패했습니다.',
+          type: 'error',
+        })
+      } else {
+        toast.show({
+          message: '알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.',
+          type: 'error',
+        })
+      }
     } finally {
       setIsSubmitting(false)
     }
