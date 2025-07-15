@@ -52,7 +52,7 @@ const SocialLoginButtons = ({ className }: SocialLoginButtonsProps) => {
 
   const loginWithSocial = useCallback(
     async (
-      provider: SocialProvider,
+      _provider: SocialProvider,
       endpoint: string,
       code: string,
       state?: string
