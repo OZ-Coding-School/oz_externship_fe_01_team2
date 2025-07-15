@@ -1,12 +1,12 @@
-// components/LoginForm/WithdrawnAccountModal.tsx
+// components/LoginForm/RegisterModal.tsx
+import { useEffect, useState } from 'react'
+import { Check } from 'lucide-react'
 import Modal from '../common/Modal'
 import Button from '../common/Button'
-import { Check } from 'lucide-react'
 import SingleDropdown from '../common/SingleDropdown'
-import { useState } from 'react'
-import { useToast } from '@hooks/useToast'
-import axios, { AxiosError } from 'axios'
-import { getAccessToken } from '@store/authStore'
+import { useToast } from '../../hooks/useToast'
+import RegisterApi from '../../api/register/api'
+import type { Course, Generation } from '../../api/register/types'
 
 interface RegisterModalProps {
   isOpen: boolean
@@ -14,65 +14,75 @@ interface RegisterModalProps {
 }
 
 export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
-  const courseOptions = [
-    '웹 개발 초격차 프론트엔드 부트캠프',
-    '웹 개발 초격차 백엔드 부트캠프',
-    'IT스타트업 실무형 사업 개발자(BD) 부트캠프',
-    '스타트업 맞춤형 프로덕트 디자이너',
-  ]
   const toast = useToast()
-  const batchOptions = ['10기', '11기', '12기', '13기', '14기', '15기']
+  const accessToken = localStorage.getItem('accessToken')
 
-  const [selectedCourse, setSelectedCourse] = useState('')
-  const [selectedBatch, setSelectedBatch] = useState('')
+  const [courses, setCourses] = useState<Course[]>([])
+  const [generations, setGenerations] = useState<Generation[]>([])
+
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
+  const [selectedGeneration, setSelectedGeneration] =
+    useState<Generation | null>(null)
 
   const [isCourseOpen, setIsCourseOpen] = useState(false)
   const [isBatchOpen, setIsBatchOpen] = useState(false)
 
-  const accessToken = getAccessToken()
+  // 과정 목록 불러오기
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const data = await RegisterApi.getCourses()
+        setCourses(data)
+      } catch {
+        toast.show({ message: '과정 목록 불러오기 실패', type: 'error' })
+      }
+    }
+    fetchCourses()
+  }, [])
 
-  const handleCourseSelect = (value: string) => {
-    setSelectedCourse(value)
+  // 과정 선택 → 기수 목록 불러오기
+  const handleCourseSelect = async (courseName: string) => {
+    const course = courses.find((c) => c.name === courseName)
+    if (!course) return
+
+    setSelectedCourse(course)
+    setSelectedGeneration(null)
     setIsCourseOpen(false)
+    setIsBatchOpen(false)
+
+    try {
+      const data = await RegisterApi.getGenerations(course.id)
+      setGenerations(data)
+    } catch {
+      toast.show({ message: '기수 목록 불러오기 실패', type: 'error' })
+    }
   }
 
-  const handleBatchSelect = (value: string) => {
-    setSelectedBatch(value)
+  // 기수 선택
+  const handleGenerationSelect = (generationName: string) => {
+    const generation = generations.find((g) => g.name === generationName)
+    if (!generation) return
+
+    setSelectedGeneration(generation)
     setIsBatchOpen(false)
   }
 
+  // 수강 신청
   const handleRegister = async () => {
+    if (!selectedGeneration) return
+
     try {
-      const generationNumber = parseInt(selectedBatch.replace('기', ''), 10)
-
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/v1/auth/users/student/enrollments/`,
-        { generation: generationNumber },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+      await RegisterApi.register(
+        { generation_id: selectedGeneration.id },
+        accessToken || ''
       )
-
-      if (response.status === 201) {
-        toast.show({
-          message: '수강신청에 성공했습니다!',
-          type: 'success',
-        })
-        onClose()
-      }
-    } catch (err) {
-      const error = err as AxiosError
-
-      if (error.response?.status === 400) {
+      toast.show({ message: '수강신청에 성공했습니다!', type: 'success' })
+      onClose()
+    } catch (err: any) {
+      if (err?.response?.status === 400) {
         toast.show({ message: '이미 신청한 기수입니다.', type: 'error' })
       } else {
-        toast.show({
-          message: '수강신청에 실패했습니다. 다시 시도해 주세요.',
-          type: 'error',
-        })
+        toast.show({ message: '수강신청에 실패했습니다.', type: 'error' })
       }
     }
   }
@@ -94,34 +104,36 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
 
         <div className="flex flex-col gap-[20px]">
           <SingleDropdown
-            options={courseOptions}
+            options={courses.map((c) => c.name)}
             placeholder="수강중인 과정을 선택해 주세요."
+            selected={selectedCourse?.name || ''}
             onChange={handleCourseSelect}
-            selected={selectedCourse}
             isOpen={isCourseOpen}
             onToggle={() => {
               setIsCourseOpen((prev) => !prev)
-              setIsBatchOpen(false) // 다른 드롭다운 닫기
+              setIsBatchOpen(false)
             }}
             className="w-[348px] h-[48px]"
           />
 
           <SingleDropdown
-            options={batchOptions}
+            options={generations.map((g) => g.name)}
             placeholder="기수를 선택해 주세요."
-            onChange={handleBatchSelect}
-            selected={selectedBatch}
+            selected={selectedGeneration?.name || ''}
+            onChange={handleGenerationSelect}
             isOpen={isBatchOpen}
             onToggle={() => {
               setIsBatchOpen((prev) => !prev)
               setIsCourseOpen(false)
             }}
+            className="w-[348px] h-[48px]"
           />
         </div>
+
         <Button
-          variant={selectedCourse && selectedBatch ? 'fill' : 'ghost'}
+          variant={selectedCourse && selectedGeneration ? 'fill' : 'ghost'}
           className="w-[348px] h-[52px] font-normal"
-          disabled={!(selectedCourse && selectedBatch)}
+          disabled={!(selectedCourse && selectedGeneration)}
           onClick={handleRegister}
         >
           등록하기
