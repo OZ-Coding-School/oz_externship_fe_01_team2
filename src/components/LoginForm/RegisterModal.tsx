@@ -7,6 +7,7 @@ import SingleDropdown from '../common/SingleDropdown'
 import { useToast } from '../../hooks/useToast'
 import RegisterApi from '../../api/register/api'
 import type { Course, Generation } from '../../api/register/types'
+import { AxiosError } from 'axios'
 
 interface RegisterModalProps {
   isOpen: boolean
@@ -78,8 +79,10 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
       )
       toast.show({ message: '수강신청에 성공했습니다!', type: 'success' })
       onClose()
-    } catch (err: any) {
-      if (err?.response?.status === 400) {
+    } catch (err) {
+      const error = err as AxiosError
+
+      if (error?.response?.status === 400) {
         toast.show({ message: '이미 신청한 기수입니다.', type: 'error' })
       } else {
         toast.show({ message: '수강신청에 실패했습니다.', type: 'error' })
