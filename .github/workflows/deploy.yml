@@ -17,6 +17,12 @@ jobs:
           echo "Listing files in the repository:"
           ls -la
 
+      - name: Create .env file # 환경변수 넣기
+        run: |
+          echo "Creating .env file..."
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> .env
+          echo "VITE_WSS_URL=${{ secrets.VITE_WSS_URL }}" >> .env
+
       - name: install & build
         run: |
           echo "Building the project..."
