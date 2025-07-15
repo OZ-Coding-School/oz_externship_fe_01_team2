@@ -4,20 +4,19 @@ import MarkdownEditor from '@components/common/MarkdownEditor'
 import { useToast } from '@hooks/useToast'
 import { useAuthStore } from '@store/authStore'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { createAnswer } from '@api/qna/answerApi'
 
 interface AnswerFormProps {
   questionId: number
+  onAnswerSubmit?: () => void
 }
 
-const AnswerForm = ({ questionId }: AnswerFormProps) => {
+const AnswerForm = ({ questionId, onAnswerSubmit }: AnswerFormProps) => {
   const { user } = useAuthStore()
   const [content, setContent] = useState('')
   const [imageFiles, setImageFiles] = useState([] as File[])
   const [isReplying, setIsReplying] = useState(false)
   const toast = useToast()
-
-  const navigate = useNavigate()
 
   if (!user) {
     return null
@@ -30,24 +29,31 @@ const AnswerForm = ({ questionId }: AnswerFormProps) => {
     setImageFiles([])
     setIsReplying(false)
   }
+
   const handleSubmit = async () => {
     const formData = new FormData()
-    formData.append('content', content) // 실제 텍스트 입력
+    formData.append('content', content)
     imageFiles?.forEach((file) => {
-      formData.append('image_files', file) // 실제 File 객체 append
+      formData.append('image_files', file)
     })
+
     try {
       if (!content.trim()) {
         toast.show({ message: '답변 내용을 입력해주세요.', type: 'error' })
         return
       }
+
+      await createAnswer(questionId, formData)
+
       handleReset()
       toast.show({ message: '답변이 저장되었습니다!', type: 'success' })
-      navigate(`/qna/${questionId}`) // 답변 저장 후 해당 질문 페이지로 이동
+
+      onAnswerSubmit?.()
     } catch {
       toast.show({ message: '답변 저장 실패', type: 'error' })
     }
   }
+
   return (
     <div className="border border-gray-250 rounded-3xl mb-25">
       <div className="flex items-center justify-between py-10 px-9">

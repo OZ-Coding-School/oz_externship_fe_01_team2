@@ -120,6 +120,15 @@ const QnaDetailPage = () => {
     fetchData()
   }
 
+  const refreshQnaData = async () => {
+    try {
+      const response = await fetchQnaDetail(Number(questionId))
+      setQnaData(response)
+    } catch {
+      //실패무시
+    }
+  }
+
   return (
     <div className="bg-white min-h-screen px-6 py-10 max-w-4xl mx-auto">
       {/* 경로 네비게이션 */}
@@ -184,7 +193,9 @@ const QnaDetailPage = () => {
       </section>
 
       {/* 답변 요청 안내 */}
-      {user && <AnswerForm questionId={qnaData.id} />}
+      {user && (
+        <AnswerForm questionId={qnaData.id} onAnswerSubmit={refreshQnaData} />
+      )}
 
       {/* 답변 개수 */}
       <h2 className="mb-10 flex items-center gap-4 text-2xl font-semibold">
