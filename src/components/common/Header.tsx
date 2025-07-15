@@ -1,5 +1,6 @@
 import UserDefaultImage from '@assets/images/common/img_user_default.png'
 import LogoImage from '@assets/images/common/renewal_ozcoding_logo_black.svg'
+import { useDropdownPosition } from '@hooks/useDropdownPosition'
 import { useToast } from '@hooks/useToast'
 import { useAuthStore } from '@store/authStore'
 import axios from 'axios'
@@ -12,6 +13,8 @@ const Header = () => {
   const { user, logout: authLogout } = useAuthStore()
   const [showDropdown, setShowDropdown] = useState(false)
   const [isRegisterOpen, setIsRegisterOpen] = useState(false)
+
+  const { ref, position } = useDropdownPosition<HTMLDivElement>(showDropdown)
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev)
@@ -91,7 +94,10 @@ const Header = () => {
               </button>
               {showDropdown && (
                 <div
-                  className="absolute left-0 mt-7 bg-white rounded-md drop-shadow-xl py-6 px-4 z-10 text-sm"
+                  ref={ref}
+                  className={`absolute mt-7 bg-white rounded-md drop-shadow-xl py-6 px-4 z-10 text-sm
+                    ${position === 'right' ? 'right-0' : 'left-0'}
+                  `}
                   onMouseLeave={() => setShowDropdown(false)}
                 >
                   <div className="mb-2 border-b border-gray-200 pb-5">
