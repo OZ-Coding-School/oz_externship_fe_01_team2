@@ -1,7 +1,7 @@
+import { useToast } from '@hooks/useToast'
 import axios from 'axios'
 import { useCallback, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useToast } from '@hooks/useToast'
 
 interface SocialLoginButtonsProps {
   className?: string
@@ -33,7 +33,7 @@ const SocialLoginButtons = ({ className }: SocialLoginButtonsProps) => {
       kakaoRedirectUri
     )}&response_type=code`
     window.location.href = kakaoAuthUrl
-  }, [kakaoClientId, kakaoRedirectUri, toast])
+  }, [kakaoClientId, kakaoRedirectUri])
 
   const handleNaverLogin = useCallback(() => {
     if (!naverClientId || !naverRedirectUri) {
@@ -48,7 +48,7 @@ const SocialLoginButtons = ({ className }: SocialLoginButtonsProps) => {
       naverRedirectUri
     )}&state=${naverState}`
     window.location.href = naverAuthUrl
-  }, [naverClientId, naverRedirectUri, toast])
+  }, [naverClientId, naverRedirectUri])
 
   const loginWithSocial = useCallback(
     async (
@@ -72,21 +72,26 @@ const SocialLoginButtons = ({ className }: SocialLoginButtonsProps) => {
         } else {
           throw new Error('토큰을 받지 못했습니다.')
         }
-      } catch (err) {
-        console.error(`${provider} 로그인 실패:`, err)
-        toast.show({
-          message:
-            axios.isAxiosError(err) && err.response?.data?.message
-              ? err.response.data.message
-              : '로그인 실패!',
-          type: 'error',
-        })
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+          toast.show({
+            message:
+              error.response.data?.message ||
+              '로그인 처리 중 오류가 발생했습니다.',
+            type: 'error',
+          })
+        } else {
+          toast.show({
+            message: '로그인 처리 중 알 수 없는 오류가 발생했습니다.',
+            type: 'error',
+          })
+        }
         navigate('/login')
       } finally {
         isLoginProcessing.current = false
       }
     },
-    [navigate, toast]
+    [navigate]
   )
 
   const handleSocialCallback = useCallback(() => {
@@ -107,7 +112,7 @@ const SocialLoginButtons = ({ className }: SocialLoginButtonsProps) => {
       }
       loginWithSocial('naver', '/api/v1/auth/login/naver', code, state)
     }
-  }, [loginWithSocial, naverState, toast, navigate])
+  }, [loginWithSocial, naverState, navigate])
 
   useEffect(() => {
     handleSocialCallback()
