@@ -31,6 +31,14 @@ export interface CreateQuestionRequest {
   title: string
   content: string
 }
+export interface fetchCreateCommentParams {
+  answer_id: number
+  content: string
+}
+
+export interface CreateCommentResponse {
+  message: string
+}
 export interface QnaListParams {
   ordering?: string
   page?: number
