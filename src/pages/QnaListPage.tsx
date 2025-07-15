@@ -1,5 +1,4 @@
 import { fetchQnaList } from '@api/qna/questionApi'
-import { type QuestionRawResponse } from '@api/qna/types'
 import Spinner from '@components/common/Spinner'
 import QnaCard from '@components/qna/QnaCard'
 import QnaFilterModal from '@components/qna/QnaFilterModal'
@@ -26,8 +25,6 @@ const QnaListPage = () => {
   })
   const toast = useToast()
 
-  const [data, setData] = useState<QuestionRawResponse>()
-
   const [questions, setQuestions] = useState<Question[]>([])
 
   const [page, setPage] = useState(1)
@@ -42,7 +39,6 @@ const QnaListPage = () => {
           page_size: PAGE_SIZE,
           search: query.trim() || '',
         })
-        setData(response)
         setQuestions(response.results)
       } catch (error: unknown) {
         if (axios.isAxiosError<{ message: string }>(error)) {
