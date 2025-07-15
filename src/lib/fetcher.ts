@@ -69,27 +69,30 @@ export const get = async <T>(
   return response.data
 }
 
-export const post = <T>(
+export const post = async <T>(
   url: string,
   data?: unknown,
   config?: AxiosRequestConfig
 ): Promise<T> => {
-  return fetcher.post(url, data, config)
+  const response = await fetcher.post<T>(url, data, config)
+  return response.data
 }
 
-export const put = <T>(
+export const put = async <T>(
   url: string,
   data?: unknown,
   config?: AxiosRequestConfig
 ): Promise<T> => {
-  return fetcher.put(url, data, config)
+  const response = await fetcher.put<T>(url, data, config)
+  return response.data
 }
 
-export const del = <T>(
+export const del = async <T>(
   url: string,
   config?: AxiosRequestConfig
 ): Promise<T> => {
-  return fetcher.delete(url, config)
+  const response = await fetcher.delete<T>(url, config)
+  return response.data
 }
 
 export default fetcher
