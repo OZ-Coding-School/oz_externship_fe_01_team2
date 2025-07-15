@@ -42,7 +42,7 @@ const QnaDetailPage = () => {
       }
     }
     fetchData()
-  }, [questionId, toast, navigate])
+  }, [questionId, navigate])
 
   const handleShare = async () => {
     try {
