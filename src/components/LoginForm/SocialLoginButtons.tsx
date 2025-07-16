@@ -51,73 +51,73 @@ const SocialLoginButtons = ({ className }: SocialLoginButtonsProps) => {
     window.location.href = naverAuthUrl
   }, [naverClientId, naverRedirectUri])
 
-  const loginWithSocial = useCallback(
-    async (
-      _provider: SocialProvider,
-      endpoint: string,
-      code: string,
-      state?: string
-    ) => {
-      if (isLoginProcessing.current) return
+  // const loginWithSocial = useCallback(
+  //   async (
+  //     _provider: SocialProvider,
+  //     endpoint: string,
+  //     code: string,
+  //     state?: string
+  //   ) => {
+  //     if (isLoginProcessing.current) return
 
-      isLoginProcessing.current = true
+  //     isLoginProcessing.current = true
 
-      try {
-        const payload = state ? { code, state } : { code }
-        const res = await fetcher.post(endpoint, payload)
+  //     try {
+  //       const payload = state ? { code, state } : { code }
+  //       const res = await fetcher.post(endpoint, payload)
 
-        if (res.data?.token) {
-          localStorage.setItem('token', res.data.token)
-          toast.show({ message: '로그인 성공!', type: 'success' })
-          navigate('/')
-        } else {
-          throw new Error('토큰을 받지 못했습니다.')
-        }
-      } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response) {
-          toast.show({
-            message:
-              error.response.data?.message ||
-              '로그인 처리 중 오류가 발생했습니다.',
-            type: 'error',
-          })
-        } else {
-          toast.show({
-            message: '로그인 처리 중 알 수 없는 오류가 발생했습니다.',
-            type: 'error',
-          })
-        }
-        navigate('/login')
-      } finally {
-        isLoginProcessing.current = false
-      }
-    },
-    [navigate]
-  )
+  //       if (res.data?.token) {
+  //         localStorage.setItem('token', res.data.token)
+  //         toast.show({ message: '로그인 성공!', type: 'success' })
+  //         navigate('/')
+  //       } else {
+  //         throw new Error('토큰을 받지 못했습니다.')
+  //       }
+  //     } catch (error: unknown) {
+  //       if (axios.isAxiosError(error) && error.response) {
+  //         toast.show({
+  //           message:
+  //             error.response.data?.message ||
+  //             '로그인 처리 중 오류가 발생했습니다.',
+  //           type: 'error',
+  //         })
+  //       } else {
+  //         toast.show({
+  //           message: '로그인 처리 중 알 수 없는 오류가 발생했습니다.',
+  //           type: 'error',
+  //         })
+  //       }
+  //       navigate('/login')
+  //     } finally {
+  //       isLoginProcessing.current = false
+  //     }
+  //   },
+  //   [navigate]
+  // )
 
-  const handleSocialCallback = useCallback(() => {
-    const searchParams = new URLSearchParams(window.location.search)
-    const code = searchParams.get('code')
-    const state = searchParams.get('state')
-    const path = window.location.pathname
+  // const handleSocialCallback = useCallback(() => {
+  //   const searchParams = new URLSearchParams(window.location.search)
+  //   const code = searchParams.get('code')
+  //   const state = searchParams.get('state')
+  //   const path = window.location.pathname
 
-    if (!code) return
+  //   if (!code) return
 
-    if (path === '/auth/callback/kakao') {
-      loginWithSocial('kakao', '/api/v1/auth/login/kakao', code)
-    } else if (path === '/auth/callback/naver') {
-      if (state !== naverState) {
-        toast.show({ message: '잘못된 요청입니다.', type: 'error' })
-        navigate('/login')
-        return
-      }
-      loginWithSocial('naver', '/api/v1/auth/login/naver', code, state)
-    }
-  }, [loginWithSocial, naverState, navigate])
+  //   if (path === '/auth/callback/kakao') {
+  //     loginWithSocial('kakao', '/api/v1/auth/login/kakao', code)
+  //   } else if (path === '/auth/callback/naver') {
+  //     if (state !== naverState) {
+  //       toast.show({ message: '잘못된 요청입니다.', type: 'error' })
+  //       navigate('/login')
+  //       return
+  //     }
+  //     loginWithSocial('naver', '/api/v1/auth/login/naver', code, state)
+  //   }
+  // }, [loginWithSocial, naverState, navigate])
 
-  useEffect(() => {
-    handleSocialCallback()
-  }, [handleSocialCallback])
+  // useEffect(() => {
+  //   handleSocialCallback()
+  // }, [handleSocialCallback])
 
   return (
     <div className="flex flex-col gap-[12px] mb-[40px]">
