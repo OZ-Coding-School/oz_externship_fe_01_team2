@@ -1,19 +1,19 @@
 import { useToast } from '@hooks/useToast'
-import fetcher from '@lib/fetcher'
-import axios from 'axios'
-import { useCallback, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+// import fetcher from '@lib/fetcher'
+// import axios from 'axios'
+import { useCallback } from 'react'
+// import { useNavigate } from 'react-router-dom'
 
 interface SocialLoginButtonsProps {
   className?: string
 }
 
-type SocialProvider = 'kakao' | 'naver'
+// type SocialProvider = 'kakao' | 'naver'
 
 const SocialLoginButtons = ({ className }: SocialLoginButtonsProps) => {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const toast = useToast()
-  const isLoginProcessing = useRef(false)
+  // const isLoginProcessing = useRef(false)
 
   const kakaoClientId = import.meta.env.VITE_KAKAO_CLIENT_ID
   const kakaoRedirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI
