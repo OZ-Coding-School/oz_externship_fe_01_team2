@@ -20,10 +20,10 @@ export default function NaverCallbackPage() {
       }
 
       try {
-        const res = await fetcher.post(
-          `${import.meta.env.VITE_API_URL}/api/v1/auth/login/naver`,
-          { code, state }
-        )
+        const res = await fetcher.post(`/api/v1/auth/login/naver`, {
+          code,
+          state,
+        })
 
         localStorage.setItem('accessToken', res.data.access_token)
         localStorage.setItem('refreshToken', res.data.refresh_token)
