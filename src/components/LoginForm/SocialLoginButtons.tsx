@@ -1,4 +1,5 @@
 import { useToast } from '@hooks/useToast'
+import fetcher from '@lib/fetcher'
 import axios from 'axios'
 import { useCallback, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -63,7 +64,7 @@ const SocialLoginButtons = ({ className }: SocialLoginButtonsProps) => {
 
       try {
         const payload = state ? { code, state } : { code }
-        const res = await axios.post(endpoint, payload)
+        const res = await fetcher.post(endpoint, payload)
 
         if (res.data?.token) {
           localStorage.setItem('token', res.data.token)
