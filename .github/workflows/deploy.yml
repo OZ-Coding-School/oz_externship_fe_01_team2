@@ -1,0 +1,63 @@
+name: Deploy to S3 and CloudFront
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Repository 파일 목록 출력
+        run: |
+          echo "Listing files in the repository:"
+          ls -la
+
+      - name: Create .env file # 환경변수 넣기
+        run: |
+          echo "Creating .env file..."
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> .env
+          echo "VITE_WSS_URL=${{ secrets.VITE_WSS_URL }}" >> .env
+          echo "VITE_KAKAO_CLIENT_ID=${{ secrets.VITE_KAKAO_CLIENT_ID }}" >> .env
+          echo "VITE_KAKAO_REDIRECT_URI=${{ secrets.VITE_KAKAO_REDIRECT_URI }}" >> .env
+          echo "VITE_NAVER_CLIENT_ID=${{ secrets.VITE_NAVER_CLIENT_ID }}" >> .env
+          echo "VITE_NAVER_CLIENT_SECRET=${{ secrets.VITE_NAVER_CLIENT_SECRET }}" >> .env
+          echo "VITE_NAVER_REDIRECT_URI=${{ secrets.VITE_NAVER_REDIRECT_URI }}" >> .env
+
+      - name: install & build
+        run: |
+          echo "Building the project..."
+          HUSKY=0 npm ci
+          npm run build
+
+      - name: Build files 목록 출력
+        run: |
+          echo "Listing files in the build directory:"
+          ls -la ./dist
+
+      - name: AWS Resource
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Deploy to S3
+        run: |
+          echo "Deploying to S3..."
+          aws s3 sync ./dist s3://oz-frontend-team2 --delete
+          aws s3 cp ./dist/index.html s3://oz-frontend-team2 --metadata-directive REPLACE --cache-control "no-cache"
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          echo "Invalidating CloudFront cache..."
+          aws cloudfront create-invalidation --distribution-id E3LJZVYRNTH49B --paths "/*"
+
+      - name: Notify Deployment Success
+        run: |
+          echo "Deployment to S3 and CloudFront completed successfully!"
+          echo "You can access your site at https://oz-team2.kro.kr/"
